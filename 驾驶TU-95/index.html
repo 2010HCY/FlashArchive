@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>驾驶TU-95</title>
+    <style>
+        /* 基本样式 */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 页面顶部 */
+        header {
+            background-color: #333;
+            color: white;
+            padding: 0px;
+            text-align: center;
+        }
+
+        /* 内容区，包含游戏窗口、介绍栏、按钮栏、底部文字区 */
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            padding: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap; /* 支持响应式布局 */
+        }
+
+        /* 游戏窗口区域 */
+        .game-container {
+            flex: 3; /* 游戏窗口占用四分之三的宽度 */
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #ccc;
+            height: 480px; /* 设置固定高度 */
+        }
+
+        .game-container embed {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 竖向操作介绍栏 */
+        .text-container {
+            flex: 1; /* 操作介绍区占剩余的一部分 */
+            background-color: #fafafa;
+            padding: 10px;
+            height: 500px;
+            overflow-y: auto; /* 超出时出现滚动条 */
+            word-wrap: break-word; /* 允许长单词换行 */
+            word-break: break-word; /* 长单词在容器边缘时换行 */
+        }
+
+        .switch-buttons {
+            margin-bottom: 20px;
+        }
+
+        /* 按钮栏 */
+        .bottom-bar {
+            width: 100%; /* 设置按钮栏宽度为100% */
+            display: flex;
+            justify-content: flex-start;
+            padding: 20px;
+            background-color: #ddd;
+            box-sizing: border-box; /* 确保边距、内边距不超出宽度 */
+        }
+
+        .bottom-bar button {
+            padding: 8px 16px;
+            margin-right: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 底部文字区域 */
+        .bottom-text {
+            background-color: #f1f1f1;
+            padding: 80px;
+            height: auto;
+            word-wrap: break-word;
+            word-break: break-word;
+            min-height: 200px; /* 默认最小高度 */
+            flex-grow: 1; /* 自适应扩展 */
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1000px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-container, .text-container {
+                flex: none;
+                width: 90%; /* 在屏幕小于1000px时，宽度调整为90% */
+                height: 300px; /* 高度调整为适应较小屏幕 */
+            }
+
+            .bottom-bar {
+                width: 90%;
+                justify-content: center;
+            }
+
+            .bottom-text {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 页面顶部 -->
+    <header>
+        <h1>驾驶TU-95</h1>
+    </header>
+
+    <!-- 内容区域 -->
+    <div class="main-content">
+        <!-- 游戏窗口 -->
+        <div class="game-container">
+            <embed id="gameEmbed" src="驾驶TU-95汉化.swf" width="100%" height="100%" />
+        </div>
+
+        <!-- 操作介绍区 -->
+        <div class="text-container">
+            <!-- 汉化版与原版切换按钮 -->
+            <div class="switch-buttons">
+                <button onclick="switchGame('hanzihuan')">汉化版</button>
+                <button onclick="switchGame('original')">原版</button>
+            </div>
+            <h2>如何游玩</h2>
+            <p>“W”加速 <br>“A，D”控制俯仰<br>空格任务操作（比如释放加油管，扔炸弹）<br> “H”跳伞</p>
+            <p>你可以按上面的按钮切换原版汉化版</p>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <!-- 下载按钮 -->
+        <a href="驾驶TU-95汉化.swf" download="驾驶TU-95汉化.swf">
+            <button>下载汉化版</button>
+        </a>
+        <a href="驾驶TU-95.swf" download="驾驶TU-95.swf">
+            <button>下载原版</button>
+        </a>
+        <a href="https://flash.100713.xyz/Falsh播放器.exe" download="Falsh播放器.exe">
+            <button>下载Flash播放器</button>
+        </a>
+    
+        <!-- 复制网址按钮 -->
+        <button onclick="copyToClipboard()">复制网址</button>
+    </div>
+
+    <!-- 底部文字区域 -->
+    <div class="bottom-text">
+        <h2>说明</h2>
+        <p>这是flash游戏，2024年了，支持flash的浏览器一个巴掌也数的过来，如果无法游玩，试试以下方法</p>
+        <p>安装插件，安装这个叫Ruffle的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
+        <p>下载游戏，然后将swf游戏文件用flash播放器打开</p>
+    </div>
+
+    <script>
+        function switchGame(version) {
+            var embed = document.getElementById('gameEmbed');
+            if (version === 'hanzihuan') {
+                embed.src = '驾驶TU-95汉化.swf';  // 替换为汉化版的文件路径
+            } else if (version === 'original') {
+                embed.src = '驾驶TU-95.swf';  // 替换为原版的文件路径
+            }
+        }
+        // 复制当前页面的 URL 到剪贴板
+        function copyToClipboard() {
+            // 获取当前页面的 URL
+            var currentUrl = window.location.href;
+
+            // 创建一个临时的输入框元素
+            var tempInput = document.createElement("input");
+            tempInput.value = currentUrl; // 将当前 URL 设置为输入框的值
+            document.body.appendChild(tempInput); // 将输入框添加到 DOM 中
+
+            // 选中输入框内容
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+            // 执行复制命令
+            document.execCommand("copy");
+
+            // 移除临时的输入框
+            document.body.removeChild(tempInput);
+
+            // 提示用户复制成功
+            alert("网址已复制到剪贴板！");
+        }        
+    </script>
+
+</body>
+</html>
