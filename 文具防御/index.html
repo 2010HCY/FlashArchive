@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>驾驶TU-95</title>
+    <link rel="icon" href="https://100713.xyz/medias/Hlogo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 文具防御, 文具防御汉化版, Flash">
+    <meta name="description" content="Flash游戏收藏站，人工汉化">
+    <meta name="author" content="Ethaniel">
+    <title>文具防御</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -129,14 +134,14 @@
 
     <!-- 页面顶部 -->
     <header>
-        <h1>驾驶TU-95</h1>
+        <h1>文具防御</h1>
     </header>
 
     <!-- 内容区域 -->
     <div class="main-content">
         <!-- 游戏窗口 -->
         <div class="game-container">
-            <embed id="gameEmbed" src="驾驶TU-95汉化.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="文具防御汉化版.swf" width="100%" height="100%" />
         </div>
 
         <!-- 操作介绍区 -->
@@ -147,7 +152,12 @@
                 <button onclick="switchGame('original')">原版</button>
             </div>
             <h2>如何游玩</h2>
-            <p>“W”加速 <br>“A，D”控制俯仰<br>空格任务操作（比如释放加油管，扔炸弹）<br> “H”跳伞</p>
+            <p>1.点击，按住，并移动鼠标来设置射击的力量和角度.<br>
+               2.瞄准时按空格键取消射击.按P暂停游戏.<br>
+               3.在每场战斗中击沉所有船只.在它们摧毁你的王国之前!<br>
+               4.在每场战斗前购买最好的武器。
+            </p>
+            <p>此游戏共计七关</p>
             <p>你可以按上面的按钮切换原版汉化版</p>
             <a href="index.html">返回主页</a>
         </div>
@@ -155,10 +165,10 @@
 
     <div class="bottom-bar">
         <!-- 下载按钮 -->
-        <a href="驾驶TU-95汉化.swf" download="驾驶TU-95汉化.swf">
+        <a href="文具防御汉化版.swf" download="文具防御汉化版.swf">
             <button>下载汉化版</button>
         </a>
-        <a href="驾驶TU-95.swf" download="驾驶TU-95.swf">
+        <a href="文具防御.swf" download="文具防御.swf">
             <button>下载原版</button>
         </a>
         <a href="../Falsh播放器.exe" download="Falsh播放器.exe">
@@ -175,16 +185,16 @@
         <p>这是flash游戏，2024年了，支持flash的浏览器一个巴掌也数的过来，如果无法游玩，试试以下方法</p>
         <p>安装插件，安装这个叫Ruffle的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
         <p>下载游戏，然后将swf游戏文件用flash播放器打开</p>
-        <p>2024年11月24号花三小时汉化，这是我汉化的第一个游戏</p>
+        <p>2024年11月25日汉化</p>
     </div>
 
     <script>
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '驾驶TU-95汉化.swf';  // 替换为汉化版的文件路径
+                embed.src = '文具防御汉化版.swf';  // 替换为汉化版的文件路径
             } else if (version === 'original') {
-                embed.src = '驾驶TU-95.swf';  // 替换为原版的文件路径
+                embed.src = '文具防御.swf';  // 替换为原版的文件路径
             }
         }
         // 复制当前页面的 URL 到剪贴板

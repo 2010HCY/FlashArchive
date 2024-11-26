@@ -8,21 +8,55 @@
 <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版">
 <meta name="description" content="Flash游戏收藏站，人工汉化">
 <meta name="author" content="Ethaniel">
-</head>
-<h1 style="text-align: center; padding: 20px; background-color: #007BFF; color: white;">Flash游戏收藏站</h1>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+ gtag('config', 'G-9C3EYEPPQ1');
+</script>
+</head>
+  
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            overflow-x: hidden;
+        }
+        .header-banner {
+        position: fixed; /* 固定在页面顶部 */
+        top: 0;
+        left: 0;
+        width: 100%; /* 占据整个宽度 */
+        padding: 20px;
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        font-size: 24px;
+        z-index: 1000; /* 确保在其他内容上层 */  
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  
         }
         .card-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, 200px); /* 调整卡片宽度为200px */
             gap: 20px; /* 卡片之间的间距 */
             padding: 20px;
+            padding-top: 100px; /* 为顶部横幅预留空间 */
             overflow-y: auto;
             height: 100vh; /* 使页面高度为视口高度 */
         }
@@ -61,6 +95,10 @@
 <body>
 
     <div class="card-container">
+            <!-- 顶部横幅 -->
+    <div class="header">
+        flash收藏站
+    </div>
         <!-- 卡片 1 -->
         <div class="card">
             <a href="./驾驶TU-95/">
@@ -69,13 +107,31 @@
                 <p>驾驶战略轰炸机TU-95！带有汉化</p>
             </a>
         </div>
+        <!-- 卡片 2 -->
+        <div class="card">
+            <a href="./文具防御/">
+                <img src="./文具防御/文具防御.png" alt="文具防御">
+                <h3>文具防御</h3>
+                <p>使用文具打击来犯之敌！带有汉化</p>
+            </a>
+        </div>
+
 
         <!-- 更多卡片... -->
     </div>
+    <footer style="text-align: center; 
+               padding: 20px; 
+               background-color: #333; 
+               color: white; 
+               position: relative; 
+               bottom: 0; 
+               width: 100%;
+               font-size: 14px;">
+    &copy; 2024 <a href="https://100713.xyz" style="color: #00BFFF; text-decoration: none;">静水深流</a> | 版权所有 <a href="about.html" style="color: #00BFFF; text-decoration: none;">关于我们</a>
+</footer>
+
 </html>
 
-
-    
 
 
 
