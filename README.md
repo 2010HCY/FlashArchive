@@ -1,16 +1,16 @@
-## Hi there 👋
+## 这是flash的收藏站
 
-<!--
-**Flash-web-Ethaniel/Flash-web-Ethaniel** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+这里面汇集了我收藏的flash小游戏，并且有人工汉化（本人亲自汉化），且能够方便快捷的一键切换汉化版原版。
 
-Here are some ideas to get you started:
+-->体验地址https://flash.100713.xyz<--
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+-->博客地址https://100713.xyz<--
+
+-->Page页面地址https://page.100713.xyz<--
+
+使用协议[GPL3](LICENSE)：
+
+1. 我保留代码所有权
+2. 你们可以转载、使用、修改，但请注明我这个作者，来源
+3. 我不对你们修改后的代码负责
+4. 允许在一定范围内的商用，但需要注明来源作者
