@@ -1,0 +1,110 @@
+        /* 基本样式 */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 页面顶部 */
+        header {
+            background-color: #333;
+            color: white;
+            padding: 0px;
+            text-align: center;
+        }
+
+        /* 内容区，包含游戏窗口、介绍栏、按钮栏、底部文字区 */
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            padding: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap; /* 支持响应式布局 */
+        }
+
+        /* 游戏窗口区域 */
+        .game-container {
+            flex: 3; /* 游戏窗口占用四分之三的宽度 */
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #ccc;
+            height: 480px; /* 设置固定高度 */
+        }
+
+        .game-container embed {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 竖向操作介绍栏 */
+        .text-container {
+            flex: 1; /* 操作介绍区占剩余的一部分 */
+            background-color: #fafafa;
+            padding: 10px;
+            height: 500px;
+            overflow-y: auto; /* 超出时出现滚动条 */
+            word-wrap: break-word; /* 允许长单词换行 */
+            word-break: break-word; /* 长单词在容器边缘时换行 */
+        }
+
+        .switch-buttons {
+            margin-bottom: 20px;
+        }
+
+        /* 按钮栏 */
+        .bottom-bar {
+            width: 100%; /* 设置按钮栏宽度为100% */
+            display: flex;
+            justify-content: flex-start;
+            padding: 20px;
+            background-color: #ddd;
+            box-sizing: border-box; /* 确保边距、内边距不超出宽度 */
+        }
+
+        .bottom-bar button {
+            padding: 8px 16px;
+            margin-right: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 底部文字区域 */
+        .bottom-text {
+            background-color: #f1f1f1;
+            padding: 80px;
+            height: auto;
+            word-wrap: break-word;
+            word-break: break-word;
+            min-height: 200px; /* 默认最小高度 */
+            flex-grow: 1; /* 自适应扩展 */
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1000px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .game-container, .text-container {
+                flex: none;
+                width: 90%; /* 在屏幕小于1000px时，宽度调整为90% */
+                height: 300px; /* 高度调整为适应较小屏幕 */
+            }
+
+            .bottom-bar {
+                width: 90%;
+                justify-content: center;
+            }
+
+            .bottom-text {
+                width: 90%;
+            }
+        }
