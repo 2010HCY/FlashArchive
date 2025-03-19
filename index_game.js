@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("/api/Games_name.json")
+    fetch("./api/Games_name.json")
         .then(response => response.json())
         .then(games => {
             shuffleArray(games);
