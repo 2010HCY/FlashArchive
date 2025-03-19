@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文具防御</title>
+    <title>整蛊火柴人</title>
     <link rel="stylesheet" href="../play.css">
-    <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
-    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 文具防御, 文具防御汉化版, Flash">
-    <meta name="description" content="Flash游戏收藏站，人工汉化">
     <meta name="author" content="Ethaniel">
+    <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 整蛊火柴人, 整蛊火柴人汉化版, Flash, 整蛊火柴人1、2, 弄死火柴人">
+    <meta name="description" content="Flash游戏收藏站，人工汉化">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -21,36 +21,31 @@
 <body>
 
     <header>
-        <h1>文具防御</h1>
+        <h1>整蛊火柴人</h1>
     </header>
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="文具防御汉化版.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="整蛊火柴人2.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
             <div class="switch-buttons">
-                <button onclick="switchGame('hanzihuan')">汉化版</button>
-                <button onclick="switchGame('original')">原版</button>
+                <button onclick="switchGame('hanzihuan')">一代</button>
+                <button onclick="switchGame('original')">二代</button>
             </div>
             <h2>如何游玩</h2>
-            <p>1.点击，按住，并移动鼠标来设置射击的力量和角度.<br>
-               2.瞄准时按空格键取消射击.按P暂停游戏.<br>
-               3.在每场战斗中击沉所有船只.在它们摧毁你的王国之前!<br>
-               4.在每场战斗前购买最好的武器。
-            </p>
-            <p>此游戏共计七关</p>
-            <p>你可以按上面的按钮切换原版汉化版</p>
+            <p>鼠标控制，点击左侧的道具选项选择道具，然后尽情发挥吧！（右边上面的滑动条是调节绳子长度的，下面的是水位高度）</p>
+            <p>你可以按上面的按钮切换1、2两代，推荐玩2代，更细腻的画风和更丰富的道具选择</p>
             <a href="https://flash.100713.xyz">返回主页</a>
         </div>
     </div>
 
     <div class="bottom-bar">
-        <a href="文具防御汉化版.swf" download="文具防御汉化版.swf">
+        <a href="整蛊火柴人1.swf" download="驾驶TU-95汉化.swf">
             <button>下载汉化版</button>
         </a>
-        <a href="文具防御.swf" download="文具防御.swf">
+        <a href="整蛊火柴人2.swf" download="驾驶TU-95.swf">
             <button>下载原版</button>
         </a>
         <a href="../Falsh播放器.exe" download="Falsh播放器.exe">
@@ -65,29 +60,27 @@
         <p>这是flash游戏，2024年了，支持flash的浏览器一个巴掌也数的过来，如果无法游玩，试试以下方法</p>
         <p>安装插件，安装这个叫<a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
         <p>下载游戏，然后将swf游戏文件用flash播放器打开</p>
-        <p>2024年11月25日汉化</p>
+        <p>2024年11月28号花2小时汉化，这是我汉化的第三个游戏</p>
     </div>
 
     <script>
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '文具防御汉化版.swf';
+                embed.src = '整蛊火柴人1.swf'; 
             } else if (version === 'original') {
-                embed.src = '文具防御.swf'; 
+                embed.src = '城邦争霸原版.swf'; 
             }
         }
-
         function copyToClipboard() {
-           
             var currentUrl = window.location.href;
 
             var tempInput = document.createElement("input");
-            tempInput.value = currentUrl;
-            document.body.appendChild(tempInput); 
+            tempInput.value = currentUrl; 
+            document.body.appendChild(tempInput);
 
             tempInput.select();
-            tempInput.setSelectionRange(0, 99999); // For mobile devices
+            tempInput.setSelectionRange(0, 99999);
 
             document.execCommand("copy");
 

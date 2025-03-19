@@ -20,21 +20,16 @@
 </head>
 <body>
 
-    <!-- 页面顶部 -->
     <header>
         <h1>城邦争霸无敌版</h1>
     </header>
 
-    <!-- 内容区域 -->
     <div class="main-content">
-        <!-- 游戏窗口 -->
         <div class="game-container">
             <embed id="gameEmbed" src="城邦争霸中文无敌版.swf" width="100%" height="100%" />
         </div>
 
-        <!-- 操作介绍区 -->
         <div class="text-container">
-            <!-- 汉化版与原版切换按钮 -->
             <div class="switch-buttons">
                 <button onclick="switchGame('hanzihuan')">汉化版</button>
                 <button onclick="switchGame('original')">原版</button>
@@ -48,7 +43,6 @@
     </div>
 
     <div class="bottom-bar">
-        <!-- 下载按钮 -->
         <a href="城邦争霸中文无敌版.swf" download="驾驶TU-95汉化.swf">
             <button>下载汉化版</button>
         </a>
@@ -59,11 +53,9 @@
             <button>下载Flash播放器</button>
         </a>
     
-        <!-- 复制网址按钮 -->
         <button onclick="copyToClipboard()">复制网址</button>
     </div>
 
-    <!-- 底部文字区域 -->
     <div class="bottom-text">
         <h2>说明</h2>
         <p>这是flash游戏，2024年了，支持flash的浏览器一个巴掌也数的过来，如果无法游玩，试试以下方法</p>
@@ -76,32 +68,26 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '城邦争霸中文无敌版.swf';  // 替换为汉化版的文件路径
+                embed.src = '城邦争霸中文无敌版.swf';
             } else if (version === 'original') {
-                embed.src = '城邦争霸无敌版.swf';  // 替换为原版的文件路径
+                embed.src = '城邦争霸无敌版.swf';
             }
         }
-        // 复制当前页面的 URL 到剪贴板
+
         function copyToClipboard() {
-            // 获取当前页面的 URL
             var currentUrl = window.location.href;
 
-            // 创建一个临时的输入框元素
             var tempInput = document.createElement("input");
-            tempInput.value = currentUrl; // 将当前 URL 设置为输入框的值
-            document.body.appendChild(tempInput); // 将输入框添加到 DOM 中
+            tempInput.value = currentUrl;
+            document.body.appendChild(tempInput);
 
-            // 选中输入框内容
             tempInput.select();
-            tempInput.setSelectionRange(0, 99999); // For mobile devices
+            tempInput.setSelectionRange(0, 99999);
 
-            // 执行复制命令
             document.execCommand("copy");
 
-            // 移除临时的输入框
             document.body.removeChild(tempInput);
 
-            // 提示用户复制成功
             alert("网址已复制到剪贴板！");
         }        
     </script>
