@@ -22,8 +22,8 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #41ae3c;
-    color: white;
+    background-color: oklch(0.95 0.025 112);
+    color: oklch(0.55 0.12 112);
     text-align: center;
     padding: 15px 0;
     font-size: 24px;
@@ -75,3 +75,24 @@ body {
     text-decoration: none;
     color: inherit;
 }
+.divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 20px auto;
+    width: 80%;
+}  
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #333;
+}
+ .footer a {
+    color: #a3a300;
+    text-decoration: none;
+    font-weight: bold;
+}
+  .footer a:hover {
+    text-decoration: underline;
+}
+  
