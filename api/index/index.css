@@ -1,0 +1,98 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: oklch(0.95 0.025 112);
+    overflow-x: hidden;
+}
+.header-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    z-index: 1000;
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: oklch(0.95 0.025 112);
+    color: oklch(0.55 0.12 112);
+    text-align: center;
+    padding: 15px 0;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  
+    z-index: 999;
+}
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+    gap: 20px;
+    padding: 20px;
+    padding-top: 100px;
+    overflow-y: auto;
+    height: 100vh;
+}
+#game-list {
+    display: contents;
+}
+.card {
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    height: 220px;
+    background-color: #FFFFFF;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+.card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+.card h3 {
+    margin: 10px 0;
+    font-size: 16px;
+}
+.card p {
+    padding: 0 10px 10px;
+    font-size: 12px;
+    color: #555;
+}
+.card a {
+    text-decoration: none;
+    color: inherit;
+}
+.divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 20px auto;
+    width: 80%;
+}  
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #333;
+}
+ .footer a {
+    color: #a3a300;
+    text-decoration: none;
+    font-weight: bold;
+}
+  .footer a:hover {
+    text-decoration: underline;
+}
+  

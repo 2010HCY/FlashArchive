@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
     
     // 提示信息：如果命令行参数中包含 "-c"，则在控制台输出，否则弹出窗口
     if (argc > 1 && std::strcmp(argv[1], "-c") == 0) {
-        std::cout << "RSS 订阅链接文件生成完毕" << std::endl;
+        std::cout << "站点地图生成完毕" << std::endl;
     } else {
 #ifdef _WIN32
         // 隐藏控制台窗口
@@ -102,9 +102,9 @@ int main(int argc, char* argv[]) {
         }
         
         // 使用 MessageBoxW 弹出对话框
-        MessageBoxW(NULL, L"RSS 订阅链接文件生成完毕", L"OK!", MB_OK);
+        MessageBoxW(NULL, L"站点地图生成完毕", L"OK!", MB_OK);
 #else
-        std::cout << "RSS 订阅链接文件生成完毕" << std::endl;
+        std::cout << "站点地图生成完毕" << std::endl;
 #endif
     }
     
