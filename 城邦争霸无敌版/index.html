@@ -33,40 +33,21 @@
         <div class="text-container">
             <div class="switch-buttons">
                 <button onclick="switchGame('hanzihuan')">汉化版</button>
-                <button onclick="switchGame('original')">原版</button>
             </div>
             <h2>如何游玩</h2>
             <p>鼠标控制，点击拖动士兵上方的按钮可移动士兵，有三大阵营可选，点击地图空地上的牌子可以建造农场、矿场等建筑</p>
             <p>你可以按上面的按钮切换原版汉化版</p>
-            <div class="GoIndex">
-                <a href="/" class="GoIndexP">
-                <div class="GoIndexP">
-                    <svg data-icon="HomeSVG" height="1em" width="1em" class="HomeSVG">
-                        <symbol id="HomeSVG" viewBox="0 0 24 24">
-                            <path d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75" fill="currentColor"></path>
-                        </symbol><use href="#HomeSVG"></use>
-                    </svg> 返回主页</div>
-                </a>
-            </div>
             <a href="https://flash.100713.xyz/城邦争霸">原版游戏</a>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="整蛊火柴人1.swf" download="整蛊火柴人1.swf" class="bottomP">
+            <a href="城邦争霸中文无敌版.swf" download="城邦争霸中文无敌版.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
-            <span>下载一代</span>    
-            </a>
-        </div>
-        <div class="bottom">
-            <a href="整蛊火柴人2.swf" download="整蛊火柴人2.swf" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>下载二代</span>    
+            <span>下载城邦争霸中文无敌版</span>    
             </a>
         </div>
         <div class="bottom">
@@ -93,25 +74,18 @@
         </div>
     </div>
 
-    <div class="bottom-text">
-        <h2>说明</h2>
-        <p>这是flash游戏，2024年了，支持flash的浏览器一个巴掌也数的过来，我已经在网站上部署了Ruffle，如果还是无法游玩，试试以下方法</p>
-        <p>安装插件，安装这个叫<a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
-        <p>下载游戏，然后将swf游戏文件用flash播放器打开</p>
-        <p>2024年11月28号花2小时汉化，这是我汉化的第三个游戏</p>
-    </div>
+    <div class="bottom-text"></div>
 
     <script>
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
                 embed.src = '城邦争霸中文无敌版.swf';
-            } else if (version === 'original') {
-                embed.src = '城邦争霸无敌版.swf';
             }
         }
     </script>
-    <script src="/api/play/play.js"></script>
+    <script src="/api/play/play-copy.js"></script>
+    <script src="/api/play/play-bottom-text.js"></script>
 
 </body>
 </html>

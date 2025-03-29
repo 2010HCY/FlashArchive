@@ -12,6 +12,25 @@ header {
     color: white;
     padding: 0px;
     text-align: center;
+    height: 13vh;
+}
+a {
+    color: #007BFF;
+    text-decoration: none;
+    position: relative;
+}
+a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0%;
+    height: 2px;
+    background-color: #007BFF;
+    transition: width 0.3s ease;
+}
+a:hover::after {
+    width: 100%;
 }
 .main-content {
     display: flex;
@@ -29,6 +48,11 @@ header {
     align-items: center;
     border: 2px solid #ccc;
     height: 480px;
+    position: relative;
+    max-width: 800px;
+    max-height: 500px;
+    object-fit: contain;
+    margin-left: 100px;
 }
 .game-container embed {
     width: 100%;
@@ -38,10 +62,14 @@ header {
     flex: 1;
     background-color: #fafafa;
     padding: 10px;
-    height: 500px;
+    height: 100%;
     overflow-y: auto;
     word-wrap: break-word;
     word-break: break-word;
+}
+.bottom-text {
+    padding-left: 10%;
+    max-width: 80%;
 }
 .bottom-bar {
     width: 100%;
@@ -50,6 +78,8 @@ header {
     padding: 20px;
     background-color: #ddd;
     box-sizing: border-box;
+    padding: 0;
+    padding-left: 100px;
 }
 @media (max-width: 1000px) {
     .main-content {
@@ -80,6 +110,8 @@ header {
     overflow: hidden;
     transition: background-color 0.3s ease-in-out;
     border: none;
+    margin-top: 5px;
+    margin-bottom: 5px; 
     .icon{
         color: oklch(0.7 0.14 112);
         vertical-align: middle;
@@ -92,10 +124,10 @@ header {
         background-color: oklch(0.95 0.025 112);
     }
     .copy-button {
-        padding: 0; /* 可根据需求调整按钮额外的内边距 */
-        font: inherit; /* 保留父级字体样式 */
+        padding: 0;
+        font: inherit;
         background: none;
-        border: none; /* 删除按钮默认边框 */
+        border: none;
         cursor: pointer;
     }
 }
