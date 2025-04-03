@@ -33,12 +33,12 @@ body {
 }
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 200px);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-rows: repeat(3, 40vh);
     gap: 20px;
     padding: 20px;
     padding-top: 100px;
-    overflow-y: auto;
-    height: 100vh;
+    height: 120vh;
 }
 #game-list {
     display: contents;
@@ -95,4 +95,16 @@ body {
   .footer a:hover {
     text-decoration: underline;
 }
-  
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+.pagination button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+.pagination span {
+    margin: 0 5px;
+    cursor: pointer;
+}

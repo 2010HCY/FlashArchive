@@ -6,6 +6,7 @@
 #include <vector>
 #include <ctime>
 #include <json.hpp>
+#include <iomanip>  // 用于 std::get_time
 
 using json = nlohmann::json;
 
@@ -25,6 +26,24 @@ std::string extractBetween(const std::string& str, const std::string& start_deli
     size_t end = str.find(end_delim, start);
     if (end == std::string::npos) return "";
     return str.substr(start, end - start);
+}
+
+// 将 "YYYY-MM-DD HH:MM:SS" 转换为 RFC-822 格式
+std::string formatRssDate(const std::string& datetime) {
+    std::tm tm = {};
+    std::istringstream ss(datetime);
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+    
+    if (ss.fail()) {
+        std::cerr << "时间格式不正确: " << datetime << std::endl;
+        return getCurrentTime();  // 如果解析失败，返回当前时间
+    }
+
+    tm.tm_isdst = -1; // 自动判断夏令时
+    std::time_t time = std::mktime(&tm);
+    char buf[80];
+    std::strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", std::gmtime(&time));
+    return std::string(buf);
 }
 
 // 读取现有 RSS XML 中的链接与发布时间映射（简单解析）
@@ -51,65 +70,33 @@ json readXmlPubDates(const std::string& xmlFilename) {
     return xmlMap;
 }
 
-// 加载日志文件（记录链接到发布时间的映射）, 如果不存在，则返回空 JSON 对象
-json loadLog(const std::string& logFilename) {
-    json logData;
-    std::ifstream logFile(logFilename);
-    if (logFile.is_open()){
-        try {
-            logFile >> logData;
-        } catch (json::parse_error& e) {
-            std::cerr << "日志文件解析错误: " << e.what() << std::endl;
-        }
-        logFile.close();
-    } else {
-        logData = json::object();
-    }
-    return logData;
-}
-
-// 保存日志文件
-void saveLog(const json& logData, const std::string& logFilename) {
-    std::ofstream logFile(logFilename);
-    if (logFile.is_open()){
-        logFile << logData.dump(4);  // 缩进4格格式化输出
-        logFile.close();
-    } else {
-        std::cerr << "无法保存日志文件: " << logFilename << std::endl;
-    }
-}
-
 #ifdef _WIN32
-    #include <windows.h>
-    // Windows 下使用 _mkgmtime 替代 timegm
-    #define timegm _mkgmtime
+#include <windows.h>
+// Windows 下使用 _mkgmtime 替代 timegm
+#define timegm _mkgmtime
 #endif
 
 int main(int argc, char* argv[]) {
     std::string jsonInputFilename = "api/games_name.json";
     std::string xmlOutputFilename = "rss.xml";
-    std::string logFilename = "rss_log.json";
 
     // --- 1. 读取 JSON 数据 ---
     std::ifstream inputFile(jsonInputFilename);
     if (!inputFile.is_open()){
-        std::cerr << "无法打开文件 " << jsonInputFilename << std::endl;
+        MessageBoxW(NULL, L"无法打开文件!", L"错误", MB_OK | MB_ICONERROR);
         return 1;
     }
+    
     json jsonData;
-    inputFile >> jsonData;
+    try {
+        inputFile >> jsonData;
+    } catch (json::parse_error& e) {
+        MessageBoxW(NULL, L"JSON 文件格式不正确!", L"错误", MB_OK | MB_ICONERROR);
+        return 1;
+    }
     inputFile.close();
 
-    // --- 2. 加载日志 ---
-    json logData = loadLog(logFilename);
-
-    // --- 3. 尝试读取现有 rss.xml 中的发布时间（若存在） ---
-    json xmlMap = readXmlPubDates(xmlOutputFilename);
-
-    // 用于存储当前 JSON 中所有链接（便于后续删除日志中不存在的链接）
-    std::set<std::string> jsonLinks;
-
-    // --- 4. 生成 RSS XML 内容 ---
+    // --- 2. 生成 RSS XML 内容 ---
     std::ostringstream xmlContent;
     xmlContent << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
     xmlContent << "<rss version=\"2.0\">\n";
@@ -124,25 +111,10 @@ int main(int argc, char* argv[]) {
     for (const auto& item : jsonData) {
         std::string name = item["name"];
         std::string desc = item["desc"];
-        std::string link = "https://flash.100713.xyz/" + name;
-        jsonLinks.insert(link);
+        std::string link = "https://flash.100713.xyz/Games/" + name;  // 更改链接格式
 
-        // --- 判断发布时间：优先级：JSON > XML > 日志
-        std::string pubDate;
-        if (item.contains("pubDate")) {
-            pubDate = item["pubDate"];
-        } else if (xmlMap.contains(link)) {
-            pubDate = xmlMap[link];
-        } else if (logData.contains(link)) {
-            pubDate = logData[link];
-        } else {
-            pubDate = getCurrentTime();
-        }
-
-        // 更新日志（若记录与将要使用的时间不一致）
-        if (!logData.contains(link) || logData[link] != pubDate) {
-            logData[link] = pubDate;
-        }
+        // 使用 JSON 中的 time 字段转换为 RSS 格式的发布时间
+        std::string pubDate = item.contains("time") ? formatRssDate(item["time"]) : getCurrentTime();
 
         // 写入当前项到 RSS XML
         xmlContent << "    <item>\n";
@@ -153,34 +125,18 @@ int main(int argc, char* argv[]) {
         xmlContent << "    </item>\n";
     }
 
-    // --- 删除日志中存在、但 JSON 中不存在的链接记录 ---
-    std::vector<std::string> keysToRemove;
-    for (auto it = logData.begin(); it != logData.end(); ++it) {
-        const std::string& link = it.key();
-        if (jsonLinks.find(link) == jsonLinks.end()) {
-            keysToRemove.push_back(link);
-        }
-    }
-    for (const auto& link : keysToRemove) {
-        logData.erase(link);
-    }
-
     xmlContent << "  </channel>\n";
     xmlContent << "</rss>\n";
 
     std::ofstream outputFile(xmlOutputFilename);
     if (!outputFile.is_open()){
-        std::cerr << "无法创建文件 " << xmlOutputFilename << std::endl;
+        MessageBoxW(NULL, L"无法创建文件!", L"错误", MB_OK | MB_ICONERROR);
         return 1;
     }
     outputFile << xmlContent.str();
     outputFile.close();
 
-    // --- 保存更新后的日志 ---
-    saveLog(logData, logFilename);
-
     // 提示信息
-    // 如果命令行参数中包含 "-c" 则在命令行输出；否则隐藏控制台窗口并弹出 MessageBoxW（不带警告图标）
     if (argc > 1 && std::strcmp(argv[1], "-c") == 0) {
         std::cout << "RSS 订阅链接文件生成完毕" << xmlOutputFilename << std::endl;
     } else {
@@ -190,7 +146,7 @@ int main(int argc, char* argv[]) {
             ShowWindow(consoleWnd, SW_HIDE);
         }
         // 使用 MessageBoxW，仅带 OK 按钮，无警告图标（MB_OK）
-        MessageBoxW(NULL, L"RSS 订阅链接文件生成完毕", L"OK!", MB_OK);
+        MessageBoxW(NULL, L"RSS 订阅链接文件生成完毕", L"完成", MB_OK);
 #else
         std::cout << "RSS 订阅链接文件生成完毕" << xmlOutputFilename << std::endl;
 #endif

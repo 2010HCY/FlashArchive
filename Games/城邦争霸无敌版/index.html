@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>驾驶TU-95</title>
+    <title>城邦争霸无敌版</title>
     <link rel="stylesheet" href="/api/play/play.css">
-    <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
-    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 驾驶TU-95, 驾驶TU-95汉化版, Flash">
-    <meta name="description" content="Flash游戏收藏站，人工汉化">
     <meta name="author" content="Ethaniel">
-    <script src="path/to/ruffle.js"></script>
+    <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 城邦争霸, 城邦争霸汉化版, Flash, 城邦争霸无敌汉化版">
+    <meta name="description" content="Flash游戏收藏站，人工汉化">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -23,44 +22,36 @@
 <body>
 
     <header>
-        <h1>驾驶TU-95</h1>
+        <h1>城邦争霸无敌版</h1>
     </header>
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="驾驶TU-95汉化.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="城邦争霸中文无敌版.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
             <div class="switch-buttons">
                 <button onclick="switchGame('hanzihuan')">汉化版</button>
-                <button onclick="switchGame('original')">原版</button>
             </div>
             <h2>如何游玩</h2>
-            <p>“W”加速 <br>“A，D”控制俯仰<br>空格任务操作（比如释放加油管，扔炸弹）<br> “H”跳伞</p>
+            <p>鼠标控制，点击拖动士兵上方的按钮可移动士兵，有三大阵营可选，点击地图空地上的牌子可以建造农场、矿场等建筑</p>
             <p>你可以按上面的按钮切换原版汉化版</p>
+            <a href="https://flash.100713.xyz/城邦争霸">原版游戏</a>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="驾驶TU-95汉化.swf" download="驾驶TU-95汉化.swf" class="bottomP">
+            <a href="城邦争霸中文无敌版.swf" download="城邦争霸中文无敌版.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
-            <span>下载汉化版</span>    
+            <span>下载城邦争霸中文无敌版</span>    
             </a>
         </div>
         <div class="bottom">
-            <a href="驾驶TU-95.swf" download="驾驶TU-95.swf" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>下载原版</span>    
-            </a>
-        </div>
-        <div class="bottom">
-            <a href="../Falsh播放器.exe" download="../Falsh播放器.exe" class="bottomP">
+            <a href="../../Falsh播放器.exe" download="Falsh播放器.exe" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
@@ -89,9 +80,7 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '驾驶TU-95汉化.swf'; 
-            } else if (version === 'original') {
-                embed.src = '驾驶TU-95.swf'; 
+                embed.src = '城邦争霸中文无敌版.swf';
             }
         }
     </script>

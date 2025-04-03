@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终导弹防御战</title>
+    <link rel="stylesheet" href="/api/play/play.css">
+    <meta name="author" content="Ethaniel">
+    <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 最终导弹防御战, 最终导弹防御战汉化版, Flash, Missile Defence">
+    <meta name="description" content="Flash游戏收藏站，人工汉化">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+     gtag('config', 'G-9C3EYEPPQ1');
+    </script>
+        <script src="/api/ruffle/ruffle.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>最终导弹防御战</h1>
+    </header>
+
+    <div class="main-content">
+        <div class="game-container">
+            <embed id="gameEmbed" src="最终导弹防御战汉化版.swf" width="100%" height="100%" />
+        </div>
+
+        <div class="text-container">
+            <div class="switch-buttons">
+                <button onclick="switchGame('hanzihuan')">汉化版</button>
+                <button onclick="switchGame('original')">原版</button>
+            </div>
+            <h2>如何游玩</h2>
+            <p>鼠标控制，游戏有引导你如何游玩，你也可以去看看<a href="https://flashgaming.fandom.com/wiki/Mini_Tower_Defence" target="_blank">Wiki</a></p>
+            <p>你可以按上面的按钮切换原版汉化版</p>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom">
+            <a href="最终导弹防御战汉化版.swf" download="最终导弹防御战汉化版.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载中文版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="最终导弹防御战.swf" download="最终导弹防御战.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载原版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="../../Falsh播放器.exe" download="Falsh播放器.exe" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>Flash播放器</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#HomeSVG"></use>
+            </svg>
+            <span>返回主页</span>    
+            </a>
+        </div>
+        <div class="bottom">
+                <svg width="20" height="20" class="icon">
+                    <use xlink:href="/api/icon/icon.svg#CopySVG"></use>
+                </svg>
+        <button class="bottomP copy-button" onclick="copyToClipboard()">复制网址</button>
+        </div>
+    </div>
+    
+    <div class="bottom-text"></div>
+
+    <script>
+        function switchGame(version) {
+            var embed = document.getElementById('gameEmbed');
+            if (version === 'hanzihuan') {
+                embed.src = '最终导弹防御战汉化版.swf';  
+            } else if (version === 'original') {
+                embed.src = '最终导弹防御战.swf';
+            }
+        }
+    </script>
+    <script src="/api/play/play-copy.js"></script>
+    <script src="/api/play/play-bottom-text.js"></script>
+
+</body>
+</html>

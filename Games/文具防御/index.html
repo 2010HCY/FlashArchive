@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>海岸警卫队</title>
+    <title>文具防御</title>
     <link rel="stylesheet" href="/api/play/play.css">
-    <meta name="author" content="Ethaniel">
     <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
-    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 海岸警卫队, 海岸警卫队汉化版, Flash">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 文具防御, 文具防御汉化版, Flash">
     <meta name="description" content="Flash游戏收藏站，人工汉化">
+    <meta name="author" content="Ethaniel">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -22,12 +22,12 @@
 <body>
 
     <header>
-        <h1>海岸警卫队</h1>
+        <h1>文具防御</h1>
     </header>
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="海岸警卫队汉化.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="文具防御汉化版.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
@@ -36,23 +36,19 @@
                 <button onclick="switchGame('original')">原版</button>
             </div>
             <h2>如何游玩</h2>
-            <p>鼠标控制，提示：你可以按住不松手，持续发射炮弹</p>
+            <p>1.点击，按住，并移动鼠标来设置射击的力量和角度.<br>
+               2.瞄准时按空格键取消射击.按P暂停游戏.<br>
+               3.在每场战斗中击沉所有船只.在它们摧毁你的王国之前!<br>
+               4.在每场战斗前购买最好的武器。
+            </p>
+            <p>此游戏共计七关</p>
             <p>你可以按上面的按钮切换原版汉化版</p>
-            <p>注：因为Flash目前已被淘汰，网页使用Ruffle插件会出现布局混乱，大飞艇和海警船加载不出来的情况，而本地播放器可以加载所有东西，个别版本加载不出来按钮文字</p>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="海岸警卫队.swf" download="海岸警卫队.swf" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>下载原版</span>    
-            </a>
-        </div>
-        <div class="bottom">
-            <a href="海岸警卫队汉化.swf" download="海岸警卫队汉化.swf" class="bottomP">
+            <a href="文具防御汉化版.swf" download="文具防御汉化版.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
@@ -60,7 +56,15 @@
             </a>
         </div>
         <div class="bottom">
-            <a href="../Falsh播放器.exe" download="../Falsh播放器.exe" class="bottomP">
+            <a href="文具防御.swf" download="文具防御.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载原版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="../../Falsh播放器.exe" download="Falsh播放器.exe" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
@@ -89,9 +93,9 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '海岸警卫队汉化.swf'; 
+                embed.src = '文具防御汉化版.swf';
             } else if (version === 'original') {
-                embed.src = '海岸警卫队.swf'; 
+                embed.src = '文具防御.swf'; 
             }
         }
     </script>
