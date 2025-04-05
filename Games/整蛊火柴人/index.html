@@ -27,7 +27,7 @@
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="整蛊火柴人2.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="/swf/整蛊火柴人/整蛊火柴人2.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
@@ -44,7 +44,7 @@
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="整蛊火柴人1.swf" download="整蛊火柴人1.swf" class="bottomP">
+            <a href="/swf/整蛊火柴人/整蛊火柴人1.swf" download="整蛊火柴人1.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
@@ -52,7 +52,7 @@
             </a>
         </div>
         <div class="bottom">
-            <a href="整蛊火柴人2.swf" download="整蛊火柴人2.swf" class="bottomP">
+            <a href="/swf/整蛊火柴人/整蛊火柴人2.swf" download="整蛊火柴人2.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
@@ -89,9 +89,9 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '整蛊火柴人1.swf'; 
+                embed.src = '/swf/整蛊火柴人/整蛊火柴人1.swf'; 
             } else if (version === 'original') {
-                embed.src = '整蛊火柴人2.swf'; 
+                embed.src = '/swf/整蛊火柴人/整蛊火柴人2.swf'; 
             }
         }
     </script>

@@ -27,7 +27,7 @@
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="海岸警卫队汉化版.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="/swf/海岸警卫队/海岸警卫队汉化版.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
@@ -44,19 +44,19 @@
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="海岸警卫队.swf" download="海岸警卫队.swf" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>下载原版</span>    
-            </a>
-        </div>
-        <div class="bottom">
-            <a href="海岸警卫队汉化版.swf" download="海岸警卫队汉化版.swf" class="bottomP">
+            <a href="/swf/海岸警卫队/海岸警卫队汉化版.swf" download="海岸警卫队汉化版.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
             <span>下载汉化版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/海岸警卫队/海岸警卫队.swf" download="海岸警卫队.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载原版</span>    
             </a>
         </div>
         <div class="bottom">
@@ -89,9 +89,9 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '海岸警卫队汉化版.swf'; 
+                embed.src = '/swf/海岸警卫队/海岸警卫队汉化版.swf'; 
             } else if (version === 'original') {
-                embed.src = '海岸警卫队.swf'; 
+                embed.src = '/swf/海岸警卫队/海岸警卫队.swf'; 
             }
         }
     </script>
