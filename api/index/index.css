@@ -87,12 +87,12 @@ body {
     font-size: 14px;
     color: #333;
 }
- .footer a {
+.footer a {
     color: #a3a300;
     text-decoration: none;
     font-weight: bold;
 }
-  .footer a:hover {
+.footer a:hover {
     text-decoration: underline;
 }
 .pagination {

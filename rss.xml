@@ -5,7 +5,7 @@
     <link>https://flash.100713.xyz/</link>
     <description>最新Flash游戏列表 RSS 订阅</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 05 Apr 2025 17:56:58 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 06 Apr 2025 03:31:59 GMT</lastBuildDate>
     <item>
       <title>驾驶TU-95</title>
       <link>https://flash.100713.xyz/Games/驾驶TU-95</link>
@@ -71,6 +71,18 @@
       <link>https://flash.100713.xyz/Games/歼15模拟飞行</link>
       <description>驾驶歼15在蓝天翱翔</description>
       <pubDate>Sat, 05 Apr 2025 17:54:37 GMT</pubDate>
+    </item>
+    <item>
+      <title>村庄噩梦</title>
+      <link>https://flash.100713.xyz/Games/村庄噩梦</link>
+      <description>收集物质抵御晚上的尸潮</description>
+      <pubDate>Sat, 05 Apr 2025 17:23:05 GMT</pubDate>
+    </item>
+    <item>
+      <title>暴打火柴人</title>
+      <link>https://flash.100713.xyz/Games/暴打火柴人</link>
+      <description>用各种道具暴揍火柴人</description>
+      <pubDate>Sun, 06 Apr 2025 03:31:13 GMT</pubDate>
     </item>
   </channel>
 </rss>
