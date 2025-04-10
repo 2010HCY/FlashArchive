@@ -55,8 +55,10 @@ a:hover::after {
     margin-left: 100px;
 }
 .game-container embed {
-    width: 100%;
-    height: 100%;
+    height: auto;
+    width: 640px;
+    min-height: 480px;
+    max-height: none;
 }
 .text-container {
     flex: 1;
@@ -70,6 +72,10 @@ a:hover::after {
 .bottom-text {
     padding-left: 10%;
     max-width: 80%;
+}
+.twikoo {
+    padding-left: 5%;
+    max-width: 90%;
 }
 .bottom-bar {
     width: 100%;
@@ -117,6 +123,7 @@ a:hover::after {
         vertical-align: middle;
     }
     .bottomP{
+        all: unset; 
         color: oklch(0.7 0.14 112);
         text-decoration: none;
     }

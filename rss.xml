@@ -5,7 +5,7 @@
     <link>https://flash.100713.xyz/</link>
     <description>最新Flash游戏列表 RSS 订阅</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 06 Apr 2025 03:31:59 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 07 Apr 2025 11:31:40 GMT</lastBuildDate>
     <item>
       <title>驾驶TU-95</title>
       <link>https://flash.100713.xyz/Games/驾驶TU-95</link>
@@ -83,6 +83,18 @@
       <link>https://flash.100713.xyz/Games/暴打火柴人</link>
       <description>用各种道具暴揍火柴人</description>
       <pubDate>Sun, 06 Apr 2025 03:31:13 GMT</pubDate>
+    </item>
+    <item>
+      <title>狙击小日本</title>
+      <link>https://flash.100713.xyz/Games/狙击小日本</link>
+      <description>狙杀小日本，一共3代</description>
+      <pubDate>Mon, 07 Apr 2025 09:11:36 GMT</pubDate>
+    </item>
+    <item>
+      <title>峡谷防卫</title>
+      <link>https://flash.100713.xyz/Games/峡谷防卫</link>
+      <description>建造炮塔抵御外星人入侵</description>
+      <pubDate>Mon, 07 Apr 2025 11:29:47 GMT</pubDate>
     </item>
   </channel>
 </rss>

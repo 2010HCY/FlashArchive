@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>歼15模拟飞行</title>
+    <title>狙击小日本</title>
     <link rel="stylesheet" href="/api/play/play.css">
     <meta name="author" content="Ethaniel">
     <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
-    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 歼15模拟飞行, 歼15模拟飞行汉化版, Flash">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 狙击小日本, 狙击小日本合集, Flash">
     <meta name="description" content="Flash游戏收藏站，人工汉化">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
@@ -22,30 +22,49 @@
 <body>
 
     <header>
-        <h1>歼15模拟飞行</h1>
+        <h1>狙击小日本</h1>
     </header>
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="/swf/歼15模拟飞行/歼15模拟飞行.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="/swf/狙击小日本/狙击小日本.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
             <div class="switch-buttons">
-                <button onclick="switchGame('original')">原版</button>
+                <button onclick="switchGame('1')">狙击小日本1</button>
+                <button onclick="switchGame('2')">狙击小日本2</button>
+                <button onclick="switchGame('3')">狙击小日本3</button>
             </div>
             <h2>如何游玩</h2>
-            <p>W、S加减油门Z、X控制尾舵左右，↑↓←→控制俯仰左右翻滚</p>
+            <p>鼠标控制，一共有3代，第三代变成了考眼力找小日本的...</p>
+            <p>你可以按上面的按钮切换你要玩的游戏</p>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="/swf/歼15模拟飞行/歼15模拟飞行.swf" download="歼15模拟飞行.swf" class="bottomP">
+            <a href="/swf/狙击小日本/狙击小日本.swf" download="狙击小日本.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
-            <span>下载游戏</span>    
+            <span>下载1代</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/狙击小日本2/狙击小日本2.swf" download="狙击小日本2.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载2代</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/狙击小日本3/狙击小日本3.swf" download="狙击小日本3.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载3代</span>    
             </a>
         </div>
         <div class="bottom">
@@ -78,8 +97,12 @@
     <script>
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
-            if (version === 'hanzihuan') {
-                embed.src = '/swf/歼15模拟飞行/歼15模拟飞行.swf';  
+            if (version === '1') {
+                embed.src = '/swf/狙击小日本/狙击小日本.swf';  
+            } else if (version === '2') {
+                embed.src = '/swf/狙击小日本/狙击小日本2.swf';
+            } else if (version === '3') {
+                embed.src = '/swf/狙击小日本/狙击小日本3.swf';
             }
         }
     </script>

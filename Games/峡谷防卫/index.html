@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>歼15模拟飞行</title>
+    <title>峡谷防卫</title>
     <link rel="stylesheet" href="/api/play/play.css">
     <meta name="author" content="Ethaniel">
     <link rel="icon" href="https://100713.xyz/medias/Hlogo徽章.svg">
-    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 歼15模拟飞行, 歼15模拟飞行汉化版, Flash">
+    <meta name="keywords" content="静水深流, Flash游戏收藏站, 在线小游戏, Flash游戏, Flash游戏汉化版, 峡谷防卫, 峡谷防卫, Flash">
     <meta name="description" content="Flash游戏收藏站，人工汉化">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
     <script>
@@ -22,30 +22,49 @@
 <body>
 
     <header>
-        <h1>歼15模拟飞行</h1>
+        <h1>峡谷防卫</h1>
     </header>
 
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="/swf/歼15模拟飞行/歼15模拟飞行.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="/swf/峡谷防卫/峡谷防卫汉化版.swf" width="100%" height="100%" />
         </div>
 
         <div class="text-container">
             <div class="switch-buttons">
+                <button onclick="switchGame('hanzihuan')">汉化版</button>
                 <button onclick="switchGame('original')">原版</button>
+                <button onclick="switchGame('wudi')">无敌版</button>
             </div>
             <h2>如何游玩</h2>
-            <p>W、S加减油门Z、X控制尾舵左右，↑↓←→控制俯仰左右翻滚</p>
+            <p>鼠标控制，放置炮台抵御外星人</p>
+            <p>你可以按上面的按钮切换原版汉化无敌版</p>
         </div>
     </div>
 
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="/swf/歼15模拟飞行/歼15模拟飞行.swf" download="歼15模拟飞行.swf" class="bottomP">
+            <a href="/swf/峡谷防卫/峡谷防卫汉化版.swf" download="峡谷防卫汉化版.swf" class="bottomP">
             <svg width="20" height="20" class="icon">
                 <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
             </svg>
-            <span>下载游戏</span>    
+            <span>下载汉化版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/峡谷防卫/峡谷防卫.swf" download="峡谷防卫.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载原版</span>    
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/峡谷防卫/峡谷防卫中文无敌版.swf" download="峡谷防卫中文无敌版.swf" class="bottomP">
+            <svg width="20" height="20" class="icon">
+                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+            </svg>
+            <span>下载无敌版</span>    
             </a>
         </div>
         <div class="bottom">
@@ -79,7 +98,11 @@
         function switchGame(version) {
             var embed = document.getElementById('gameEmbed');
             if (version === 'hanzihuan') {
-                embed.src = '/swf/歼15模拟飞行/歼15模拟飞行.swf';  
+                embed.src = '/swf/峡谷防卫/峡谷防卫汉化版.swf';  
+            } else if (version === 'original') {
+                embed.src = '/swf/峡谷防卫/峡谷防卫.swf';
+            } else if (version === 'wudi') {
+                embed.src = '/swf/峡谷防卫/峡谷防卫中文无敌版.swf';
             }
         }
     </script>
