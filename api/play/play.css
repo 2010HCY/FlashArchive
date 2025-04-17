@@ -7,6 +7,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
 }
+/* 标题 */
 header {
     background-color: #333;
     color: white;
@@ -32,6 +33,7 @@ a::after {
 a:hover::after {
     width: 100%;
 }
+/* 播放窗口侧边边栏 */
 .main-content {
     display: flex;
     flex-grow: 1;
@@ -40,6 +42,7 @@ a:hover::after {
     align-items: flex-start;
     flex-wrap: wrap;
 }
+/* 播放窗口 */
 .game-container {
     flex: 3;
     background-color: #fff;
@@ -54,12 +57,14 @@ a:hover::after {
     object-fit: contain;
     margin-left: 100px;
 }
+/* Flash显示位置 */
 .game-container embed {
     height: auto;
     width: 640px;
     min-height: 480px;
     max-height: none;
 }
+/* 边栏文字介绍区 */
 .text-container {
     flex: 1;
     background-color: #fafafa;
@@ -69,14 +74,7 @@ a:hover::after {
     word-wrap: break-word;
     word-break: break-word;
 }
-.bottom-text {
-    padding-left: 10%;
-    max-width: 80%;
-}
-.twikoo {
-    padding-left: 5%;
-    max-width: 90%;
-}
+/* 按钮栏 */
 .bottom-bar {
     width: 100%;
     display: flex;
@@ -106,6 +104,7 @@ a:hover::after {
         width: 90%;
     }
 }
+/* 按钮 */
 .bottom {
     position: relative;
     display: inline-block;
@@ -137,4 +136,14 @@ a:hover::after {
         border: none;
         cursor: pointer;
     }
+}
+/* 底部说明 */
+.bottom-text {
+    padding-left: 10%;
+    max-width: 80%;
+}
+/* 评论区 */
+.twikoo {
+    padding-left: 5%;
+    max-width: 90%;
 }

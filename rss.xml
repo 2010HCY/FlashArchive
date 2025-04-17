@@ -5,7 +5,7 @@
     <link>https://flash.100713.xyz/</link>
     <description>最新Flash游戏列表 RSS 订阅</description>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 07 Apr 2025 11:31:40 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 17 Apr 2025 13:58:06 GMT</lastBuildDate>
     <item>
       <title>驾驶TU-95</title>
       <link>https://flash.100713.xyz/Games/驾驶TU-95</link>
@@ -49,6 +49,12 @@
       <pubDate>Sat, 29 Mar 2025 14:02:49 GMT</pubDate>
     </item>
     <item>
+      <title>最终导弹防御战</title>
+      <link>https://flash.100713.xyz/Games/最终导弹防御战</link>
+      <description>使用导弹拦截敌机！有汉化</description>
+      <pubDate>Thu, 17 Apr 2025 13:58:06 GMT</pubDate>
+    </item>
+    <item>
       <title>暴打老板</title>
       <link>https://flash.100713.xyz/Games/暴打老板</link>
       <description>拿起手边的物品暴打老板！已汉化</description>
@@ -73,8 +79,8 @@
       <pubDate>Sat, 05 Apr 2025 17:54:37 GMT</pubDate>
     </item>
     <item>
-      <title>村庄噩梦</title>
-      <link>https://flash.100713.xyz/Games/村庄噩梦</link>
+      <title>小村梦魇</title>
+      <link>https://flash.100713.xyz/Games/小村梦魇</link>
       <description>收集物质抵御晚上的尸潮</description>
       <pubDate>Sat, 05 Apr 2025 17:23:05 GMT</pubDate>
     </item>
@@ -93,8 +99,20 @@
     <item>
       <title>峡谷防卫</title>
       <link>https://flash.100713.xyz/Games/峡谷防卫</link>
-      <description>建造炮塔抵御外星人入侵</description>
+      <description>建造炮塔抵御外星人入侵，有汉化</description>
       <pubDate>Mon, 07 Apr 2025 11:29:47 GMT</pubDate>
+    </item>
+    <item>
+      <title>海战塔防</title>
+      <link>https://flash.100713.xyz/Games/海战塔防</link>
+      <description>建造炮塔抵御敌舰入侵，有汉化</description>
+      <pubDate>Thu, 10 Apr 2025 04:44:26 GMT</pubDate>
+    </item>
+    <item>
+      <title>光之帝国</title>
+      <link>https://flash.100713.xyz/Games/光之帝国</link>
+      <description>放下防御塔迎接一波波敌人，有汉化</description>
+      <pubDate>Thu, 17 Apr 2025 07:05:43 GMT</pubDate>
     </item>
   </channel>
 </rss>
