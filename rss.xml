@@ -5,7 +5,7 @@
     <link>https://flash.100713.xyz/</link>
     <description>最新Flash游戏列表 RSS 订阅</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 27 Apr 2025 10:28:21 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 27 Apr 2025 14:12:52 GMT</lastBuildDate>
     <item>
       <title>驾驶TU-95</title>
       <link>https://flash.100713.xyz/Games/驾驶TU-95</link>
@@ -27,13 +27,13 @@
     <item>
       <title>城邦争霸</title>
       <link>https://flash.100713.xyz/Games/城邦争霸</link>
-      <description>带领你的军队统一欧洲！汉化版</description>
+      <description>带领你的军队统一欧洲！</description>
       <pubDate>Thu, 30 Jan 2025 03:58:38 GMT</pubDate>
     </item>
     <item>
       <title>城邦争霸无敌版</title>
       <link>https://flash.100713.xyz/Games/城邦争霸无敌版</link>
-      <description>带领你的军队统一欧洲！无敌汉化版</description>
+      <description>带领你的军队统一欧洲！无敌版</description>
       <pubDate>Thu, 30 Jan 2025 03:58:38 GMT</pubDate>
     </item>
     <item>
@@ -113,6 +113,18 @@
       <link>https://flash.100713.xyz/Games/光之帝国</link>
       <description>放下防御塔迎接一波波敌人</description>
       <pubDate>Thu, 17 Apr 2025 07:05:43 GMT</pubDate>
+    </item>
+    <item>
+      <title>赤色要塞之一</title>
+      <link>https://flash.100713.xyz/Games/赤色要塞之一</link>
+      <description>开车杀敌，但你十分的脆皮</description>
+      <pubDate>Sun, 27 Apr 2025 14:11:38 GMT</pubDate>
+    </item>
+    <item>
+      <title>火柴人战争1.0</title>
+      <link>https://flash.100713.xyz/Games/火柴人战争1.0</link>
+      <description>火柴人战争早期版本，很老的游戏</description>
+      <pubDate>Sun, 27 Apr 2025 14:12:00 GMT</pubDate>
     </item>
   </channel>
 </rss>
