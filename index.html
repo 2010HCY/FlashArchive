@@ -13,6 +13,7 @@
 <meta name="360-site-verification" content="2f1dcf308eebb4ce73bc570dcb6613fc" />
 <meta name="google-site-verification" content="mD2l3_aOmwjXLEvIAyB7bLGNGBnq7u88vPoK2oNuy3c" />
 <script defer src="https://www.googletagmanager.com/gtag/js?id=G-9C3EYEPPQ1"></script>
+<script type="text/javascript" src="/api/index/index-count.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -36,10 +37,20 @@
 
     <hr class="divider">
     <footer class="footer">
-        <p>&copy; 2025 静水深流 版权所有 / All rights reserved.  <a href="https://flash.100713.xyz/rss.xml"  title="RSS">RSS</a>  <a href="https://flash.100713.xyz/sitemap.xml"  title="站点地图 / Sitemap">站点地图</a></p>
-        <p>Created by <a href="https://100713.xyz">静水深流</a> &amp; <a href="https://100713.xyz/about">Ethaniel</a></p>
+        <p>&copy; <span id="year"></span> 静水深流 版权所有 / All rights reserved.  <a href="https://flash.100713.xyz/rss.xml"  title="RSS">RSS</a>  <a href="https://flash.100713.xyz/sitemap.xml"  title="站点地图 / Sitemap">站点地图</a></p>
+        <p>Created by <a href="https://100713.xyz">静水深流</a> &amp; <a href="https://100713.xyz/about">Ethaniel</a> | System <a href="https://status.100713.xyz/" target="_blank">Status</a></p>
+        <span id="sitetime">载入运行时间...</span>
+        <span id="busuanzi_container_site_pv">
+          |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+          <span class="stats-value" id="PageMeter_site_pv">加载中...</span>&nbsp;次
+        </span>
+        <span id="busuanzi_container_site_uv">
+          |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+          <span class="stats-value" id="PageMeter_site_uv">加载中...</span>&nbsp;人
+        </span>
     </footer>
       
+    <script type="text/javascript" src="/api/index/sitetime.js"></script>
     <script type="text/javascript" src="/api/index/index_game.js"></script>
 </body>
 </html>

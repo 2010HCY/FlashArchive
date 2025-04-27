@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: oklch(0.95 0.025 112);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -9,8 +9,9 @@ body {
 }
 /* 标题 */
 header {
-    background-color: #333;
-    color: white;
+    background-color: oklch(0.95 0.025 112);
+    color: oklch(0.55 0.12 112);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     padding: 0px;
     text-align: center;
     height: 13vh;
@@ -73,6 +74,125 @@ a:hover::after {
     overflow-y: auto;
     word-wrap: break-word;
     word-break: break-word;
+}
+/* 点赞按钮 */
+#zan:after {
+    position: absolute;
+    top: .7rem;
+    right: .7rem;
+    width: .4rem;
+    height: .4rem;
+    border-radius: .4rem;
+    background: var(--card-bg);
+    content: '';
+}
+#zan:before {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    width: .8rem;
+    height: .8rem;
+    border-radius: .8rem;
+    background: #b30070;
+    content: '';
+}
+#zan:hover{
+    -webkit-box-shadow: 0 0 8px 0 rgba(232,237,250,.6), 0 2px 4px 0 rgba(232,237,250,.5);
+    box-shadow: 0 0 8px 0 rgba(232,237,250,.6), 0 2px 4px 0 rgba(232,237,250,.5);
+
+}
+#zan {
+	margin-top:40px;
+	position:relative;
+	    -webkit-transition: box-shadow .3s ease-in-out;
+    -moz-transition: box-shadow .3s ease-in-out;
+    -o-transition: box-shadow .3s ease-in-out;
+    -ms-transition: box-shadow .3s ease-in-out;
+    transition: box-shadow .3s ease-in-out;
+	border: 1px solid var(--light-grey);
+   display: flex;    
+   justify-content: center; 
+  width:100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#zan .heart {
+  background: url(/api/icon/zan.png);
+  background-position: left;
+  background-repeat: no-repeat;
+  height: 100px;
+  width: 100px;
+  background-size: 2900%;
+  float: left;
+  display: inline-block;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+#zan #zan_text {
+  display: inline-block;
+  font-family: "Georgia", Times, serif;
+  font-size: 25px;
+  color: #999;
+  position: relative;
+  left: -15px;
+  line-height: 100px;
+}
+@keyframes heartBlast {
+  0% {
+    background-position: left;
+  }
+  100% {
+    background-position: right;
+  }
+}
+.heartAnimation {
+  display: inline-block;
+  animation-name: heartBlast;
+  animation-duration: 0.8s;
+  animation-iteration-count: 1;
+  animation-timing-function: steps(28);
+  background-position: right;
+}
+/* 图标 */
+@font-face {
+  font-family: 'Font Awesome';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/api/icon/fa-solid-900.woff2') format('woff2'),
+       url('/api/icon/fa-solid-900.ttf') format('truetype');
+}
+.fa-users::before {
+  content: var(--fa);
+  font-family: 'Font Awesome';
+  font-weight: 900;
+}
+.fa-eye::before {
+  content: var(--fa);
+  font-family: 'Font Awesome';
+  font-weight: 400;
+}
+.fas,
+.far,
+.fab,
+.fa-solid,
+.fa-regular,
+.fa-brands,
+.fa {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: var(--fa-display, inline-block);
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+.fa-eye {
+  --fa: "\f06e";
 }
 /* 按钮栏 */
 .bottom-bar {
