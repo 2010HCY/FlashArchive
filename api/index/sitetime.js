@@ -6,7 +6,7 @@ function siteTime() {
     var years = days * 365;
     var today = new Date();
     var startYear = "2024";
-    var startMonth = "10";
+    var startMonth = "11";
     var startDate = "26";
     var startHour = "00";
     var startMinute = "13";
