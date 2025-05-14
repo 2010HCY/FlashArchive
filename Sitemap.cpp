@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
         std::string name = item["name"];
         std::string time = item["time"];
         std::string title = name; // 标题为 name
-        std::string url = "https://flash.100713.xyz/Games/" + name; // 构建 URL
+        std::string url = "https://flash.teahush.link/Games/" + name; // 构建 URL
         std::string sitemapTime = convertToSitemapTime(time); // 格式化时间
         
         sitemapFile << "  <url>\n";

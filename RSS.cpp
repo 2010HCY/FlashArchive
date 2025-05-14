@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     xmlContent << "<rss version=\"2.0\">\n";
     xmlContent << "  <channel>\n";
     xmlContent << "    <title>Flash收藏站</title>\n";
-    xmlContent << "    <link>https://flash.100713.xyz/</link>\n";
+    xmlContent << "    <link>https://flash.teahush.link/</link>\n";
     xmlContent << "    <description>最新Flash游戏列表 RSS 订阅</description>\n";
     xmlContent << "    <language>zh-CN</language>\n";
     xmlContent << "    <lastBuildDate>" << getCurrentTime() << "</lastBuildDate>\n";
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     for (const auto& item : jsonData) {
         std::string name = item["name"];
         std::string desc = item["desc"];
-        std::string link = "https://flash.100713.xyz/Games/" + name;  // 更改链接格式
+        std::string link = "https://flash.teahush.link/Games/" + name;  // 更改链接格式
 
         // 使用 JSON 中的 time 字段转换为 RSS 格式的发布时间
         std::string pubDate = item.contains("time") ? formatRssDate(item["time"]) : getCurrentTime();
