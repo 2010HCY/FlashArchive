@@ -76,7 +76,6 @@ int main(int argc, char* argv[]) {
         sitemapFile << "  <url>\n";
         sitemapFile << "    <loc>" << url << "</loc>\n";
         sitemapFile << "    <lastmod>" << sitemapTime << "</lastmod>\n";
-        sitemapFile << "    <title>" << title << "</title>\n"; // 非标准标签，仅作扩展显示标题
         sitemapFile << "  </url>\n";
     }
 
