@@ -3,7 +3,7 @@
     var BLOG_LIKE_CONFIG = {
       enable: true,
       Backend: "Cloudflare",
-      CloudflareBackend: "blog-likes.teahush.link",
+      CloudflareBackend: "teahush.link",
       AppID: "",
       AppKEY: "",
       xianzhi: true,
