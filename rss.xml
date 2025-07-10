@@ -5,7 +5,7 @@
     <link>https://flash.teahush.link/</link>
     <description>最新Flash游戏列表 RSS 订阅</description>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 14 May 2025 06:30:38 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 10 Jul 2025 09:56:31 GMT</lastBuildDate>
     <item>
       <title>驾驶TU-95</title>
       <link>https://flash.teahush.link/Games/驾驶TU-95</link>
@@ -131,6 +131,12 @@
       <link>https://flash.teahush.link/Games/孤城神箭</link>
       <description>援军将在25天后到来，你能坚持到那一刻吗？</description>
       <pubDate>Sat, 03 May 2025 15:01:49 GMT</pubDate>
+    </item>
+    <item>
+      <title>加农炮防御</title>
+      <link>https://flash.teahush.link/Games/加农炮防御</link>
+      <description>使用加农炮击退来袭的敌军</description>
+      <pubDate>Thu, 10 Jul 2025 09:24:16 GMT</pubDate>
     </item>
   </channel>
 </rss>
