@@ -32,7 +32,7 @@ function loadGames() {
           });
       }
       if (!g.cover) {
-          g.cover = `//Games/mock/${g.dir}.jpg`;
+          g.cover = `//images/${g.dir}/${g.dir}.webp`;
       }
       return g;
   });

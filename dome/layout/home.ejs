@@ -6,11 +6,11 @@
       <div class="header">Flash收藏站</div>
       <div id="game-list">
         <% games.forEach(game => { %>
-          <div class="game-card">
+          <div class="card">
             <a href="/<%= game.dir %>/index.html">
-              <img alt="<%= game.title %>" class="game-thumb" src="/Games/mock/<%= game.dir %>.jpg">
-              <div class="game-title"><%= game.title %></div>
-              <div class="game-desc"><%= game.intro %></div>
+              <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+              <h3><%= game.title %></h3>
+              <p><%= game.brief %></p>
             </a>
           </div>
         <% }); %>
