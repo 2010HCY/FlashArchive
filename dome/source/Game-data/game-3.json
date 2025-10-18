@@ -1,0 +1,8 @@
+{
+  "title": "测试游戏3",
+  "pubDate": "2025-01-03",
+  "brief": "这是编号为3的测试短介绍",
+  "play": "这里是测试游戏3的玩法说明",
+  "cover": "/Games/mock/game3.jpg",
+  "dir": "testgame3"
+}
