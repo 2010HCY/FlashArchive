@@ -13,10 +13,28 @@ function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, {recursive:true});
 }
 function loadGames() {
+  if (!fs.existsSync(DATA_DIR)) {
+    return [];
+  }
   const all = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.json'));
   const games = all.map(fn => {
-    const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
-    return g;
+      const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
+      if (!g.files || g.files.length === 0) {
+          console.warn(`WARN: Game data for ${g.dir} is missing 'files'. Creating default structure.`);
+          g.files = [];
+          g.files.push({
+              name: "汉化版",
+              path: `/swf/${g.dir}/${g.dir}汉化版.swf`
+          });
+          g.files.push({
+              name: "原版",
+              path: `/swf/${g.dir}/${g.dir}.swf`
+          });
+      }
+      if (!g.cover) {
+          g.cover = `//Games/mock/${g.dir}.jpg`;
+      }
+      return g;
   });
   games.sort((a, b) => b.pubDate.localeCompare(a.pubDate));
   return games;
@@ -37,6 +55,7 @@ function renderTpl(tpl, data) {
 function genHomePages(games) {
   const PAGE_SIZE = 18;
   const totalPages = Math.ceil(games.length / PAGE_SIZE);
+  if (totalPages === 0) totalPages = 1;
   for (let p = 1; p <= totalPages; p++) {
     const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
     const html = renderTpl('home', { games: pageGames, page: p, totalPages: totalPages }); // 传递给模板

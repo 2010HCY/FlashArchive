@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>测试游戏29</title>
-    <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,测试游戏29,测试游戏29汉化版">
+    <title>名字</title>
+    <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,名字,名字汉化版">
     <link rel="stylesheet" href="/api/play/play.css">
     <script src="/api/ruffle/ruffle.js"></script>
     <script src="/api/play/zan.js"></script>
@@ -26,25 +26,26 @@
 
 <body>
     <header>
-        <h1>测试游戏29</h1>
+        <h1>名字</h1>
     </header>
     <div class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="/swf/testgame29/testgame29汉化版.swf" width="100%" height="100%" />
+            <embed id="gameEmbed" src="/swf/testgame1/testgame1汉化版.swf" width="100%" height="100%" />
         </div>
         <div class="text-container">
             <div class="switch-buttons">
-                <button onclick="switchGame('hanzihuan')">汉化版</button>
-                <button onclick="switchGame('original')">原版</button>
+                <button onclick="switchGame('0')">汉化版</button>
+                <button onclick="switchGame('1')">原版</button>
+                <button onclick="switchGame('2')">修复版</button>
             </div>
             <h2>如何游玩</h2>
-            <p>这里是测试游戏29的玩法说明</p>
-            <p>你可以按上面的按钮切换原版汉化版</p>
+            <p>玩法说明</p>
+            <p>你可以按上面的按钮切换不同版本</p>
         </div>
     </div>
     <div class="bottom-bar">
         <div class="bottom">
-            <a href="/swf/testgame29/testgame29汉化版.swf" download="testgame29汉化版.swf" class="bottomP">
+            <a href="/swf/testgame1/testgame1汉化版.swf" download="汉化版.swf" class="bottomP">
                 <svg width="20" height="20" class="icon">
                     <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
                 </svg>
@@ -52,11 +53,19 @@
             </a>
         </div>
         <div class="bottom">
-            <a href="/swf/testgame29/testgame29.swf" download="testgame29.swf" class="bottomP">
+            <a href="/swf/testgame1/testgame1.swf" download="原版.swf" class="bottomP">
                 <svg width="20" height="20" class="icon">
                     <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
                 </svg>
                 <span>下载原版</span>
+            </a>
+        </div>
+        <div class="bottom">
+            <a href="/swf/testgame1/testgame1修复版.swf" download="修复版.swf" class="bottomP">
+                <svg width="20" height="20" class="icon">
+                    <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
+                </svg>
+                <span>下载修复版</span>
             </a>
         </div>
         <div class="bottom">
@@ -85,12 +94,21 @@
     <div class="bottom-text"></div>
     <div id="twikoo"></div>
     <script>
-        function switchGame(version) {
+        const gameFiles = [{
+            "name": "汉化版",
+            "path": "/swf/testgame1/testgame1汉化版.swf"
+        }, {
+            "name": "原版",
+            "path": "/swf/testgame1/testgame1.swf"
+        }, {
+            "name": "修复版",
+            "path": "/swf/testgame1/testgame1修复版.swf"
+        }];
+
+        function switchGame(index) {
             var embed = document.getElementById('gameEmbed');
-            if (version === 'hanzihuan') {
-                embed.src = '/swf/testgame29/testgame29汉化版.swf';
-            } else if (version === 'original') {
-                embed.src = '/swf/testgame29/testgame29.swf';
+            if (gameFiles[index] && gameFiles[index].path) {
+                embed.src = gameFiles[index].path;
             }
         }
     </script>

@@ -1,0 +1,23 @@
+{
+  "id": "游戏ID",
+  "title": "名字",
+  "pubDate": "时间",
+  "brief": "显示在首页的短介绍",
+  "play": "玩法说明",
+  "cover": "图片路径",
+  "dir": "页面目录",
+  "files": [
+    {
+      "name": "汉化版",
+      "path": "/swf/testgame1/testgame1汉化版.swf"
+    },
+    {
+      "name": "原版",
+      "path": "/swf/testgame1/testgame1.swf"
+    },
+    {
+      "name": "修复版",
+      "path": "/swf/testgame1/testgame1修复版.swf"
+    }
+  ]
+}
