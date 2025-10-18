@@ -1,0 +1,19 @@
+{
+    "id": "7",
+    "title": "迷你塔防",
+    "pubDate": "2025-03-29 22:02:49",
+    "brief": "一款塔防小游戏，风格像铁锈战争",
+    "play": "鼠标控制，游戏有引导你如何游玩，你也可以去看看<a href=\"https://flashgaming.fandom.com/wiki/Mini_Tower_Defence\" target=\"_blank\">Wiki</a>",
+    "cover": "/images/迷你塔防/迷你塔防.webp",
+    "dir": "/Games/迷你塔防",
+    "files": [
+        {
+            "name": "汉化版",
+            "path": "/swf/迷你塔防/迷你塔防汉化版.swf"
+        },
+        {
+            "name": "原版",
+            "path": "/swf/迷你塔防/迷你塔防.swf"
+        }
+    ]
+}

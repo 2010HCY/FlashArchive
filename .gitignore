@@ -1,3 +1,2 @@
-.vscode/
-SWF/
-FlashWebPub.exe
+node_modules/
+public/

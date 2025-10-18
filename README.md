@@ -3,11 +3,11 @@
 这里面汇集了我收藏的flash小游戏，并且有人工汉化（本人亲自汉化），且能够方便快捷的一键切换汉化版原版。
 站点自带Ruffle可以直接游玩
 
--->体验地址https://flash.100713.xyz<--
+-->体验地址https://flash.hcyhub.com<--
 
--->博客地址https://100713.xyz<--
+-->博客地址https://hcyhub.com<--
 
--->Page页面地址https://page.100713.xyz<--
+-->Page页面地址https://page.hcyhub.com<--
 
 使用协议[GPL3](LICENSE)：
 
