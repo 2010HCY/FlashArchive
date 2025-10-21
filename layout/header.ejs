@@ -1,0 +1,28 @@
+<% if (pageType === 'home') { %>
+<header class="header">
+  <div class="header-content">
+    <div class="brand-logo">
+      <a href="/">
+        <img src="/api/icon/H.svg" alt="Flash收藏站Logo" class="logo-img">
+        <span class="logo-span">Flash收藏站</span>
+      </a>
+    </div>
+  </div>
+</header>
+<% } else if (pageType === 'game') { %>
+<header class="header">
+  <div class="header-content">
+    <div class="brand-logo">
+      <a href="/">
+        <img src="/api/icon/H.svg" alt="Flash收藏站Logo" class="logo-img">
+        <span class="logo-span">Flash收藏站</span>
+      </a>
+    </div>
+    <nav class="main-nav">
+      <a href="/" class="nav-btn">
+        <i class="fa-fw fas fa-home"></i> 首页
+      </a>
+    </nav>
+  </div>
+</header>
+<% } %>

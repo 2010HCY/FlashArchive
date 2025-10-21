@@ -2,6 +2,7 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "fs-extra": "^11.3.2",
-    "js-beautify": "^1.15.4"
+    "js-beautify": "^1.15.4",
+    "js-yaml": "^4.1.0"
   }
 }

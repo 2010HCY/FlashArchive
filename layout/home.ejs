@@ -3,7 +3,7 @@
 <%- include('head', { pageType: 'home' }) %>
 <body>
     <div class="card-container">
-      <div class="header">Flash收藏站</div>
+      <%- include('header', { pageType: 'home' }) %>
       <div id="game-list">
         <% games.forEach(game => { %>
           <div class="card">

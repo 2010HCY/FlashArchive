@@ -1,0 +1,7 @@
+src: source
+public: public
+template: layout
+ignore:
+  - Game-data
+  - 模板.json
+domain: flash.hcyhub.com
