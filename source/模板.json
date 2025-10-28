@@ -1,23 +1,23 @@
 {
   "id": "游戏ID",
-  "title": "名字",
-  "pubDate": "时间",
+  "title": "title",
+  "pubDate": "9999-01-01 00:00:00",
   "brief": "显示在首页的短介绍",
   "play": "玩法说明",
-  "cover": "图片路径",
-  "dir": "页面目录",
+  "cover": "/images/title/title.webp",
+  "dir": "/Games/title",
   "files": [
     {
       "name": "汉化版",
-      "path": "/swf/testgame1/testgame1汉化版.swf"
+      "path": "/swf/title/title汉化版.swf"
     },
     {
       "name": "原版",
-      "path": "/swf/testgame1/testgame1.swf"
+      "path": "/swf/title/title.swf"
     },
     {
       "name": "修复版",
-      "path": "/swf/testgame1/testgame1修复版.swf"
+      "path": "/swf/title/title修复版.swf"
     }
   ]
 }
