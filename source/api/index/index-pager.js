@@ -3,11 +3,9 @@
   var totalElement = document.getElementById('totalPages');
   var totalPages = totalElement ? parseInt(totalElement.dataset.totalPages, 10) : 1;
 
-  function getCurrentPage() {
-      var match = location.pathname.match(/(\d+)\.html$/);
-      return match ? parseInt(match[1], 10) : 1;
-  }
-  var currentPage = getCurrentPage();
+  var totalElement = document.getElementById('totalPages');
+  var totalPages = parseInt(totalElement.dataset.totalPages, 10) || 1;
+  var currentPage = parseInt(totalElement.dataset.currentPage, 10) || 1;
 
   function jump(p) {
       location.href = p === 1 ? '/' : '/' + p + '.html';

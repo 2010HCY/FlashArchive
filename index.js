@@ -96,7 +96,7 @@ function renderTpl(tplDir, name, data) {
 }
 
 function genHomePages(TPL, PUB, games) {
-    const PAGE_SIZE = 18;
+    const PAGE_SIZE = 20;
     const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
         const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
