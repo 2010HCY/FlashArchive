@@ -1,5 +1,5 @@
 (function () {
-  const ApiUrl = 'https://hcyhub.com/visitor-count';
+  const ApiUrl = '/visitor-count';
   const SiteKey = 'SiteUV';
   const Target = window.location.hostname + window.location.pathname;
   const PageKey = 'PageUV_' + Target;
