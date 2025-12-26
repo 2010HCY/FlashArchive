@@ -109,7 +109,9 @@ function genHomePages(TPL, PUB, games) {
 
 function genGamePages(TPL, PUB, games) {
     games.forEach(game => {
-        const html = renderTpl(TPL, 'game', { game });
+        let ruffleBase = "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
+        if (game.base) ruffleBase = game.base;
+        const html = renderTpl(TPL, 'game', { game, ruffleBase });
         const gameDir = path.join(PUB, game.dir);
         ensureDir(gameDir);
         fs.writeFileSync(path.join(gameDir, 'index.html'), html, 'utf-8');

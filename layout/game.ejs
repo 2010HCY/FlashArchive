@@ -90,6 +90,13 @@
             }
         }
     </script>
+    <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+        "base": "<%= ruffleBase %>",
+        "allowScriptAccess": true
+    };
+    </script>
     <script src="/api/play/play-copy.js"></script>
 </body>
 </html>
