@@ -42,6 +42,7 @@ a:hover::after {
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
+    align-items: stretch;
 }
 /* 播放窗口 */
 .game-container {
@@ -70,7 +71,9 @@ a:hover::after {
     flex: 1;
     background-color: #fafafa;
     padding: 10px;
-    height: 100%;
+    height: auto;
+    margin-left: 10px;
+    margin-right: 100px;
     overflow-y: auto;
     word-wrap: break-word;
     word-break: break-word;
@@ -205,25 +208,6 @@ a:hover::after {
     padding: 0;
     padding-left: 100px;
 }
-@media (max-width: 1000px) {
-    .main-content {
-        flex-direction: column;
-        align-items: center;
-    }
-    .game-container,
-    .text-container {
-        flex: none;
-        width: 90%;
-        height: 300px;
-    }
-    .bottom-bar {
-        width: 90%;
-        justify-content: center;
-    }
-    .bottom-text {
-        width: 90%;
-    }
-}
 /* 按钮 */
 .bottom {
     position: relative;
@@ -266,4 +250,42 @@ a:hover::after {
 .twikoo {
     padding-left: 5%;
     max-width: 90%;
+}
+/* 移动端 */
+@media (max-width: 1000px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    .game-container,
+    .text-container {
+        flex: none;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .game-container {
+        height: 300px;
+        max-width: 100%;
+        min-width: 240px;
+    }
+    .text-container {
+        height: auto;
+        max-width: 100%;
+    }
+    .game-container, .text-container {
+        margin-bottom: 10px;
+    }
+    .bottom-bar {
+        width: 90%;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .bottom-text {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0;
+    }
 }
