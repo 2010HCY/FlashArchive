@@ -47,12 +47,12 @@ header .brand-logo .logo-img {
     color: oklch(0.55 0.12 112) !important;
 }
 /* 链接 */
-a:not(.header a) {
+a:not(.header a):not(.footer a) {
     color: #007BFF;
     text-decoration: none;
     position: relative;
 }
-a:not(.header a)::after {
+a::not(.header a):not(.footer a)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -62,7 +62,7 @@ a:not(.header a)::after {
     background-color: #007BFF;
     transition: width 0.3s ease;
 }
-a:not(.header a):hover::after {
+a:not(.header a):not(.footer a):hover::after {
     width: 100%;
 }
 /* 播放窗口侧边边栏 */
@@ -103,6 +103,7 @@ a:not(.header a):hover::after {
     padding: 10px;
     height: auto;
     height: 480px; 
+    max-height: 480px; 
     margin-left: 10px;
     overflow-y: auto;
     word-wrap: break-word;
@@ -247,41 +248,8 @@ a:not(.header a):hover::after {
     padding: 0;
     padding-left: 100px;
 }
-/* 按钮 */
-.bottom {
-    position: relative;
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 17px;
-    border-radius: 8px;
-    text-decoration: none;
-    overflow: hidden;
-    transition: background-color 0.3s ease-in-out;
-    border: none;
-    margin-top: 5px;
-    margin-bottom: 5px; 
-    .icon{
-        color: oklch(0.7 0.14 112);
-        vertical-align: middle;
-    }
-    .bottomP{
-        all: unset; 
-        color: oklch(0.7 0.14 112);
-        text-decoration: none;
-    }
-    &:hover {
-        background-color: oklch(0.95 0.025 112);
-    }
-    .copy-button {
-        padding: 0;
-        font: inherit;
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-}
 /* 底部说明 */
-.bottom-text {
+.text {
     padding-left: 10%;
     max-width: 80%;
 }
@@ -290,11 +258,38 @@ a:not(.header a):hover::after {
     padding-left: 5%;
     max-width: 90%;
 }
+/* 页脚分割线 */
+.divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 20px auto;
+    width: 80%;
+}
+/* 页脚 */
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #333;
+}
+.footer a {
+    color: #a3a300;
+    text-decoration: none;
+    font-weight: bold;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+.footer p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
 /* 移动端 */
 @media (max-width: 1000px) {
     .main-content {
         flex-direction: column;
         align-items: center;
+        padding: 80px 0 20px 0;
     }
     .game-container,
     .text-container {
@@ -315,16 +310,111 @@ a:not(.header a):hover::after {
     .game-container, .text-container {
         margin-bottom: 10px;
     }
-    .bottom-bar {
-        width: 90%;
-        justify-content: center;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .bottom-text {
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 0;
-    }
+}
+/* 切换版本 */
+.ver-dropdown-menu {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    min-width: 120px;
+    z-index: 900;
+    padding: 4px 0;
+    margin-top: 2px;
+}
+.ver-dropdown-item {
+    padding: 6px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #333;
+    display: flex; align-items: center;
+}
+.ver-dropdown-item:hover {
+    background: #f3f3f3;
+    color: #01a201;
+}
+#gameVerDropdownBtn {
+    position: relative;
+}
+#gameVerSwitchBox {
+    position: relative;
+    display:inline-block;
+}
+.dropdown-icon {
+    margin-left: 6px;
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+.ver-dropdown-open .dropdown-icon {
+    transform: rotate(180deg);
+}
+/* 下载 */
+.download-modal {
+    position: fixed;
+    left:0; top:0; width:100vw; height:100vh;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.download-modal-mask {
+    position:absolute;
+    left:0; top:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.36);
+    z-index:0;
+}
+.download-modal-panel {
+    position:relative;
+    background:#fff;
+    width:320px; height:350px;
+    border-radius:12px;
+    box-shadow:0 10px 40px rgba(40,60,90,0.11);
+    z-index:1;
+    overflow:hidden;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+}
+.modal-close {
+    position:absolute; right:15px; top:14px; 
+    font-size:22px; cursor:pointer; color:#888; z-index:100;
+}
+.modal-close:hover{color:#e00;}
+.modal-title {
+    font-size:20px; font-weight:500; text-align:center;
+    margin-top:22px; margin-bottom:5px; letter-spacing:3px;
+}
+.modal-download-list {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:stretch;
+    margin:0 0 0 0;
+    padding:0 20px;
+    overflow:visible;
+}
+.modal-download-entry {
+    width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    line-height:36px;
+    font-size:16px;
+}
+.modal-download-entry a {
+    color:#3267c9;
+    text-decoration:none;
+    display:inline-block;
+    width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    vertical-align:middle;
+}
+.modal-divider {
+    margin:0; padding:0;
+    border-bottom:1px solid #e5e5e5;
+    width:100%;
+    height:0; 
 }

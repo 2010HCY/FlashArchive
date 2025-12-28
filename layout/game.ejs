@@ -8,12 +8,27 @@
             <embed id="gameEmbed" src="<%= game.files[0].path %>" width="100%" height="100%" />
         </div>
         <div class="text-container">
-            <h1><%= game.title %></h1>
-            <div class="switch-buttons">
-                <% game.files.forEach((file, index) => { -%>
-                <button onclick="switchGame('<%= index %>')"><%= file.name %></button>
-                <% }); -%>
+            <h1>
+                <%= game.title %>
+            </h1>
+            <div class="switch-buttons" id="gameVerSwitchBox">
+                <% if (game.files.length <=3) { %>
+                <% game.files.forEach((file, index)=> { -%>
+                    <button onclick="switchGame('<%= index %>')"><%= file.name %></button>
+                <% }) %>
+                <% } else { %>
+                    <button id="gameVerDropdownBtn">切换版本 (<span id="curVerName"><%= game.files[0].name %></span>) <i class="fas fa-chevron-down dropdown-icon"></i></button>
+                        <div id="gameVerDropdown" class="ver-dropdown-menu" style="display:none;">
+                            <% game.files.forEach((file, index)=> { -%>
+                            <div class="ver-dropdown-item" id="verItem<%= index %>" onclick="switchGame('<%= index %>');toggleVerDropdown(false)">
+                                <%= file.name %><i class="fas fa-check ver-check" style="display:none; margin-right:8px;"></i>
+                            </div>
+                            <% }) %>
+                    </div>
+                <% } %>
+                <button id="downloadBtn" class="bottomP">下载</button>
             </div>
+            <br>
             <i class="far fa-eye fa-fw"></i>总计游玩次数:&nbsp;&nbsp;
             <span class="stats-value" id="PageMeter_page_pv">加载中...</span>
             <h2>如何游玩</h2>
@@ -26,41 +41,7 @@
             </div>
         </div>
     </div>
-    <div class="bottom-bar">
-        <% game.files.forEach(file => { -%>
-        <div class="bottom">
-            <a href="<%= file.path %>" download="<%= file.name %>.swf" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>下载<%= file.name %></span>
-            </a>
-        </div>
-        <% }); -%>
-        <div class="bottom">
-            <a href="../../Falsh播放器.exe" download="Falsh播放器.exe" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#DownloadSVG"></use>
-            </svg>
-            <span>Flash播放器</span>
-            </a>
-        </div>
-        <div class="bottom">
-            <a href="/" class="bottomP">
-            <svg width="20" height="20" class="icon">
-                <use xlink:href="/api/icon/icon.svg#HomeSVG"></use>
-            </svg>
-            <span>返回主页</span>
-            </a>
-        </div>
-        <div class="bottom">
-                <svg width="20" height="20" class="icon">
-                    <use xlink:href="/api/icon/icon.svg#CopySVG"></use>
-                </svg>
-        <button class="bottomP copy-button" onclick="copyToClipboard()">复制网址</button>
-        </div>
-    </div>
-    <div class="bottom-text">
+    <div class="text">
         <h2>说明</h2>
         <p>这是flash游戏，2025年了，支持flash的浏览器一个巴掌也数的过来，我已经在网站上部署了Ruffle，如果还是无法游玩，试试以下方法</p>
         <p>安装插件，安装这个叫<a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
@@ -80,14 +61,46 @@
         </script>
     </div>
     <script>
-    const gameFiles = <%- JSON.stringify(game.files) %>; 
-        
+        const gameFiles = <%- JSON.stringify(game.files) %>;
+        let curGameIndex = 0;
         function switchGame(index) {
+            index = parseInt(index);
             var embed = document.getElementById('gameEmbed');
             if (gameFiles[index] && gameFiles[index].path) {
                 embed.src = gameFiles[index].path;
+                curGameIndex = index;
+            }
+            var curName = document.getElementById('curVerName');
+            if (curName) curName.textContent = gameFiles[index].name;
+
+            for (let i = 0; i < gameFiles.length; i++) {
+                let item = document.getElementById('verItem' + i);
+                if (item) {
+                    let check = item.querySelector('.ver-check');
+                    if (check) check.style.display = (i === index) ? 'inline-block' : 'none';
+                }
             }
         }
+
+        function toggleVerDropdown(show) {
+            var dropdown = document.getElementById('gameVerDropdown');
+            if (!dropdown) return;
+            dropdown.style.display = show ? 'block' : 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('gameVerDropdownBtn');
+            var menu = document.getElementById('gameVerDropdown');
+            if (btn && menu) {
+                btn.onclick = function (e) {
+                    e.stopPropagation();
+                    toggleVerDropdown(menu.style.display !== 'block');
+                }
+                document.body.addEventListener('click', function () { toggleVerDropdown(false); });
+                menu.onclick = function (e) { e.stopPropagation(); }
+            }
+            switchGame(0);
+        });
     </script>
     <script>
     window.RufflePlayer = window.RufflePlayer || {};
@@ -98,6 +111,71 @@
         forceScale: true,
     };
     </script>
+    <script>
+        function toggleDownloadModal(show) {
+            var md = document.getElementById('downloadModal');
+            if (md) {
+                md.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('downloadBtn');
+            if (btn) {
+                btn.onclick = function () {
+                    toggleDownloadModal(true);
+                }
+            }
+            var modal = document.getElementById('downloadModal');
+            if (modal) modal.onclick = function (e) {
+                toggleDownloadModal(false);
+            };
+            var panel = document.querySelector('.download-modal-panel');
+            if (panel) panel.onclick = function (e) {
+                e.stopPropagation();
+            }
+        });
+        function toggleVerDropdown(show) {
+        var dropdown = document.getElementById('gameVerDropdown');
+        var btn = document.getElementById('gameVerDropdownBtn'); // 获取按钮
+        if (!dropdown) return;
+    
+        dropdown.style.display = show ? 'block' : 'none';
+    
+        // 切换旋转类名
+        if (show) {
+            btn.classList.add('ver-dropdown-open');
+        } else {
+            btn.classList.remove('ver-dropdown-open');
+        }
+    }
+    </script>
     <script src="/api/play/play-copy.js"></script>
+    <div id="downloadModal" class="download-modal" style="display:none;">
+        <div class="download-modal-mask"></div>
+        <div class="download-modal-panel">
+            <i class="fas fa-times modal-close" onclick="toggleDownloadModal(false)"></i>
+            <div class="modal-title">下载</div>
+            <div class="modal-download-list">
+                <% game.files.forEach(function(file, idx) { %>
+                    <div class="modal-download-entry">
+                        <a href="<%= file.path %>" download="<%= file.name %>.swf" title="<%= file.name %>">
+                            <i class="fa-solid fa-file-arrow-down" style="margin-right:8px; color: #00a4ef;"></i><%= file.name %>
+                        </a>
+                    </div>
+                    <% if (idx !==game.files.length - 1) { %>
+                        <div class="modal-divider"></div>
+                    <% } %>
+                <% }) %>
+                <div class="modal-divider"></div>
+                <div class="modal-download-entry player-entry">
+                    <a href="/Falsh播放器.exe" download="Falsh播放器.exe">
+                        <i class="fab fa-windows" style="margin-right:8px; color: #00a4ef;"></i>Flash 播放器
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('footer') %>
 </body>
 </html>
