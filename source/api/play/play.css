@@ -8,20 +8,51 @@ body {
     justify-content: space-between;
 }
 /* 标题 */
-header {
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background-color: oklch(0.95 0.025 112);
     color: oklch(0.55 0.12 112);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-    padding: 0px;
-    text-align: center;
-    height: 13vh;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  
+    z-index: 999;
+    text-align: inherit;
+    padding: 0;
+    text-decoration: none !important;
 }
-a {
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 64px;
+    padding: 0 32px;
+}
+header .brand-logo .logo-img {
+    height: 45px;
+    vertical-align: middle;
+    padding-bottom: 6px;
+    text-decoration: none !important;
+}
+.brand-logo a {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+.logo-span {
+    text-decoration: none !important;
+    color: oklch(0.55 0.12 112) !important;
+}
+/* 链接 */
+a:not(.header a) {
     color: #007BFF;
     text-decoration: none;
     position: relative;
 }
-a::after {
+a:not(.header a)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -31,18 +62,17 @@ a::after {
     background-color: #007BFF;
     transition: width 0.3s ease;
 }
-a:hover::after {
+a:not(.header a):hover::after {
     width: 100%;
 }
 /* 播放窗口侧边边栏 */
 .main-content {
     display: flex;
     flex-grow: 1;
-    padding: 10px;
+    padding: 74px 100px 10px 100px; 
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-    align-items: stretch;
 }
 /* 播放窗口 */
 .game-container {
@@ -57,7 +87,7 @@ a:hover::after {
     max-width: 800px;
     max-height: 500px;
     object-fit: contain;
-    margin-left: 100px;
+    box-sizing: border-box;
 }
 /* Flash显示位置 */
 .game-container embed {
@@ -72,11 +102,20 @@ a:hover::after {
     background-color: #fafafa;
     padding: 10px;
     height: auto;
+    height: 480px; 
     margin-left: 10px;
-    margin-right: 100px;
     overflow-y: auto;
     word-wrap: break-word;
     word-break: break-word;
+    box-sizing: border-box;
+}
+/* H1 */
+.text-container h1 {
+    font-size: 28px; 
+    color: #333; 
+    margin: 5px 0 10px 0; 
+    font-weight: normal;
+    text-align: center;
 }
 /* 点赞按钮 */
 #zan:after {
