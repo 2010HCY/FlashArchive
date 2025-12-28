@@ -56,8 +56,8 @@ function main() {
     });
 
     const games = loadGames(DATA_DIR);
-    genHomePages(TPL, PUB, games);
-    genGamePages(TPL, PUB, games);
+    genHomePages(TPL, PUB, games, DOMAIN);
+    genGamePages(TPL, PUB, games, DOMAIN);
     genGamesNameJson(DATA_DIR, API_DIR);
     genSitemapXmlFromApi(API_DIR, PUB, DOMAIN);
     genRssXmlFromApi(API_DIR, PUB, DOMAIN);
@@ -99,23 +99,23 @@ function renderTpl(tplDir, name, data) {
     });
 }
 
-function genHomePages(TPL, PUB, games) {
+function genHomePages(TPL, PUB, games, DOMAIN) {
     const PAGE_SIZE = 20;
     const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
         const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
-        const html = renderTpl(TPL, 'home', { games: pageGames, page: p, totalPages: totalPages });
+        const html = renderTpl(TPL, 'home', { games: pageGames, page: p, totalPages: totalPages, domain: DOMAIN });
         const file = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
         ensureDir(PUB);
         fs.writeFileSync(file, html, 'utf-8');
     }
 }
 
-function genGamePages(TPL, PUB, games) {
+function genGamePages(TPL, PUB, games, DOMAIN) {
     games.forEach(game => {
         let ruffleBase = "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
         if (game.base) ruffleBase = game.base;
-        const html = renderTpl(TPL, 'game', { game, ruffleBase });
+        const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN });
         const gameDir = path.join(PUB, game.dir);
         ensureDir(gameDir);
         fs.writeFileSync(path.join(gameDir, 'index.html'), html, 'utf-8');

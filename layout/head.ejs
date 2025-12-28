@@ -9,7 +9,7 @@
         <meta property="og:type" content="website">
         <meta property="og:title" content="静水深流 | Flash收藏站">
         <meta property="og:description" content="Flash收藏站，收集大量好玩的Flash游戏，支持在线游玩和下载。">
-        <meta property="og:image" content="/api/icon/H.svg">
+        <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
     <% } else if (pageType === 'game' && typeof game !== 'undefined') { %>
         <title><%= game.title %></title>
         <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,<%= game.title %>,<%= game.title %>汉化版">
@@ -20,7 +20,7 @@
         <meta property="og:type" content="website">
         <meta property="og:title" content="<%= game.title %>">
         <meta property="og:description" content="<%= game.brief %>">
-        <meta property="og:image" content="<%= game.cover %>">
+        <meta property="og:image" content="https://<%= domain + game.cover %>">
     <% } %>
     <script type="text/javascript" src="/api/index/sitetime.js" defer></script>
     <script type="text/javascript" src="/api/index/index-count.js" defer></script>
