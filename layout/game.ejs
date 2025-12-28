@@ -3,7 +3,7 @@
 <%- include('head', { pageType: 'game' }) %>
 <body>
     <%- include('header', { pageType: 'game' }) %>
-    <div class="main-content">
+    <main class="main-content">
         <div class="game-container">
             <embed id="gameEmbed" src="<%= game.files[0].path %>" width="100%" height="100%" />
         </div>
@@ -40,16 +40,16 @@
                 <div id="zan_text"></div>
             </div>
         </div>
-    </div>
-    <div class="text">
-        <h2>说明</h2>
+    </main>
+    <section class="text" aria-labelledby="desc-title">
+    <h2 id="desc-title">说明</h2>
         <p>这是flash游戏，2025年了，支持flash的浏览器一个巴掌也数的过来，我已经在网站上部署了Ruffle，如果还是无法游玩，试试以下方法</p>
         <p>安装插件，安装这个叫<a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>的浏览器插件就好了<a target="_blank" rel="noopener" href="https://microsoftedge.microsoft.com/addons/detail/ruffle-flash-emulator/pipjjbgofgieknlpefmcckdmgaaegban">点击跳转</a></p>
         <p>下载游戏，然后将swf游戏文件用flash播放器打开</p>
         <p>Ruffle的兼容性不是很好，已知一些3D游戏无法游玩，并且有可能会出现按钮失灵、文字贴图不显示，所以我强烈建议下载下来以获得最佳体验</p>
         <p>评论区在下面，你们遇到问题可以反馈给我，但大概率我也只能建议你们下载到本地游玩...Flash的兼容性安全性真是太差了</p>
-    </div>
-    <div id="twikoo">
+    </section>
+    <section id="twikoo" aria-label="评论区">
         <div id="tcomment"></div>
         <script src="/api/play/twikoo.min.js"></script>
         <script>
@@ -59,7 +59,7 @@
             lang: 'zh-CN',
             })
         </script>
-    </div>
+    </section>
     <script>
         const gameFiles = <%- JSON.stringify(game.files) %>;
         let curGameIndex = 0;
@@ -157,13 +157,13 @@
             <i class="fas fa-times modal-close" onclick="toggleDownloadModal(false)"></i>
             <div class="modal-title">下载</div>
             <div class="modal-download-list">
-                <% game.files.forEach(function(file, idx) { %>
+                <% game.DownFiles.forEach(function(file, idx) { %>
                     <div class="modal-download-entry">
-                        <a href="<%= file.path %>" download="<%= file.name %>.swf" title="<%= file.name %>">
+                        <a href="<%= file.path %>" download="<%= file.name %>" title="<%= file.name %>">
                             <i class="fa-solid fa-file-arrow-down" style="margin-right:8px; color: #00a4ef;"></i><%= file.name %>
                         </a>
                     </div>
-                    <% if (idx !==game.files.length - 1) { %>
+                    <% if (idx !==game.DownFiles.length - 1) { %>
                         <div class="modal-divider"></div>
                     <% } %>
                 <% }) %>

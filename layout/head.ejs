@@ -6,16 +6,24 @@
         <meta name="keywords" content="静水深流,Flash游戏收藏站,Flash收藏站,在线小游戏,Flash游戏,Flash游戏汉化版">
         <meta name="description" content="欢迎来到我的个人Flash收藏空间！所以游戏都是人工汉化，支持一键切换原版和汉化版，你也可以直接下载喜欢的游戏。部分游戏还附有攻略，希望你玩得高兴！">
         <link rel="stylesheet" href="/api/index/index.css">
-        <script type="text/javascript" src="/api/index/index-count.js"></script>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="静水深流 | Flash收藏站">
+        <meta property="og:description" content="Flash收藏站，收集大量好玩的Flash游戏，支持在线游玩和下载。">
+        <meta property="og:image" content="/api/icon/H.svg">
     <% } else if (pageType === 'game' && typeof game !== 'undefined') { %>
         <title><%= game.title %></title>
         <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,<%= game.title %>,<%= game.title %>汉化版">
+        <meta name="description" content="<%= game.brief %>">
         <link rel="stylesheet" href="/api/play/play.css">
         <script src="/api/ruffle/ruffle.js" defer></script>
         <script src="/api/play/zan.js" defer></script>
-        <script type="text/javascript" src="/api/index/index-count.js" defer></script>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="<%= game.title %>">
+        <meta property="og:description" content="<%= game.brief %>">
+        <meta property="og:image" content="<%= game.cover %>">
     <% } %>
     <script type="text/javascript" src="/api/index/sitetime.js" defer></script>
+    <script type="text/javascript" src="/api/index/index-count.js" defer></script>
     <link rel="stylesheet" href="/api/icon/css/all.min.css">
     <link rel="icon" href="/api/icon/H.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

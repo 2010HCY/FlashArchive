@@ -76,6 +76,10 @@ function loadGames(DATA_DIR) {
             g.files.push({ name: "汉化版", path: `/swf/${g.dir}/${g.dir}汉化版.swf` });
             g.files.push({ name: "原版", path: `/swf/${g.dir}/${g.dir}.swf` });
         }
+        if (!g.DownFiles || g.DownFiles.length === 0) {
+            g.DownFiles = g.files;
+        }
+
         if (!g.cover) {
             g.cover = `/images/${g.dir}/${g.dir}.webp`;
         }
