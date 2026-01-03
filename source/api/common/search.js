@@ -42,7 +42,7 @@
             
             div.innerHTML = `
                 <div style="margin-bottom: 5px;">
-                    <a href="/${item.play}/" style="color:#42b983; text-decoration:none; font-size:18px; font-weight:600;">
+                    <a href="${item.play}/" style="color:#42b983; text-decoration:none; font-size:18px; font-weight:600;">
                         ${highlight(item.title || '', query)}
                     </a>
                 </div>
