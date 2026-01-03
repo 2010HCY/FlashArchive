@@ -22,9 +22,13 @@
         <meta property="og:description" content="<%= game.brief %>">
         <meta property="og:image" content="https://<%= domain + game.cover %>">
     <% } %>
-    <script type="text/javascript" src="/api/index/sitetime.js" defer></script>
-    <script type="text/javascript" src="/api/index/index-count.js" defer></script>
+    <script type="text/javascript" src="/api/common/sitetime.js" defer></script>
+    <script type="text/javascript" src="/api/common/count.js" defer></script>
+    <script type="text/javascript" src="/api/common/toggle.js"></script>
+    <script type="text/javascript" src="/api/common/search.js" defer></script>
     <link rel="stylesheet" href="/api/icon/css/all.min.css">
+    <link rel="stylesheet" href="/api/common/header.css">
+    <link rel="stylesheet" href="/api/common/footer.css">
     <link rel="icon" href="/api/icon/H.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Ethaniel">
@@ -36,5 +40,4 @@
 
       gtag('config', 'G-9C3EYEPPQ1');
     </script>
-    <script defer src="https://umami.hcyhub.com/script.js" data-website-id="02935f85-2c08-4a8b-ac40-ce0e30d6dab1"></script>
 </head>

@@ -1,3 +1,6 @@
+/**
+ * 点赞JS
+*/
 (function(){
   const ApiUrl = 'https://hcyhub.com/like';
   const UrlKey = window.location.host + window.location.pathname;

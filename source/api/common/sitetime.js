@@ -1,3 +1,6 @@
+/**
+ * 站点运行时间JS
+*/
 function siteTime() {
     var seconds = 1000;
     var minutes = seconds * 60;

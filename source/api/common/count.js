@@ -1,3 +1,6 @@
+/**
+ * 访问数统计JS
+*/
 (function () {
   const ApiUrl = 'https://hcyhub.com/visitor-count';
   const SiteKey = 'SiteUV';

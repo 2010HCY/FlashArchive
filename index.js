@@ -59,6 +59,7 @@ function main() {
     genHomePages(TPL, PUB, games, DOMAIN);
     genGamePages(TPL, PUB, games, DOMAIN);
     genGamesNameJson(DATA_DIR, API_DIR);
+    genSearchJson(DATA_DIR, API_DIR);
     genSitemapXmlFromApi(API_DIR, PUB, DOMAIN);
     genRssXmlFromApi(API_DIR, PUB, DOMAIN);
 
@@ -136,6 +137,24 @@ function genGamesNameJson(DATA_DIR, API_DIR) {
     });
     arr.sort((a, b) => Number(a.id) - Number(b.id));
     fs.writeFileSync(path.join(API_DIR, 'games_name.json'), JSON.stringify(arr, null, 4), 'utf8');
+}
+
+function genSearchJson(DATA_DIR, API_DIR) {
+    ensureDir(API_DIR);
+    const allFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.json'));
+    
+    const arr = allFiles.map(fn => {
+        const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
+        return {
+            id: g.id || "",
+            title: g.title || "",
+            brief: g.brief || "",
+            pubDate: g.pubDate || "",
+            play: g.dir || ""
+        };
+    });
+
+    fs.writeFileSync(path.join(API_DIR, 'search.json'), JSON.stringify(arr), 'utf8');
 }
 
 function convertToSitemapTime(timeString) {

@@ -1,50 +1,12 @@
+/**
+ * 首页CSS样式
+*/
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: oklch(0.95 0.025 112);
     overflow-x: hidden;
-}
-/* Header */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: oklch(0.95 0.025 112);
-    color: oklch(0.55 0.12 112);
-    font-size: 24px;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  
-    z-index: 999;
-    text-align: inherit;
-    padding: 0;
-    text-decoration: none !important;
-}
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
-    height: 64px;
-    padding: 0 32px;
-}
-
-header .brand-logo .logo-img {
-    height: 45px;
-    width: 40px;
-    vertical-align: middle;
-    padding-bottom: 6px;
-    text-decoration: none !important;
-}
-.brand-logo a {
-    text-decoration: none !important;
-    color: inherit !important;
-}
-.logo-span {
-    text-decoration: none !important;
-    color: oklch(0.55 0.12 112) !important;
 }
 /* 展示空间 */
 .card-container {
@@ -133,23 +95,4 @@ div.card[data-chinese="no"] .chinese-label {
 .pagination span {
     margin: 0 5px;
     cursor: pointer;
-}
-/* 页脚 */
-.footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    color: #333;
-}
-.footer a {
-    color: #a3a300;
-    text-decoration: none;
-    font-weight: bold;
-}
-.footer a:hover {
-    text-decoration: underline;
-}
-.footer p {
-    margin-top: 2px;
-    margin-bottom: 2px;
 }

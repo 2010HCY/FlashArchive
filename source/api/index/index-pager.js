@@ -1,3 +1,6 @@
+/**
+ *首页翻页按钮JS
+*/
 (function() {
     
   var totalElement = document.getElementById('totalPages');
