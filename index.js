@@ -218,6 +218,8 @@ async function main() {
     genGamePages(TPL, PUB, games, DOMAIN);
     gen404Page(TPL, PUB, DOMAIN);
     genAboutPage(TPL, PUB, DOMAIN);
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
     genSearchJson(DATA_DIR, API_DIR, PUB);
     genSitemapXmlFromApi(API_DIR, PUB, DOMAIN);
@@ -345,6 +347,73 @@ function genAboutPage(TPL, PUB, DOMAIN) {
     const aboutDir = path.join(PUB, 'about');
     ensureDir(aboutDir);
     writeFile(path.join(aboutDir, 'index.html'), html, PUB);
+}
+
+function getCleanNames(str) {
+    const ignoreList = ['无', '未知'];
+    if (!str) return [];
+    return str.split(',')
+        .map(a => a.trim())
+        .filter(name => name && !ignoreList.includes(name));
+}
+
+function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
+    const isAuthor = type === 'author';
+    const folder = isAuthor ? 'authors' : 'translators';
+    const titlePrefix = isAuthor ? '游戏作者' : '汉化者';
+    const PAGE_SIZE = 20;
+
+    const peopleMap = {};
+    games.forEach(g => {
+        const names = isAuthor ? getCleanNames(g['Author']) : getCleanNames(g['CN-Author']);
+        names.forEach(name => {
+            if (!peopleMap[name]) peopleMap[name] = [];
+            peopleMap[name].push(g);
+        });
+    });
+
+    const allNames = Object.keys(peopleMap).sort((a, b) => 
+        peopleMap[b].length - peopleMap[a].length || a.localeCompare(b, 'zh-Hans-CN')
+    );
+
+    const indexList = allNames.map(name => ({ name, count: peopleMap[name].length }));
+    const indexHtml = renderTpl(TPL, 'author', {
+        list: indexList,
+        type: type,
+        title: `${titlePrefix}列表`,
+        domain: DOMAIN,
+        pageType: folder,
+        personName: "",
+        personType: type
+    });
+    const indexDir = path.join(PUB, folder);
+    ensureDir(indexDir);
+    writeFile(path.join(indexDir, 'index.html'), indexHtml, PUB);
+
+    allNames.forEach(name => {
+        const personGames = peopleMap[name];
+        const totalPages = Math.ceil(personGames.length / PAGE_SIZE) || 1;
+        const personDir = path.join(indexDir, name);
+        ensureDir(personDir);
+
+        for (let p = 1; p <= totalPages; p++) {
+            const pageGames = personGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+            
+            const html = renderTpl(TPL, 'author-games', { 
+                games: pageGames, 
+                page: p, 
+                totalPages: totalPages, 
+                domain: DOMAIN,
+                title: `${name} 的作品`,
+                pageType: 'author-games', 
+                personName: name,
+                personType: type
+            });
+
+            const dest = path.join(personDir, p === 1 ? 'index.html' : `${p}.html`);
+            writeFile(dest, html, PUB);
+        }
+    });
 }
 
 function genGamesNameJson(DATA_DIR, API_DIR, PUB) {

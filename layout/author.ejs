@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh">
+<%- include('head', { pageType: 'author' }) %>
+<body>
+<%- include('header', { pageType: 'author'}) %>
+<%- include('search') %>
+
+<main class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-users"></i><%= title %></h1>
+        <p class="stats-info">共计收录: <strong><%= list.length %></strong> 位</p>
+    </div>
+
+    <div class="people-grid">
+        <% list.forEach(item => { %>
+            <a href="/<%= pageType %>/<%= encodeURIComponent(item.name) %>/" class="person-card">
+                <span class="name"><%= item.name %></span>
+                <span class="badge"><%= item.count %></span>
+            </a>
+        <% }) %>
+    </div>
+</main>
+<style>
+
+</style>
+<%- include('footer') %>
+</body>

@@ -1,0 +1,65 @@
+/* 作者、汉化者页CSS */
+body {
+    font-family: Arial, sans-serif;
+    padding: 0 20px 0 20px;
+    background-color: oklch(0.95 0.025 112);
+}
+.container {
+    padding: 50px 20px 0 20px
+}
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+.person-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+}
+.person-card:hover {
+    border-color: #a3a300;
+    background: #f0faf9;
+    transform: translateY(-2px);
+}
+.person-card .name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.person-card .badge {
+    background: #eee;
+    color: #666;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+.person-card:hover .badge {
+    background: #a3a300;
+    color: #fff;
+}
+.page-header h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+.stats-info {
+    color: #999;
+    font-size: 14px;
+}
+/* 卡片页脚分割线 */
+.divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 20px auto;
+    width: 80%;
+}

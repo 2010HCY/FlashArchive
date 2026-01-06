@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<%- include('head', { 
+    pageType: 'author-games', 
+    personName: personName, 
+    personType: personType,
+    domain: domain 
+}) %>
+<body>
+    <%- include('header') %>
+    <h1 style="font-size: 24px;color: #333;padding: 50px 0 0 0;text-align: center;">
+        <i class="fas <%= personType === 'author' ? 'fa-pen-nib' : 'fa-language' %>"></i>
+        <%= personName %> <%= personType === 'author' ? '所有的作品' : '汉化的游戏' %>
+    </h1>
+    <div class="card-container">     
+        <div id="game-list">
+        <% games.forEach(game => { %>
+          <div class="card">
+            <a href="<%= game.dir %>/">
+              <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+              <h3><%= game.title %></h3>
+              <p><%= game.brief %></p>
+            </a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+    <div class="pagination">
+      <button id="prevBtn">上一页</button>
+      <span id="pageNumbers"></span>
+      <button id="nextBtn">下一页</button>
+    </div>
+    <span id="totalPages" data-total-pages="<%= totalPages %>" data-current-page="<%= page %>" style="display:none;"></span>
+    <%- include('footer') %>
+    <script type="text/javascript" src="/api/index/index-pager.js"></script>
+    <%- include('search') %>
+</body>
+</html>

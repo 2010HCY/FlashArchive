@@ -1,19 +1,15 @@
-/**
- * 首页CSS样式
-*/
+/* 汉化者、作者详情页CSS */
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+    padding: 0 0 0 0;
     background-color: oklch(0.95 0.025 112);
-    overflow-x: hidden;
 }
 /* 展示空间 */
 .card-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 100px 0 0 0;
+    padding: 0 0 0 0;
 }
 /* 卡片区 */
 #game-list {
