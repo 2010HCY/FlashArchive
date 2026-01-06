@@ -318,7 +318,7 @@ a:not(.header a):not(.footer a):hover::after {
     border-radius:12px;
     box-shadow:0 10px 40px rgba(40,60,90,0.11);
     z-index:1;
-    overflow:hidden;
+    overflow: hidden;
     padding:0;
     display:flex;
     flex-direction:column;
@@ -333,14 +333,11 @@ a:not(.header a):not(.footer a):hover::after {
     margin-top:22px; margin-bottom:5px; letter-spacing:3px;
 }
 .modal-download-list {
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:stretch;
-    margin:0 0 0 0;
-    padding:0 20px;
-    overflow:visible;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 20px;   
+    display: block;
 }
 .modal-download-entry {
     width:100%;

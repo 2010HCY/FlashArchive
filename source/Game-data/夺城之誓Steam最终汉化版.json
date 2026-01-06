@@ -1,0 +1,45 @@
+{
+    "id": "36",
+    "title": "夺城之誓Steam最终汉化版",
+    "pubDate": "2026-01-06 23:47:10",
+    "brief": "官方steam《夺城之誓：遗产收藏》",
+    "play": "消灭丧尸，升级装备，重建前哨站和工厂，从丧尸手中夺回城市！<br>感谢K老于汉化分享！<br>共计8个版本，218MB",
+    "cover": "/images/夺城之誓/夺城之誓.webp",
+    "dir": "/Games/夺城之誓Steam最终汉化版",
+    "Author": "未知",
+    "CN-Author": "K老于",
+    "files": [
+        {
+            "name": "夺城之誓1-1.4.4-Steam最终汉化版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓1-1.4.4-Steam最终汉化版.swf "
+        },
+        {
+            "name": "夺城之誓1-1.4.4-Steam最终版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓1-1.4.4-Steam最终版.swf "
+        },
+        {
+            "name": "夺城之誓2-1.4-Steam最终汉化版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓2-1.4-Steam最终汉化版.swf "
+        },
+        {
+            "name": "夺城之誓2-1.4-Steam最终版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓2-1.4-Steam最终版.swf "
+        },
+        {
+            "name": "夺城之誓3-1.19-Steam最终汉化版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓3-1.19-Steam最终汉化版.swf "
+        },
+        {
+            "name": "夺城之誓3-1.19-Steam最终版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓3-1.19-Steam最终版.swf "
+        },
+        {
+            "name": "夺城之誓：中世纪-1.21-Steam最终汉化版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓：中世纪-1.21-Steam最终汉化版.swf "
+        },
+        {
+            "name": "夺城之誓：中世纪-1.21-Steam最终版",
+            "path": "/swf/夺城之誓Steam最终汉化版/夺城之誓：中世纪-1.21-Steam最终版.swf "
+        }
+    ]
+}
