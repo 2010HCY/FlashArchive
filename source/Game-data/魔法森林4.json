@@ -6,6 +6,8 @@
   "play": "鼠标操作，注意敌人的专长和弱点，搭配不同的兵种克制敌军",
   "cover": "/images/魔法森林4/魔法森林4.webp",
   "dir": "/Games/魔法森林4",
+  "Author": "未知",
+  "CN-Author": "未知",
   "files": [
     {
       "name": "汉化版",

@@ -6,6 +6,8 @@
     "play": "鼠标控制，提示：你可以按住不松手，持续发射炮弹",
     "cover": "/images/海岸警卫队/海岸警卫队.webp",
     "dir": "/Games/海岸警卫队",
+    "Author": "SquaiePig",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

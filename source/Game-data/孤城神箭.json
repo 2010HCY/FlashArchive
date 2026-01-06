@@ -6,6 +6,8 @@
     "play": "射箭，射箭，要快准狠，难度高了点，可以玩无敌版练手先<br>援军将在25天后赶来，你能坚持住吗？",
     "cover": "/images/孤城神箭/孤城神箭.webp",
     "dir": "/Games/孤城神箭",
+    "Author": "3KG Games",
+    "CN-Author": "血罪天赎",
     "files": [
         {
             "name": "汉化版",

@@ -6,6 +6,8 @@
     "play": "鼠标控制，点击下面的士兵图标出兵，击杀敌人获取经验，升级文明解锁更强力的兵种",
     "cover": "/images/战争进化史/战争进化史.webp",
     "dir": "/Games/战争进化史",
+    "Author": "Loulissi",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "汉化版",

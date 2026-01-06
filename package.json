@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "chokidar": "^5.0.0",
     "clean-css": "^5.3.3",
     "ejs": "^3.1.10",
     "fs-extra": "^11.3.2",
@@ -7,6 +8,7 @@
     "js-beautify": "^1.15.4",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
+    "serve-handler": "^6.1.6",
     "terser": "^5.44.1"
   }
 }

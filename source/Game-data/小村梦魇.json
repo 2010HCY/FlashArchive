@@ -6,6 +6,8 @@
     "play": "指挥四支小队在白天搜集劫掠物质，夜晚迎接野外刷新的丧尸<br>小队若没有在袭击前返回会死亡，并且变出一群丧",
     "cover": "/images/小村梦魇/小村梦魇.webp",
     "dir": "/Games/小村梦魇",
+    "Author": "Dead Frontier",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "汉化版",

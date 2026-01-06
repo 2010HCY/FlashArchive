@@ -8,19 +8,87 @@ const minifyHtml = require('html-minifier').minify;
 const CleanCSS = require('clean-css');
 const Terser = require('terser');
 const argv = require('minimist')(process.argv.slice(2));
+const chokidar = require('chokidar');
+const http = require('http');
+const handler = require('serve-handler');
 
 const IS_MIN = argv.min || false;
 let fileCount = 0;
 let totalOriginalSize = 0;
 let totalMinifiedSize = 0;
 let compressedFileCount = 0;
+let GLOBAL_CONFIG = {};
+
+let CACHED_STATS = {
+    totalCount: 0, totalSize: '0 B', maxFileSize: '0 B', avgSize: '0 B',
+    authors: 0, translators: 0
+};
+
+function updateSwfStats(SRC_DIR) {
+    const swfRoot = path.join(SRC_DIR, 'swf');
+    let totalBytes = 0, swfFileCount = 0, maxBytes = 0;
+
+    if (fs.existsSync(swfRoot)) {
+        const scanDir = (dir) => {
+            const files = fs.readdirSync(dir);
+            files.forEach(file => {
+                const fullPath = path.join(dir, file);
+                const stat = fs.statSync(fullPath);
+                if (stat.isDirectory()) scanDir(fullPath);
+                else if (file.toLowerCase().endsWith('.swf')) {
+                    swfFileCount++;
+                    totalBytes += stat.size;
+                    if (stat.size > maxBytes) maxBytes = stat.size;
+                }
+            });
+        };
+        scanDir(swfRoot);
+    }
+    CACHED_STATS.totalCount = swfFileCount;
+    CACHED_STATS.totalSize = formatSize(totalBytes);
+    CACHED_STATS.maxFileSize = formatSize(maxBytes);
+    CACHED_STATS.avgSize = formatSize(swfFileCount > 0 ? totalBytes / swfFileCount : 0);
+}
+
+function updateAuthorStats(games) {
+    const authors = new Set();
+    const cnAuthors = new Set();
+    
+    const ignoreList = ['无'];
+
+    games.forEach(g => {
+        if (g['Author']) {
+            g['Author'].split(',').forEach(a => {
+                const name = a.trim();
+                if (name && !ignoreList.includes(name)) {
+                    authors.add(name);
+                }
+            });
+        }
+        
+        if (g['CN-Author']) {
+            g['CN-Author'].split(',').forEach(a => {
+                const name = a.trim();
+                if (name && !ignoreList.includes(name)) {
+                    cnAuthors.add(name);
+                }
+            });
+        }
+    });
+
+    CACHED_STATS.authors = authors.size;
+    CACHED_STATS.translators = cnAuthors.size;
+}
 
 function formatSize(bytes) {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return { value: '0', unit: 'B' };
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return {
+        value: parseFloat((bytes / Math.pow(k, i)).toFixed(2)),
+        unit: sizes[i]
+    };
 }
 
 const colors = {
@@ -100,7 +168,9 @@ async function minifyAssets(dir, PUB_DIR) {
                     totalMinifiedSize += minSize;
                     compressedFileCount++;
 
-                    console.log(colors.info(`已压缩: ${path.relative(PUB_DIR, fullPath)}  ${formatSize(originalSize)} → ${colors.time(formatSize(minSize))}`));
+                    const oldS = formatSize(originalSize);
+                    const newS = formatSize(minSize);
+                    console.log(colors.info(`已压缩: ${path.relative(PUB_DIR, fullPath)}  ${oldS.value}${oldS.unit} → ${colors.time(`${newS.value}${newS.unit}`)}`));
                 }
             } catch (e) {
                 console.error(colors.error(`压缩失败: ${path.relative(PUB_DIR, fullPath)} | ${e.message}`));
@@ -111,63 +181,104 @@ async function minifyAssets(dir, PUB_DIR) {
 
 async function main() {
     const startTime = process.hrtime();
-    const config = loadConfig();
-    console.log(colors.info('开始处理'));
-    
-    const RUNDIR = process.cwd();
-    const SRC = path.join(RUNDIR, config.src);
-    const DATA_DIR = path.join(SRC, 'Game-data');
-    const PUB = path.join(RUNDIR, config.public);
-    const TPL = path.join(__dirname, config.template);
-    const API_DIR = path.join(PUB, 'api');
-    const IGNORE_LIST = new Set([...(config.ignore || []), 'Game-data']);
-    const DOMAIN = config.domain.replace(/^https?:\/\//, '');
+    GLOBAL_CONFIG = loadConfig();
+    const IS_WATCH = argv.s || argv.serve;
+    const MUST_MIN = argv.min || argv.m || false;
 
-    if (!fs.existsSync(DATA_DIR)) throw new Error(`未找到 ${config.src}/Game-data/`);
+    const RUNDIR = process.cwd();
+    const SRC = path.join(RUNDIR, GLOBAL_CONFIG.src);
+    const DATA_DIR = path.join(SRC, 'Game-data');
+    const PUB = path.join(RUNDIR, GLOBAL_CONFIG.public);
+    const TPL = path.join(__dirname, GLOBAL_CONFIG.template);
+    const API_DIR = path.join(PUB, 'api');
+    const DOMAIN = GLOBAL_CONFIG.domain.replace(/^https?:\/\//, '');
+
+    console.log(colors.info('开始处理'));
 
     ensureDir(PUB);
     cleanDirExceptGit(PUB);
 
+    const IGNORE_LIST = new Set([...(GLOBAL_CONFIG.ignore || []), 'Game-data']);
     fs.readdirSync(SRC).forEach(entry => {
         if (!IGNORE_LIST.has(entry)) {
             const dest = path.join(PUB, entry);
             fse.copySync(path.join(SRC, entry), dest, { overwrite: true });
-            if (fs.statSync(dest).isFile()) {
-                console.log(colors.info(`已复制: ${entry}`));
-                fileCount++;
-            }
+            if (fs.statSync(dest).isFile()) fileCount++;
         }
     });
 
     const loadStart = process.hrtime();
     const games = loadGames(DATA_DIR);
-    const loadDiff = process.hrtime(loadStart);
-    const loadMs = (loadDiff[0] * 1e3 + loadDiff[1] / 1e6).toFixed(2);
+    updateSwfStats(SRC);
+    updateAuthorStats(games);
+    const loadMs = (process.hrtime(loadStart)[0] * 1e3 + process.hrtime(loadStart)[1] / 1e6).toFixed(2);
     console.log(colors.info(`文件加载耗时 ${colors.time(loadMs + ' ms')}`));
 
     genHomePages(TPL, PUB, games, DOMAIN);
     genGamePages(TPL, PUB, games, DOMAIN);
+    gen404Page(TPL, PUB, DOMAIN);
+    genAboutPage(TPL, PUB, DOMAIN);
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
     genSearchJson(DATA_DIR, API_DIR, PUB);
     genSitemapXmlFromApi(API_DIR, PUB, DOMAIN);
     genRssXmlFromApi(API_DIR, PUB, DOMAIN);
 
-    const genDiff = process.hrtime(startTime);
-    const genSec = (genDiff[0] + genDiff[1] / 1e9).toFixed(2);
+    const genSec = (process.hrtime(startTime)[0] + process.hrtime(startTime)[1] / 1e9).toFixed(2);
     console.log(colors.info(`已生成 ${colors.time(fileCount)} 个文件 ${colors.time(genSec + ' s')}`));
 
-    if (IS_MIN) {
-        console.log(colors.info('执行压缩中...'));
+    if (MUST_MIN) {
         const compressStart = process.hrtime();
-        
+        console.log(colors.info('执行压缩中...'));
         await minifyAssets(PUB, PUB);
-        
+    
         const compressDiff = process.hrtime(compressStart);
         const compressSec = (compressDiff[0] + compressDiff[1] / 1e9).toFixed(2);
         const ratio = totalOriginalSize > 0 ? ((totalMinifiedSize / totalOriginalSize) * 100).toFixed(2) : 100;
-
+        const oldTotal = formatSize(totalOriginalSize);
+        const newTotal = formatSize(totalMinifiedSize);
         console.log(colors.info(`已压缩 ${colors.time(compressedFileCount)} 个文件，用时 ${colors.time(compressSec + ' s')}`));
-        console.log(colors.info(`原大小: ${formatSize(totalOriginalSize)}, 压缩后: ${colors.time(formatSize(totalMinifiedSize))}, 压缩率: ${colors.time(ratio + '%')}`));
+        console.log(colors.info(`原大小: ${oldTotal.value}${oldTotal.unit}, 压缩后: ${colors.time(`${newTotal.value}${newTotal.unit}`)}, 压缩率: ${colors.time(ratio + '%')}`));
+    }
+
+    if (IS_WATCH) {
+        const port = GLOBAL_CONFIG.port || 3000;
+        const server = http.createServer((request, response) => {
+            return handler(request, response, { public: PUB });
+        });
+
+        server.listen(port, '::', () => {
+            console.log(colors.info(`Server is running at ${colors.time(`http://localhost:${port}/`)}`));
+        });
+
+        const watcher = chokidar.watch([SRC, TPL], {
+            ignored: /(^|[\/\\])\../,
+            persistent: true,
+            ignoreInitial: true
+        });
+        watcher.on('all', async (event, filePath) => {
+            try {
+                if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
+                    const gamesUpdate = loadGames(DATA_DIR);
+                    updateAuthorStats(gamesUpdate);
+                    
+                    genGamePages(TPL, PUB, gamesUpdate, DOMAIN); 
+                    genHomePages(TPL, PUB, gamesUpdate, DOMAIN);
+                    genAboutPage(TPL, PUB, DOMAIN);
+                } 
+                else if (filePath.includes(path.join('swf'))) {
+                    updateSwfStats(SRC);
+                    genAboutPage(TPL, PUB, DOMAIN);
+                }
+                else if (filePath.includes(GLOBAL_CONFIG.src)) {
+                    const dest = path.join(PUB, path.relative(SRC, filePath));
+                    ensureDir(path.dirname(dest));
+                    fse.copySync(filePath, dest);
+                    console.log(colors.info(`已同步: ${path.relative(PUB, dest)}`));
+                }
+            } catch (err) {
+                console.error(colors.error(`热更新失败: ${err.message}`));
+            }
+        });
     }
 }
 
@@ -217,6 +328,23 @@ function genGamePages(TPL, PUB, games, DOMAIN) {
         ensureDir(gameDir);
         writeFile(path.join(gameDir, 'index.html'), html, PUB);
     });
+}
+
+function gen404Page(TPL, PUB, DOMAIN) {
+    const html = renderTpl(TPL, '404', { domain: DOMAIN, pageType: '404' });
+    writeFile(path.join(PUB, '404.html'), html, PUB);
+}
+
+function genAboutPage(TPL, PUB, DOMAIN) {
+    const html = renderTpl(TPL, 'about', { 
+        domain: DOMAIN, 
+        pageType: 'about',
+        stats: CACHED_STATS 
+    });
+    
+    const aboutDir = path.join(PUB, 'about');
+    ensureDir(aboutDir);
+    writeFile(path.join(aboutDir, 'index.html'), html, PUB);
 }
 
 function genGamesNameJson(DATA_DIR, API_DIR, PUB) {

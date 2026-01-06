@@ -6,6 +6,8 @@
     "play": "WASD移动，J向上开枪，K向车头扔炸弹或导弹，哦你可以碾压敌人",
     "cover": "/images/赤色要塞之一/赤色要塞之一.webp",
     "dir": "/Games/赤色要塞之一",
+    "Author": "Konami",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "原版",

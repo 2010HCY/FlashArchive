@@ -1,0 +1,156 @@
+<%- include('head', { title: '404 - 网页被小猫吃掉了' }) %>
+<body>
+<%- include('header') %>
+
+<main class="error-wrapper">
+    <div class="error-bg" style="background-image: url('/images/404.png');">
+        <div class="error-overlay">
+            <div class="error-content">
+                <h1 class="error-code">
+                        404
+                    </h1>
+                <p class="error-msg">哎呀，网页被小猫吃掉了</p>
+
+                <div class="error-search-box">
+                    <input type="text" id="errorSearchInput" placeholder="搜点别的游戏填饱肚子..." />
+                    <button id="errorSearchBtn"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="error-actions">
+                    <a href="/" class="btn-home">返回首页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('search') %>
+<%- include('footer') %>
+
+<style>
+/* 404 Page */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: oklch(0.95 0.025 112);
+}
+.error-wrapper {
+    position: relative;
+    width: 100%;
+    flex: 1; 
+    overflow: hidden;
+}
+.error-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url('/images/404.png');
+    background-size: auto 85%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.error-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.error-content {
+    text-align: center;
+    color: #333;
+    z-index: 10;
+}
+.error-code {
+    font-size: 4rem;
+    line-height: 1.2em;
+    margin-bottom: 20px;
+    position: relative;
+}
+.error-msg {
+    font-size: 1.5rem;
+    margin: 10px 0 30px;
+    font-weight: bold;
+}
+.error-search-box {
+    display: flex;
+    max-width: 400px;
+    margin: 0 auto 20px;
+    background: #fff;
+    border-radius: 30px;
+    padding: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+.error-search-box input {
+    flex: 1;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    outline: none;
+}
+.error-search-box button {
+    background: #a3a300;
+    border: none;
+    color: #fff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.btn-home {
+    color: #a3a300;
+    text-decoration: none;
+    opacity: 0.9;
+    font-weight: bold;
+}
+@media (max-width: 768px) {
+    .error-code { font-size: 80px; }
+    .error-msg { font-size: 18px; }
+}
+</style>
+
+<script>
+(function() {
+    const errInput = document.getElementById('errorSearchInput');
+    const errBtn = document.getElementById('errorSearchBtn');
+
+    async function handle404Search() {
+        const keyword = errInput.value.trim();
+        if (!keyword) return;
+
+        const modal = document.getElementById('searchModal');
+        const modalInput = document.querySelector('.search-modal-input');
+        const closeBtn = document.getElementById('searchModalCloseBtn');
+        
+        if (modal && modalInput) {
+            modal.classList.add('active'); 
+            modal.style.display = 'block'; 
+            modalInput.value = keyword;
+            modalInput.focus();
+            
+            setTimeout(() => {
+                modalInput.dispatchEvent(new Event('input'));
+            }, 100);
+            if (closeBtn) {
+                const forceClose = () => {
+                    modal.classList.remove('active');
+                    modal.style.display = 'none';
+                };
+                closeBtn.onclick = forceClose;
+                const mask = document.getElementById('searchModalMask');
+                if (mask) mask.onclick = forceClose;
+            }
+        }
+    }
+
+    if (errBtn) errBtn.addEventListener('click', handle404Search);
+    if (errInput) {
+        errInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handle404Search();
+        });
+    }
+})();
+</script>

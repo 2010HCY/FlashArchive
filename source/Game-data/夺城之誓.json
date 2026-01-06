@@ -6,6 +6,8 @@
   "play": "夺城之誓，可以说是Flash大作了，大作空间肯定也很大，一个SWF文件40MB以上，敬请期待吧。共计6个版本199MB(六个版本的总大小)",
   "cover": "/images/夺城之誓/夺城之誓.webp",
   "dir": "/Games/夺城之誓",
+  "Author": "Fly Anvil",
+  "CN-Author": "未知",
   "files": [
     {
       "name": "夺城之誓1",

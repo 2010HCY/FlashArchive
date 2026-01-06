@@ -6,6 +6,8 @@
     "play": "鼠标操作，建造炮塔防御，游戏操作很简单，现代智人看一眼就会的那种",
     "cover": "/images/海战塔防/海战塔防.webp",
     "dir": "/Games/海战塔防",
+    "Author": "未知",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

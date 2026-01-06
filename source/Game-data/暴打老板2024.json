@@ -6,6 +6,8 @@
     "play": "鼠标控制，这是最新版，一共有24个物品可以点击并给老板暴击",
     "cover": "/images/暴打老板2024/暴打老板2024.webp",
     "dir": "/Games/暴打老板2024",
+    "Author": "未知",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

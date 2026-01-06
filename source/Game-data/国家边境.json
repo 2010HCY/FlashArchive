@@ -6,6 +6,8 @@
     "play": "鼠标控制，开始游历各国贸易吧，注意你只有一条命",
     "cover": "/images/国家边境/国家边境.webp",
     "dir": "/Games/国家边境",
+    "Author": "ArmorGames",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "汉化版",

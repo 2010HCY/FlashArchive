@@ -5,3 +5,4 @@ ignore:
   - Game-data
   - 模板.json
 domain: flash.hcyhub.com
+port: 8080

@@ -21,6 +21,12 @@
         <meta property="og:title" content="<%= game.title %>">
         <meta property="og:description" content="<%= game.brief %>">
         <meta property="og:image" content="https://<%= domain + game.cover %>">
+    <% } else if (pageType === '404' && typeof game !== 'undefined') { %>
+        <title>404</title>
+    <% } else if (pageType === 'about') { %>
+        <title>关于 | Flash收藏站</title>
+        <meta name="description" content="关于本站的统计信息与介绍">
+        <link rel="stylesheet" href="/api/common/about.css">
     <% } %>
     <script type="text/javascript" src="/api/common/sitetime.js" defer></script>
     <script type="text/javascript" src="/api/common/count.js" defer></script>

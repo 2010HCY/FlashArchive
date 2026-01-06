@@ -6,6 +6,8 @@
     "play": "鼠标控制，游戏有新手教程教你怎么玩（我特么对齐教程的字对齐了半天）<br>建议多屯点导弹，每10关有一个Boss，至少要50发导弹才能轻松击杀",
     "cover": "/images/最终导弹防御战/最终导弹防御战.webp",
     "dir": "/Games/最终导弹防御战",
+    "Author": "Sponsor",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

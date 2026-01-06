@@ -1,4 +1,3 @@
-<% if (pageType === 'home') { %>
 <header class="header">
   <div class="header-content">
     <button class="nav-burger" id="NavBurgerBtn" aria-label="菜单" type="button">
@@ -12,6 +11,7 @@
     </div>
     <nav class="nav-menu" id="NavMenu">
       <a href="/">首页</a>
+      <a href="/about">关于</a>
     </nav>
     <button class="nav-search" id="NavSearchBtn" aria-label="搜索" type="button">
       <i class="fas fa-search"></i>
@@ -26,70 +26,6 @@
       <i class="fas fa-times"></i>
     </button>
     <a href="/">首页</a>
+    <a href="/about">关于</a>
   </nav>
 </div>
-
-<!-- 搜索弹窗 -->
-<div id="searchModal" class="search-modal">
-  <div class="search-modal-mask" id="searchModalMask"></div>
-  <div class="search-modal-dialog">
-    <button class="search-modal-close" id="searchModalCloseBtn" aria-label="关闭搜索">
-      <i class="fas fa-times"></i>
-    </button>
-    <div class="search-modal-head">
-      <i class="fas fa-search"></i>
-      <span>搜索</span>
-    </div>
-    <input class="search-modal-input" type="text" placeholder="请输入搜索的关键词" />
-  <hr style="margin:0 0 0 0; border:none; border-top:1px solid #d4d4d4;">
-  <div id="searchResult" style="max-height: 400px; overflow-y: auto;"></div>
-  </div>
-</div>
-<% } else if (pageType === 'game') { %>
-<header class="header">
-  <div class="header-content">
-    <button class="nav-burger" id="NavBurgerBtn" aria-label="菜单" type="button">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="brand-logo">
-      <a href="/">
-        <img src="/api/icon/H.svg" alt="Flash收藏站Logo" class="logo-img">
-        <span class="logo-span">Flash收藏站</span>
-      </a>
-    </div>
-    <nav class="nav-menu" id="NavMenu">
-      <a href="/">首页</a>
-    </nav>
-    <button class="nav-search" id="NavSearchBtn" aria-label="搜索" type="button">
-      <i class="fas fa-search"></i>
-    </button>
-  </div>
-</header>
-<!-- 侧边栏菜单弹窗 -->
-<div id="mobileNavDrawer" class="nav-drawer">
-  <div class="nav-drawer-mask" id="navDrawerMask"></div>
-  <nav class="nav-drawer-panel">
-    <button class="nav-drawer-close" id="navDrawerCloseBtn" aria-label="关闭菜单">
-      <i class="fas fa-times"></i>
-    </button>
-    <a href="/">首页</a>
-  </nav>
-</div>
-
-<!-- 搜索弹窗 -->
-<div id="searchModal" class="search-modal">
-  <div class="search-modal-mask" id="searchModalMask"></div>
-  <div class="search-modal-dialog">
-    <button class="search-modal-close" id="searchModalCloseBtn" aria-label="关闭搜索">
-      <i class="fas fa-times"></i>
-    </button>
-    <div class="search-modal-head">
-      <i class="fas fa-search"></i>
-      <span>搜索</span>
-    </div>
-    <input class="search-modal-input" type="text" placeholder="请输入搜索的关键词" />
-  <hr style="margin:0 0 0 0; border:none; border-top:1px solid #d4d4d4;">
-  <div id="searchResult" style="max-height: 400px; overflow-y: auto;"></div>
-  </div>
-</div>
-<% } %>

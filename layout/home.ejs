@@ -3,7 +3,7 @@
 <%- include('head', { pageType: 'home' }) %>
 <body>
     <div class="card-container">
-      <%- include('header', { pageType: 'home' }) %>
+      <%- include('header') %>
       <div id="game-list">
         <% games.forEach(game => { %>
           <div class="card">
@@ -24,5 +24,6 @@
     <span id="totalPages" data-total-pages="<%= totalPages %>" data-current-page="<%= page %>" style="display:none;"></span>
     <%- include('footer') %>
     <script type="text/javascript" src="/api/index/index-pager.js"></script>
+    <%- include('search') %>
 </body>
 </html>

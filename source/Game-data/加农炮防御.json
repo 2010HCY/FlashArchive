@@ -6,6 +6,8 @@
     "play": "鼠标移动调整角度，左键发射，空格换弹（我也不知道为啥游戏里说是Shift键，实际换弹使用的是空格键）",
     "cover": "/images/加农炮防御/加农炮防御.webp",
     "dir": "/Games/加农炮防御",
+    "Author": "未知",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

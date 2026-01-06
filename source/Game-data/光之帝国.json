@@ -6,6 +6,8 @@
     "play": "鼠标控制，游戏有教程，这游戏不难，多建俩塔然后升升级就好了，就是后期贼卡",
     "cover": "/images/光之帝国/光之帝国.webp",
     "dir": "/Games/光之帝国",
+    "Author": "Flash Ninja Clan",
+    "CN-Author": "Ethaniel",
     "files": [
         {
             "name": "汉化版",

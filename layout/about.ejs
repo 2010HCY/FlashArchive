@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<%- include('head', { title: '关于 - Flash收藏站' }) %>
+<body>
+    <%- include('header', { pageType: 'about' }) %>
+
+    <main class="main-content about-container">
+        <section class="about-section bio-card">
+            <h2 class="section-title"><i class="fas fa-info-circle"></i> 关于本站</h2>
+            <div class="bio-content">
+                <p>欢迎来到我的个人Flash收藏空间！</p>
+                <p>我在不断收集、汉化着这些游戏，所有游戏均由人工汉化</p>
+                <h3>获取文件</h3>
+                <p>游戏元信息：https://flash.hcyhub.com/api/games_name.json</p>
+                <p>SWF 文件: https://flash.hcyhub.com/{name}.swf</p>
+                <p>截图文件: https://flash.hcyhub.com/{name}.png</p>
+            </div>
+        </section>
+
+        <section class="about-section stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">游戏总数</span>
+                    <span class="stat-value"><%= stats.totalCount %><small>个</small></span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-database"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">文件总大小</span>
+                    <span class="stat-value"><%= stats.totalSize.value %><small><%= stats.totalSize.unit %></small></span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-weight-hanging"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">最大文件</span>
+                    <span class="stat-value"><%= stats.maxFileSize.value %><small><%= stats.maxFileSize.unit %></small></span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">平均大小</span>
+                    <span class="stat-value"><%= stats.avgSize.value %><small><%= stats.avgSize.unit %></small></span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-user-edit"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">游戏作者</span>
+                    <span class="stat-value"><%= stats.authors %><small>位</small></span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-language"></i></div>
+                <div class="stat-info">
+                    <span class="stat-label">汉化贡献</span>
+                    <span class="stat-value"><%= stats.translators %><small>人</small></span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('footer') %>
+    <%- include('search') %>
+</body>
+</html>

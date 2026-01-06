@@ -6,6 +6,8 @@
     "play": "鼠标控制，游戏有引导你如何游玩，你也可以去看看<a href=\"https://flashgaming.fandom.com/wiki/Mini_Tower_Defence\" target=\"_blank\">Wiki</a>",
     "cover": "/images/迷你塔防/迷你塔防.webp",
     "dir": "/Games/迷你塔防",
+    "Author": "未知",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "汉化版",

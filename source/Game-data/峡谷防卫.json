@@ -6,6 +6,8 @@
     "play": "鼠标控制，放置炮台抵御外星人",
     "cover": "/images/峡谷防卫/峡谷防卫.webp",
     "dir": "/Games/峡谷防卫",
+    "Author": "未知",
+    "CN-Author": "未知",
     "files": [
         {
             "name": "汉化版",
