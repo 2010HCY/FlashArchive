@@ -3,12 +3,16 @@
     "title": "领海防御",
     "pubDate": "2026-01-04 23:47:00",
     "brief": "喜欢轰炸机战争吗？那就准备好迎接这场反潜战争吧",
-    "play": "WASD键移动，鼠标瞄准，R键装弹，空格键打开升级页面<br>汉化筹备中",
+    "play": "WASD键移动，鼠标瞄准，R键装弹，空格键打开升级页面<br>2026.01.08汉化完毕",
     "cover": "/images/领海防御/领海防御.webp",
     "dir": "/Games/领海防御",
     "Author": "未知",
-    "CN-Author": "无",
+    "CN-Author": "Ethaniel",
     "files": [
+        {
+            "name": "领海防御汉化版",
+            "path": "/swf/领海防御/领海防御汉化版.swf"
+        },
         {
             "name": "领海防御",
             "path": "/swf/领海防御/领海防御.swf"
