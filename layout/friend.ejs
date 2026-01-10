@@ -30,7 +30,7 @@
                         <% }) %>
                     </div>
 
-                    <hr class="friends-divider" style="margin: 20px 0; border: 0; border-top: 1px solid #eee;"> 
+                    <hr class="friends-divider"> 
 
                     <div class="links-content">
                         <% (site.data.friends.others || []).forEach(function(friend){ %>
@@ -82,7 +82,7 @@
                 </div>
                 <div style="padding-top: 10px;"> 
                 <div id="tcomment"></div>
-                <script src="/js/twikoo.min.js"></script>
+                <script src="/api/play/twikoo.min.js"></script>
                 <script>
                     twikoo.init({
                         envId: 'https://twikoo.teahush.link/.netlify/functions/twikoo',

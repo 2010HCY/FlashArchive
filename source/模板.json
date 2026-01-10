@@ -1,23 +1,35 @@
 {
-  "id": "游戏ID",
-  "title": "title",
-  "pubDate": "9999-01-01 00:00:00",
-  "brief": "显示在首页的短介绍",
-  "play": "玩法说明",
-  "cover": "/images/title/title.webp",
-  "dir": "/Games/title",
-  "files": [
-    {
-      "name": "汉化版",
-      "path": "/swf/title/title汉化版.swf"
-    },
-    {
-      "name": "原版",
-      "path": "/swf/title/title.swf"
-    },
-    {
-      "name": "修复版",
-      "path": "/swf/title/title修复版.swf"
-    }
-  ]
+	"id": "游戏ID",// 无特殊作用，从1顺延
+	"title": "title，游戏名，同时作为游戏标题，显示在游戏详情页和首页",
+	"pubDate": "时间，格式：YYYY-MM-DD HH:MM:SS",
+	"brief": "显示在首页的短介绍 ，不要超过32个字符",
+	"play": "玩法说明，显示在游戏播放页，介绍游戏、操作说明布拉布拉。",
+	"cover": "首页图片路径/images/title/title.webp",
+	"dir": "游戏目录/Games/title",// 该路径将作为Ruffle播放目录，处理多文件游戏情况。
+	"Author": "游戏作者，未知情况统一填写“未知”",
+    "CN-Author": "汉化者，如有多个汉化者，使用逗号分隔，未知统一填写“未知”，无需、无汉化统一填写“无”",
+	"files": [// 游戏入口文件路径，Ruffle将播放它。如有多个版本，按优先级顺序排列，第一项为默认播放项，格式规范<游戏名><版本名>.swf。游戏统一放置在/swf目录下。name字段为显示名称。
+		{
+			"name": "汉化版",
+			"path": "/swf/title/title汉化版.swf"
+		},
+		{
+			"name": "原版",
+			"path": "/swf/title/title.swf"
+		},
+		{
+			"name": "修复版",
+			"path": "/swf/title/title修复版.swf"
+		}
+	],
+	"DownFiles": [// 游戏的下载文件列表，格式规范同files字段，用于处理多文件游戏情况。（若文件较多比如PVZ Dome则打包压缩包，使用压缩包路径）
+		{
+			"name": "主文件.swf",
+			"path": "/swf/title/title.swf"
+		},
+		{
+			"name": "完整版.7z",
+			"path": "/swf/title/title.swf"
+		}
+	]
 }

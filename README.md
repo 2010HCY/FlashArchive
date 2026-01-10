@@ -1,7 +1,7 @@
-## 这是flash的收藏站
+## 静水深流 | Flash的收藏站
 
-这里面汇集了我收藏的flash小游戏，并且有人工汉化（本人亲自汉化），且能够方便快捷的一键切换汉化版原版。
-站点自带Ruffle可以直接游玩
+这里面汇集了我收藏的flash小游戏，全人工汉化，且能够直接切换多版本游玩、下载。
+站点自带Ruffle可以免插件游玩
 
 -->体验地址https://flash.hcyhub.com<--
 
@@ -15,3 +15,92 @@
 2. 你们可以转载、使用、修改，但请注明我这个作者，来源
 3. 我不对你们修改后的代码负责
 4. 允许在一定范围内的商用，但需要注明来源作者
+
+### 结构说明
+
+```
+Flash-web-Ethaniel
+├── layout
+│   ├── .keep
+│   ├── 404.ejs
+│   ├── about.ejs
+│   ├── author-games.ejs
+│   ├── author.ejs
+│   ├── footer.ejs
+│   ├── friend.ejs
+│   ├── game-card.ejs
+│   ├── game.ejs
+│   ├── head.ejs
+│   ├── header.ejs
+│   ├── home.ejs
+│   └── search.ejs
+├── public
+|   └── /.......
+├── source
+│   ├── api/
+│   ├── friend/
+│   ├── Game-data/
+│   ├── images/
+│   ├── swf/
+│   ├── 模板.json
+│   ├── Falsh播放器.exe
+│   └── robots.txt
+├── _config.yml
+├── friends.yml
+├── index.js
+├── package-lock.json
+├── package.json
+└── README.md
+```
+
+layout存放模板文件，source、public分别是来源、输出目录，可在_config.yml配置。
+
+配置文件说明：
+_config.yml
+
+```
+src: source                   # 来源目录
+public: public                # 输出目录
+template: layout              # 模板文件目录
+ignore:                       # 忽略列表，生成器将忽略它们不复制倒输出目录
+  - Game-data
+  - 模板.json
+domain: flash.hcyhub.com      # 域名
+port: 8080                    # 预览服务器端口
+```
+
+friends.yml
+
+```
+MySite:                       # 周边站点
+  - name: "静水深流"
+    url: "https://hcyhub.com"
+    avatar: "https://hcyhub.com/medias/avatar.webp"
+    introduction: "博客主站"
+
+others:                       # 友链
+  - name: "Example Domain"
+    url: "https://example.com/"
+    avatar: "https://example.com/img.png"
+    introduction: "一个示范域名"
+```
+
+package.json
+
+```
+{
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "clean-css": "^5.3.3",
+    "ejs": "^3.1.10",
+    "fs-extra": "^11.3.2",
+    "html-minifier": "^4.0.0",
+    "js-beautify": "^1.15.4",
+    "js-yaml": "^4.1.0",
+    "minimist": "^1.2.8",
+    "serve-handler": "^6.1.6",
+    "terser": "^5.44.1"
+  }
+}
+```
+
