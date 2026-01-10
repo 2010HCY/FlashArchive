@@ -218,6 +218,7 @@ async function main() {
     genGamePages(TPL, PUB, games, DOMAIN);
     gen404Page(TPL, PUB, DOMAIN);
     genAboutPage(TPL, PUB, DOMAIN);
+    genFriendPage(TPL, PUB, DOMAIN);
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
@@ -276,6 +277,9 @@ async function main() {
                     ensureDir(path.dirname(dest));
                     fse.copySync(filePath, dest);
                     console.log(colors.info(`已同步: ${path.relative(PUB, dest)}`));
+                }
+                else if (filePath.endsWith('friends.yml')) {
+                    genFriendPage(TPL, PUB, DOMAIN);
                 }
             } catch (err) {
                 console.error(colors.error(`热更新失败: ${err.message}`));
@@ -414,6 +418,43 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
             writeFile(dest, html, PUB);
         }
     });
+}
+
+function genFriendPage(TPL, PUB, DOMAIN) {
+    console.log(colors.info('生成 Friend 页面'));
+    
+    const RUNDIR = process.cwd();
+    const friendsPath = path.join(RUNDIR, 'friends.yml');
+    let friendsData = { MySite: [], others: [] };
+    
+    if (fs.existsSync(friendsPath)) {
+        try {
+            const loaded = yaml.load(fs.readFileSync(friendsPath, 'utf8'));
+            if (loaded) friendsData = loaded;
+        } catch (e) {
+            console.error(colors.error(`friends.yml 解析失败: ${e.message}`));
+        }
+    }
+
+    const html = renderTpl(TPL, 'friend', { 
+        domain: DOMAIN,
+        site: {
+            data: {
+                friends: friendsData
+            }
+        },
+        page: {
+            content: "" 
+        },
+        '__': function(key) {
+            const trans = { 'friends': '友情链接' };
+            return trans[key] || key;
+        }
+    });
+    
+    const friendDir = path.join(PUB, 'friend');
+    ensureDir(friendDir);
+    writeFile(path.join(friendDir, 'index.html'), html, PUB);
 }
 
 function genGamesNameJson(DATA_DIR, API_DIR, PUB) {

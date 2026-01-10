@@ -30,7 +30,8 @@
     <% } else if (pageType === 'author') { %>
         <title><%= title %></title>
         <link rel="stylesheet" href="/api/common/author.css">
-    <% } else if (pageType==='author-games' ) { 
+    <% } else if (pageType==='author-games' ) { %>
+        <%
             dynamicKeywords="" ; if (personType==='author' ) { dynamicTitle=personName + " 所有的作品" ; dynamicDesc="此为 " +
             personName + " 被收藏的所有作品" ; dynamicKeywords=personName + "开发的Flash游戏, " ; } else { dynamicTitle=personName + " 汉化的游戏"
             ; dynamicDesc="此为 " + personName + " 汉化的游戏" ; dynamicKeywords=personName + "汉化的Flash游戏, " ; } %>
@@ -42,6 +43,10 @@
         <meta property="og:description" content="<%= dynamicDesc %>">
         <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
         <link rel="stylesheet" href="/api/common/author-games.css">
+    <% } else if (pageType==='friend' ) { %>
+        <title>友链 | Flash收藏站</title>
+        <meta name="description" content="友情链接，欢迎交换友链！">
+        <link rel="stylesheet" href="/api/common/friend.css"> 
     <% } %>
     <script type="text/javascript" src="/api/common/sitetime.js" defer></script>
     <script type="text/javascript" src="/api/common/count.js" defer></script>
