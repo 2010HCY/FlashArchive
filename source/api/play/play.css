@@ -82,7 +82,7 @@ a:not(.header a):not(.footer a):hover::after {
 .game-container {
     flex: 3;
     background-color: #fff;
-    display: flex;
+    display: block;
     justify-content: center;
     align-items: center;
     border: 2px solid #ccc;
@@ -92,13 +92,18 @@ a:not(.header a):not(.footer a):hover::after {
     max-height: 500px;
     object-fit: contain;
     box-sizing: border-box;
+    overflow: hidden;
 }
-/* Flash显示位置 */
-.game-container embed {
-    height: auto;
-    width: 640px;
-    min-height: 480px;
-    max-height: none;
+/* Ruffle 播放器 */
+#gameEmbed {
+    position: absolute;
+    inset: 0;
+}
+#gameEmbed ruffle-player,
+#gameEmbed canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 /* 边栏文字介绍区 */
 .text-container {

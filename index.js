@@ -125,7 +125,16 @@ function cleanDirExceptGit(dir) {
     if (!fs.existsSync(dir)) return;
     for (const entry of fs.readdirSync(dir)) {
         if (entry === '.git' || entry === '.gitignore') continue;
-        fse.removeSync(path.join(dir, entry));
+        const fullPath = path.join(dir, entry);
+        
+        const stat = fs.lstatSync(fullPath); 
+        if (stat.isSymbolicLink()) {
+            fs.unlinkSync(fullPath);
+        } else if (stat.isDirectory()) {
+            fse.removeSync(fullPath);
+        } else {
+            fs.unlinkSync(fullPath);
+        }
     }
 }
 
@@ -200,10 +209,41 @@ async function main() {
 
     const IGNORE_LIST = new Set([...(GLOBAL_CONFIG.ignore || []), 'Game-data']);
     fs.readdirSync(SRC).forEach(entry => {
-        if (!IGNORE_LIST.has(entry)) {
-            const dest = path.join(PUB, entry);
-            fse.copySync(path.join(SRC, entry), dest, { overwrite: true });
-            if (fs.statSync(dest).isFile()) fileCount++;
+        if (IGNORE_LIST.has(entry)) return;
+
+        const srcPath = path.join(SRC, entry);
+        const destPath = path.join(PUB, entry);
+
+        if (entry === 'swf') {
+            if (fs.existsSync(destPath)) {
+                const dStat = fs.lstatSync(destPath);
+                if (dStat.isSymbolicLink() || (process.platform === 'win32' && dStat.isDirectory())) {
+                    fse.removeSync(destPath); 
+                }
+            }
+            
+            const type = process.platform === "win32" ? 'junction' : 'dir';
+            try {
+                fs.symlinkSync(srcPath, destPath, type);
+                console.log(colors.info(`已建立软链接: ${entry} -> ${srcPath}`));
+            } catch (e) {
+                console.error(colors.error(`软链接建立失败: ${e.message}`));
+            }
+        } else {
+            fse.copySync(srcPath, destPath, { overwrite: true });
+            
+            if (fs.statSync(destPath).isFile()) {
+                fileCount++;
+            } else {
+                const countFiles = (dir) => {
+                    fs.readdirSync(dir).forEach(f => {
+                        const p = path.join(dir, f);
+                        if (fs.statSync(p).isFile()) fileCount++;
+                        else countFiles(p);
+                    });
+                };
+                countFiles(destPath);
+            }
         }
     });
 
@@ -421,8 +461,6 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
 }
 
 function genFriendPage(TPL, PUB, DOMAIN) {
-    console.log(colors.info('生成 Friend 页面'));
-    
     const RUNDIR = process.cwd();
     const friendsPath = path.join(RUNDIR, 'friends.yml');
     let friendsData = { MySite: [], others: [] };

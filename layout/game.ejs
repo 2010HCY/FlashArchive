@@ -5,7 +5,7 @@
     <%- include('header') %>
     <main class="main-content">
         <div class="game-container">
-            <embed id="gameEmbed" src="<%= game.files[0].path %>" width="100%" height="100%" />
+            <div id="gameEmbed" style="width:100%;height:100%;"></div>
         </div>
         <div class="text-container">
             <h1>
@@ -61,33 +61,59 @@
         </script>
     </section>
     <script>
+        // 初始化 Ruffle 播放器
+        document.addEventListener('DOMContentLoaded', function () {
+            window.RufflePlayer = window.RufflePlayer || {};
+            rufflePlayer = window.RufflePlayer.newest();
+
+            player = rufflePlayer.createPlayer({
+                allowScriptAccess: true,
+                scale: "showall",
+                forceScale: true,
+                autoplay: "on",
+                backgroundColor: null,
+                polyfills: true,
+                allowNetworking: "internal",
+            });
+
+            const container = document.getElementById('gameEmbed');
+            container.appendChild(player);
+
+            switchGame(0);
+        });
+    </script>
+    <script>
+        // 切换游戏版本
         const gameFiles = <%- JSON.stringify(game.files) %>;
         let curGameIndex = 0;
         function switchGame(index) {
-            index = parseInt(index);
-            var embed = document.getElementById('gameEmbed');
-            if (gameFiles[index] && gameFiles[index].path) {
-                embed.src = gameFiles[index].path;
-                curGameIndex = index;
-            }
-            var curName = document.getElementById('curVerName');
-            if (curName) curName.textContent = gameFiles[index].name;
-
-            for (let i = 0; i < gameFiles.length; i++) {
-                let item = document.getElementById('verItem' + i);
-                if (item) {
-                    let check = item.querySelector('.ver-check');
-                    if (check) check.style.display = (i === index) ? 'inline-block' : 'none';
-                }
-            }
+            if (!player) return;
+            const file = gameFiles[index];
+            if (!file) return;
+            curGameIndex = index;
+            player.load({
+                url: file.path,
+                base: file.base || file.path.substring(0, file.path.lastIndexOf('/') + 1)
+            });
+            const nameEl = document.getElementById('curVerName');
+            if (nameEl) nameEl.textContent = file.name;
         }
-
+    </script>
+    <script>
+        // 切换版本下拉菜单
         function toggleVerDropdown(show) {
             var dropdown = document.getElementById('gameVerDropdown');
+            var btn = document.getElementById('gameVerDropdownBtn');
             if (!dropdown) return;
-            dropdown.style.display = show ? 'block' : 'none';
-        }
 
+            dropdown.style.display = show ? 'block' : 'none';
+
+            if (show) {
+                btn.classList.add('ver-dropdown-open');
+            } else {
+                btn.classList.remove('ver-dropdown-open');
+            }
+        }
         document.addEventListener('DOMContentLoaded', function () {
             var btn = document.getElementById('gameVerDropdownBtn');
             var menu = document.getElementById('gameVerDropdown');
@@ -99,19 +125,10 @@
                 document.body.addEventListener('click', function () { toggleVerDropdown(false); });
                 menu.onclick = function (e) { e.stopPropagation(); }
             }
-            switchGame(0);
         });
     </script>
     <script>
-    window.RufflePlayer = window.RufflePlayer || {};
-    window.RufflePlayer.config = {
-        "base": "<%= ruffleBase %>",
-        "allowScriptAccess": true,
-        scale: "none",
-        forceScale: true,
-    };
-    </script>
-    <script>
+        // 下载模态框
         function toggleDownloadModal(show) {
             var md = document.getElementById('downloadModal');
             if (md) {
@@ -127,7 +144,7 @@
                 }
             }
             var modal = document.getElementById('downloadModal');
-            if (modal) modal.onclick = function (e) {
+            if (modal) modal.onclick = function () {
                 toggleDownloadModal(false);
             };
             var panel = document.querySelector('.download-modal-panel');
@@ -135,20 +152,6 @@
                 e.stopPropagation();
             }
         });
-        function toggleVerDropdown(show) {
-        var dropdown = document.getElementById('gameVerDropdown');
-        var btn = document.getElementById('gameVerDropdownBtn'); // 获取按钮
-        if (!dropdown) return;
-    
-        dropdown.style.display = show ? 'block' : 'none';
-    
-        // 切换旋转类名
-        if (show) {
-            btn.classList.add('ver-dropdown-open');
-        } else {
-            btn.classList.remove('ver-dropdown-open');
-        }
-    }
     </script>
     <div id="downloadModal" class="download-modal" style="display:none;">
         <div class="download-modal-mask"></div>
