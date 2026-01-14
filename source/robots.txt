@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /visitor-count
 Disallow: /likes/page
-Sitemap: https://flash.tealhush.link/sitemap.xml
+Sitemap: https://flash.hcyhub.com/sitemap.xml
