@@ -1,0 +1,21 @@
+{
+    "id": "43",
+    "title": "暴打前任",
+    "pubDate": "2026-01-18 19:25:06",
+    "brief": "用18般武艺暴打前任",
+    "play": "鼠标控制，寻找暴打前任的18种方法",
+    "cover": "/images/暴打前任/暴打前任.webp",
+    "dir": "/Games/暴打前任",
+    "Author": "doodie",
+    "CN-Author": "Ethaniel",
+    "files": [
+        {
+            "name": "汉化版",
+            "path": "/swf/暴打前任/暴打前任汉化版.swf"
+        },
+        {
+            "name": "原版",
+            "path": "/swf/暴打前任/暴打前任.swf"
+        }
+    ]
+}

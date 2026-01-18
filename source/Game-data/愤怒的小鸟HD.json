@@ -1,0 +1,41 @@
+{
+    "id": "40",
+    "title": "愤怒的小鸟 HD",
+    "pubDate": "2026-01-18 15:00:04",
+    "brief": "一代经典，愤怒的小鸟HD3.1版",
+    "play": "愤怒的小鸟是由芬兰Rovio公司开发的益智弹射游戏，使用弹弓发射不同能力的小鸟，摧毁绿色小猪的堡垒。<br>HD 3.1版本无法在线游玩，只能下载游玩",
+    "cover": "/images/愤怒的小鸟 HD/愤怒的小鸟 HD.webp",
+    "dir": "/Games/愤怒的小鸟 HD-3-1",
+    "Author": "Rovio",
+    "CN-Author": "无",
+    "files": [
+        {
+            "name": "愤怒的小鸟 HD",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-1.1",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD-1.1.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-1.2",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD-1.2.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-1.2选关版",
+            "path": "/swf/愤怒的小鸟 HD选关版/愤怒的小鸟HD-1.2选关版.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-2.0",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD-2.0.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-2.6",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD-2.6.swf"
+        },
+        {
+            "name": "愤怒的小鸟 HD-3.1",
+            "path": "/swf/愤怒的小鸟 HD/愤怒的小鸟HD-3.1.swf"
+        }
+    ]
+}

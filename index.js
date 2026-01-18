@@ -286,7 +286,12 @@ async function main() {
     if (IS_WATCH) {
         const port = GLOBAL_CONFIG.port || 3000;
         const server = http.createServer((request, response) => {
-            return handler(request, response, { public: PUB });
+            return handler(request, response, {
+                public: PUB,
+                cleanUrls: true,
+                directoryListing: false,
+                index: ['index.html']
+            });
         });
 
         server.listen(port, '::', () => {

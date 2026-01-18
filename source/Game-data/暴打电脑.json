@@ -1,0 +1,21 @@
+{
+    "id": "42",
+    "title": "暴打电脑",
+    "pubDate": "2026-01-18 19:24:45",
+    "brief": "工作？不，暴打电脑！",
+    "play": "鼠标控制，用不同的办法把电脑打个稀巴烂",
+    "cover": "/images/暴打电脑/暴打电脑.webp",
+    "dir": "/Games/暴打电脑",
+    "Author": "doodie",
+    "CN-Author": "Ethaniel",
+    "files": [
+        {
+            "name": "汉化版",
+            "path": "/swf/暴打电脑/暴打电脑汉化版.swf"
+        },
+        {
+            "name": "原版",
+            "path": "/swf/暴打电脑/暴打电脑.swf"
+        }
+    ]
+}
