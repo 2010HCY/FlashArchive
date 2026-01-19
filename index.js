@@ -409,7 +409,23 @@ function loadGames(DATA_DIR) {
 
 function genGamePages(TPL, PUB, game, DOMAIN) {
     let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
-    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN });
+    // ===== 作者 =====
+    const authorName = (game['Author'] || '').trim();
+    const author =
+        !authorName || authorName === '未知'
+            ? { text: '未知', link: null }
+            : { text: authorName, link: `/authors/${authorName}/` };
+
+    // ===== 汉化者 =====
+    const cnAuthorName = (game['CN-Author'] || '').trim();
+    const translator =
+        !cnAuthorName || cnAuthorName === '无'
+            ? null
+            : { text: cnAuthorName, link: `/translators/${cnAuthorName}/` };
+
+    // ===== 发布时间 =====
+    const pubTime = formatDisplayTime(game.pubDate);
+    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translator, pubTime });
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
     writeFile(path.join(gameDir, 'index.html'), html, PUB);
@@ -587,6 +603,23 @@ function genSearchJson(DATA_DIR, API_DIR, PUB) {
         });
     arr.sort((a, b) => Number(a.id) - Number(b.id));
     writeFile(path.join(API_DIR, 'search.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
+}
+
+function formatDisplayTime(timeString) {
+    if (!timeString) {
+        return { text: '----.--.-- --:--', valid: false };
+    }
+
+    const d = new Date(timeString.replace(/-/g, '/'));
+    if (isNaN(d.getTime())) {
+        return { text: '----.--.-- --:--', valid: false };
+    }
+
+    const pad = n => String(n).padStart(2, '0');
+    return {
+        text: `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`,
+        valid: true
+    };
 }
 
 function formatDate(timeString, type) {

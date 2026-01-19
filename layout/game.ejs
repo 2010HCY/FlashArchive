@@ -31,6 +31,29 @@
             <br>
             <i class="far fa-eye fa-fw"></i>总计游玩次数:&nbsp;&nbsp;
             <span class="stats-value" id="PageMeter_page_pv">加载中...</span>
+            <!-- 作者 -->
+            <br>
+            <i class="fas fa-users fa-fw"></i>
+            <% if (author.link) { %>
+                <a href="<%= author.link %>"><%= author.text %></a>
+            <% } else { %>
+                <span><%= author.text %></span>
+            <% } %>
+            <!-- 汉化者 -->
+            <% if (translator) { %>
+                <br>
+                <i class="fas fa-language fa-fw"></i>
+                <a href="<%= translator.link %>"><%= translator.text %></a>
+            <% } %>
+            <!-- 发布时间 -->
+            <br>
+            <i class="far fa-calendar-alt fa-fw"></i>
+            <span class="<%= pubTime.valid ? '' : 'time-invalid' %>">
+                <%= pubTime.text %>
+            </span>
+            <% if (!pubTime.valid) { %>
+                <span class="time-warning"></span>
+            <% } %>
             <h2>如何游玩</h2>
             <p><%- game.play %></p>
             <p>你可以按上面的按钮切换不同版本</p>
