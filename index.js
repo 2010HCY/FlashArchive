@@ -268,7 +268,7 @@ async function main() {
     console.log(colors.info(`文件加载耗时 ${colors.time(loadMs + ' ms')}`));
 
     genHomePages(TPL, PUB, games, DOMAIN);
-    genGamePages(TPL, PUB, games, DOMAIN);
+    games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
     gen404Page(TPL, PUB, DOMAIN);
     genAboutPage(TPL, PUB, DOMAIN);
     genFriendPage(TPL, PUB, DOMAIN);
@@ -319,16 +319,33 @@ async function main() {
         });
         watcher.on('all', async (event, filePath) => {
             try {
-                const file = path.basename(filePath);
+                function findGamePageIndex(games, gameDir, pageSize) {
+                    const index = games.findIndex(g => g.dir === gameDir);
+                    if (index === -1) return null;
+                    return Math.floor(index / pageSize) + 1;
+                }
 
                 // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
                     const game = loadSingleGame(filePath);
-                    genSingleGamePage(TPL, PUB, game, DOMAIN);
+                    genGamePages(TPL, PUB, game, DOMAIN);
                     const games = loadGames(DATA_DIR);
                     updateAuthorStats(games);
                     genSitemapXml(PUB, DOMAIN, games);
                     genRssXml(PUB, DOMAIN, games);
+                    const PAGE_SIZE = 20;
+                    const page = findGamePageIndex(games, game.dir, PAGE_SIZE);
+                    if (page !== null) {
+                        const pageGames = games.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+                        const html = renderTpl(TPL, 'home', {
+                            games: pageGames,
+                            page: page,
+                            totalPages: Math.ceil(games.length / PAGE_SIZE),
+                            domain: DOMAIN
+                        });
+                        const dest = path.join(PUB, page === 1 ? 'index.html' : `${page}.html`);
+                        writeFile(dest, html, PUB);
+                    }
                     return;
                 }
 
@@ -339,7 +356,7 @@ async function main() {
                     const games = loadGames(DATA_DIR);
 
                     if (affect === 'game') {
-                        games.forEach(g => genSingleGamePage(TPL, PUB, g, DOMAIN));
+                        games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
                     } 
                     else if (affect === 'home') {
                         genHomePages(TPL, PUB, games, DOMAIN);
@@ -390,7 +407,7 @@ function loadGames(DATA_DIR) {
     return games;
 }
 
-function genSingleGamePage(TPL, PUB, game, DOMAIN) {
+function genGamePages(TPL, PUB, game, DOMAIN) {
     let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
     const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN });
     const gameDir = path.join(PUB, game.dir);
@@ -427,16 +444,6 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
         const dest = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
         writeFile(dest, html, PUB);
     }
-}
-
-function genGamePages(TPL, PUB, games, DOMAIN) {
-    games.forEach(game => {
-        let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
-        const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN });
-        const gameDir = path.join(PUB, game.dir);
-        ensureDir(gameDir);
-        writeFile(path.join(gameDir, 'index.html'), html, PUB);
-    });
 }
 
 function gen404Page(TPL, PUB, DOMAIN) {
@@ -582,10 +589,11 @@ function genSearchJson(DATA_DIR, API_DIR, PUB) {
     writeFile(path.join(API_DIR, 'search.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
 }
 
-function convertToSitemapTime(timeString) {
+function formatDate(timeString, type) {
     if (!timeString) return '';
-    let d = new Date(timeString.replace(/-/g, '/'));
-    return d.toISOString().replace('.000', '').replace('Z', '+00:00');
+    const d = new Date(timeString.replace(/-/g, '/'));
+    if (type === 'rss') return d.toUTCString();
+    if (type === 'sitemap') return d.toISOString().replace('.000', '').replace('Z', '+00:00');
 }
 
 function genSitemapXml(PUB, DOMAIN, games) {
@@ -595,17 +603,11 @@ function genSitemapXml(PUB, DOMAIN, games) {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>${n}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${n}`;
     games.forEach(g => {
         const url = `https://${DOMAIN}/${g.dir}/`;
-        const lastmod = convertToSitemapTime(g.pubDate);
+        const lastmod = formatDate(g.pubDate);
         xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}${s}${s}<lastmod>${lastmod}</lastmod>${n}${s}</url>${n}`;
     });
     xml += `</urlset>${n}`;
     writeFile(path.join(PUB, 'sitemap.xml'), xml, PUB);
-}
-
-function formatRssDate(timeString) {
-    if (!timeString) return '';
-    let d = new Date(timeString.replace(/-/g, '/'));
-    return d.toUTCString();
 }
 
 function genRssXml(PUB, DOMAIN, games) {
@@ -621,7 +623,7 @@ function genRssXml(PUB, DOMAIN, games) {
 
     games.forEach(g => {
         const link = `https://${DOMAIN}/${g.dir}/`;
-        const pubDate = g.pubDate ? formatRssDate(g.pubDate) : now;
+        const pubDate = g.pubDate ? formatDate(g.pubDate) : now;
         xml += `${s}${s}<item>${n}`;
         xml += `${s}${s}${s}<title>${g.title}</title>${n}`;
         xml += `${s}${s}${s}<link>${link}</link>${n}`;
