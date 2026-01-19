@@ -19,10 +19,23 @@ let totalMinifiedSize = 0;
 let compressedFileCount = 0;
 let GLOBAL_CONFIG = {};
 
+// 统计数据缓存
 let CACHED_STATS = {
     totalCount: 0, totalSize: '0 B', maxFileSize: '0 B', avgSize: '0 B',
     authors: 0, translators: 0
 };
+
+// 模板影响范围映射
+const TEMPLATE_AFFECT = {
+    'game.ejs': 'game',
+    'home.ejs': 'home',
+    'about.ejs': 'about',
+    '404.ejs': '404',
+    'friend.ejs': 'friend',
+    'author.ejs': 'author',
+    'author-games.ejs': 'author-games'
+};
+
 
 function updateSwfStats(SRC_DIR) {
     const swfRoot = path.join(SRC_DIR, 'swf');
@@ -263,8 +276,9 @@ async function main() {
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
     genSearchJson(DATA_DIR, API_DIR, PUB);
-    genSitemapXmlFromApi(API_DIR, PUB, DOMAIN);
-    genRssXmlFromApi(API_DIR, PUB, DOMAIN);
+    genSitemapXml(PUB, DOMAIN, games);
+    genRssXml(PUB, DOMAIN, games);
+
 
     const genSec = (process.hrtime(startTime)[0] + process.hrtime(startTime)[1] / 1e9).toFixed(2);
     console.log(colors.info(`已生成 ${colors.time(fileCount)} 个文件 ${colors.time(genSec + ' s')}`));
@@ -305,26 +319,49 @@ async function main() {
         });
         watcher.on('all', async (event, filePath) => {
             try {
+                const file = path.basename(filePath);
+
+                // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
-                    const gamesUpdate = loadGames(DATA_DIR);
-                    updateAuthorStats(gamesUpdate);
-                    
-                    genGamePages(TPL, PUB, gamesUpdate, DOMAIN); 
-                    genHomePages(TPL, PUB, gamesUpdate, DOMAIN);
-                    genAboutPage(TPL, PUB, DOMAIN);
-                } 
-                else if (filePath.includes(path.join('swf'))) {
+                    const game = loadSingleGame(filePath);
+                    genSingleGamePage(TPL, PUB, game, DOMAIN);
+                    const games = loadGames(DATA_DIR);
+                    updateAuthorStats(games);
+                    genSitemapXml(PUB, DOMAIN, games);
+                    genRssXml(PUB, DOMAIN, games);
+                    return;
+                }
+
+                // 模板
+                if (filePath.endsWith('.ejs')) {
+                    const tplName = path.basename(filePath);
+                    const affect = TEMPLATE_AFFECT[tplName];
+                    const games = loadGames(DATA_DIR);
+
+                    if (affect === 'game') {
+                        games.forEach(g => genSingleGamePage(TPL, PUB, g, DOMAIN));
+                    } 
+                    else if (affect === 'home') {
+                        genHomePages(TPL, PUB, games, DOMAIN);
+                    } 
+                    else if (affect === 'about') {
+                        updateSwfStats(SRC);
+                        genAboutPage(TPL, PUB, DOMAIN);
+                    }
+                    else if (affect === 'friend') {
+                        genFriendPage(TPL, PUB, DOMAIN);
+                    }
+                    else if (affect === 'author' || affect === 'author-games') {
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+                    }
+                    return;
+                }
+
+                // swf 变更
+                if (filePath.includes(path.join('swf'))) {
                     updateSwfStats(SRC);
                     genAboutPage(TPL, PUB, DOMAIN);
-                }
-                else if (filePath.includes(GLOBAL_CONFIG.src)) {
-                    const dest = path.join(PUB, path.relative(SRC, filePath));
-                    ensureDir(path.dirname(dest));
-                    fse.copySync(filePath, dest);
-                    console.log(colors.info(`已同步: ${path.relative(PUB, dest)}`));
-                }
-                else if (filePath.endsWith('friends.yml')) {
-                    genFriendPage(TPL, PUB, DOMAIN);
                 }
             } catch (err) {
                 console.error(colors.error(`热更新失败: ${err.message}`));
@@ -351,6 +388,27 @@ function loadGames(DATA_DIR) {
         });
     games.sort((a, b) => b.pubDate.localeCompare(a.pubDate));
     return games;
+}
+
+function genSingleGamePage(TPL, PUB, game, DOMAIN) {
+    let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
+    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN });
+    const gameDir = path.join(PUB, game.dir);
+    ensureDir(gameDir);
+    writeFile(path.join(gameDir, 'index.html'), html, PUB);
+}
+
+function loadSingleGame(jsonPath) {
+    const g = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+    if (!g.files || g.files.length === 0) {
+        g.files = [
+            { name: "汉化版", path: `/swf/${g.dir}/${g.dir}汉化版.swf` },
+            { name: "原版", path: `/swf/${g.dir}/${g.dir}.swf` }
+        ];
+    }
+    if (!g.DownFiles || g.DownFiles.length === 0) g.DownFiles = g.files;
+    if (!g.cover) g.cover = `/images/${g.dir}/${g.dir}.webp`;
+    return g;
 }
 
 function renderTpl(tplDir, name, data) {
@@ -530,18 +588,15 @@ function convertToSitemapTime(timeString) {
     return d.toISOString().replace('.000', '').replace('Z', '+00:00');
 }
 
-function genSitemapXmlFromApi(API_DIR, PUB, DOMAIN) {
-    const dataPath = path.join(API_DIR, 'games_name.json');
-    if(!fs.existsSync(dataPath)) return;
-    const arr = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+function genSitemapXml(PUB, DOMAIN, games) {
     const n = IS_MIN ? "" : "\n";
     const s = IS_MIN ? "" : "  ";
-    
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>${n}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${n}`;
-    arr.forEach(item => {
-        const url = `https://${DOMAIN}/Games/${encodeURIComponent(item.name)}`;
-        const sitemapTime = convertToSitemapTime(item.time);
-        xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}${s}${s}<lastmod>${sitemapTime}</lastmod>${n}${s}</url>${n}`;
+    games.forEach(g => {
+        const url = `https://${DOMAIN}/${g.dir}/`;
+        const lastmod = convertToSitemapTime(g.pubDate);
+        xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}${s}${s}<lastmod>${lastmod}</lastmod>${n}${s}</url>${n}`;
     });
     xml += `</urlset>${n}`;
     writeFile(path.join(PUB, 'sitemap.xml'), xml, PUB);
@@ -553,26 +608,28 @@ function formatRssDate(timeString) {
     return d.toUTCString();
 }
 
-function genRssXmlFromApi(API_DIR, PUB, DOMAIN) {
-    const dataPath = path.join(API_DIR, 'games_name.json');
-    if(!fs.existsSync(dataPath)) return;
-    const arr = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+function genRssXml(PUB, DOMAIN, games) {
     const now = new Date().toUTCString();
     const n = IS_MIN ? "" : "\n";
     const s = IS_MIN ? "" : "  ";
 
     let xml = `<?xml version="1.0" encoding="UTF-8" ?>${n}<rss version="2.0">${n}${s}<channel>${n}`;
-    xml += `${s}${s}<title>Flash收藏站</title>${n}${s}${s}<link>https://${DOMAIN}/</link>${n}`;
-    xml += `${s}${s}<description>最新Flash游戏列表 RSS 订阅</description>${n}${s}${s}<language>zh-CN</language>${n}`;
+    xml += `${s}${s}<title>Flash收藏站</title>${n}`;
+    xml += `${s}${s}<link>https://${DOMAIN}/</link>${n}`;
+    xml += `${s}${s}<description>最新Flash游戏列表 RSS 订阅</description>${n}`;
     xml += `${s}${s}<lastBuildDate>${now}</lastBuildDate>${n}`;
-    
-    arr.forEach(item => {
-        const link = `https://${DOMAIN}/Games/${encodeURIComponent(item.name)}`;
-        const pubDate = item.time ? formatRssDate(item.time) : now;
-        xml += `${s}${s}<item>${n}${s}${s}${s}<title>${item.title || item.name}</title>${n}`;
-        xml += `${s}${s}${s}<link>${link}</link>${n}${s}${s}${s}<description>${item.desc || ""}</description>${n}`;
-        xml += `${s}${s}${s}<pubDate>${pubDate}</pubDate>${n}${s}${s}</item>${n}`;
+
+    games.forEach(g => {
+        const link = `https://${DOMAIN}/${g.dir}/`;
+        const pubDate = g.pubDate ? formatRssDate(g.pubDate) : now;
+        xml += `${s}${s}<item>${n}`;
+        xml += `${s}${s}${s}<title>${g.title}</title>${n}`;
+        xml += `${s}${s}${s}<link>${link}</link>${n}`;
+        xml += `${s}${s}${s}<description>${g.brief || ""}</description>${n}`;
+        xml += `${s}${s}${s}<pubDate>${pubDate}</pubDate>${n}`;
+        xml += `${s}${s}</item>${n}`;
     });
+
     xml += `${s}</channel>${n}</rss>`;
     writeFile(path.join(PUB, 'rss.xml'), xml, PUB);
 }
