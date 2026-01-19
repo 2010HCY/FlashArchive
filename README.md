@@ -104,3 +104,42 @@ package.json
 }
 ```
 
+index.js
+
+```
+main()
+│
+├─ loadConfig() → 读取 _config.yml
+├─ ensureDir(PUB) → 创建发布目录
+├─ cleanDirExceptGit(PUB) → 清理旧文件
+├─ 遍历 SRC → copy 文件 / 建立 swf 软链接
+│
+├─ loadGames(DATA_DIR) → 返回 games[]
+│    ├─ 补全 files、DownFiles、cover
+│
+├─ updateSwfStats(SRC) → 统计 SWF 文件信息
+├─ updateAuthorStats(games) → 统计作者/汉化者
+│
+├─ 页面生成
+│    ├─ genHomePages(TPL, PUB, games, DOMAIN)
+│    ├─ games.forEach → genGamePages(TPL, PUB, game, DOMAIN)
+│    │    ├─ 处理 author/translator/pubTime
+│    │    └─ renderTpl → 写 index.html
+│    ├─ gen404Page(TPL, PUB, DOMAIN)
+│    ├─ genAboutPage(TPL, PUB, DOMAIN) → 使用 CACHED_STATS
+│    ├─ genFriendPage(TPL, PUB, DOMAIN)
+│    ├─ genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author')
+│    └─ genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator')
+│
+├─ API/数据生成
+│    ├─ genGamesNameJson(DATA_DIR, API_DIR, PUB)
+│    ├─ genSearchJson(DATA_DIR, API_DIR, PUB)
+│    ├─ genSitemapXml(PUB, DOMAIN, games)
+│    └─ genRssXml(PUB, DOMAIN, games)
+│
+├─ (可选) minifyAssets(PUB, PUB) → 压缩 JS/CSS/HTML
+│
+└─ (可选) watch / serve
+     ├─ HTTP server 启动
+     └─ chokidar 监听文件变化 → 热更新对应页面或 JSON
+```

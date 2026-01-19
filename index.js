@@ -36,7 +36,7 @@ const TEMPLATE_AFFECT = {
     'author-games.ejs': 'author-games'
 };
 
-
+// 统计SWF文件信息
 function updateSwfStats(SRC_DIR) {
     const swfRoot = path.join(SRC_DIR, 'swf');
     let totalBytes = 0, swfFileCount = 0, maxBytes = 0;
@@ -63,6 +63,7 @@ function updateSwfStats(SRC_DIR) {
     CACHED_STATS.avgSize = formatSize(swfFileCount > 0 ? totalBytes / swfFileCount : 0);
 }
 
+// 统计作者和汉化者人数
 function updateAuthorStats(games) {
     const authors = new Set();
     const cnAuthors = new Set();
@@ -93,6 +94,7 @@ function updateAuthorStats(games) {
     CACHED_STATS.translators = cnAuthors.size;
 }
 
+// 格式化字节大小
 function formatSize(bytes) {
     if (bytes === 0) return { value: '0', unit: 'B' };
     const k = 1024;
@@ -104,12 +106,14 @@ function formatSize(bytes) {
     };
 }
 
+// 终端颜色
 const colors = {
     info: (msg) => `\x1b[38;2;28;168;0mINFO\x1b[0m  ${msg}`,      // #1CA800
     time: (msg) => `\x1b[38;2;0;168;154m${msg}\x1b[0m`,          // #00A89A
     error: (msg) => `\x1b[38;2;162;30;41mERROR\x1b[0m ${msg}`,    // #A21E29
 };
 
+// 写入文件并输出日志
 function writeFile(dest, content, PUB_DIR) {
     fs.writeFileSync(dest, content, 'utf8');
     const relPath = path.relative(PUB_DIR, dest);
@@ -117,6 +121,7 @@ function writeFile(dest, content, PUB_DIR) {
     fileCount++;
 }
 
+// 加载配置文件
 function loadConfig() {
     console.log(colors.info('读取 Config'));
     const RUNDIR = process.cwd();
@@ -130,10 +135,12 @@ function loadConfig() {
     return cfg;
 }
 
+// 确保目录存在
 function ensureDir(dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
+// 清理目录但保留 .git 和 .gitignore
 function cleanDirExceptGit(dir) {
     if (!fs.existsSync(dir)) return;
     for (const entry of fs.readdirSync(dir)) {
@@ -151,6 +158,7 @@ function cleanDirExceptGit(dir) {
     }
 }
 
+// 递归压缩文件
 async function minifyAssets(dir, PUB_DIR) {
     const files = fse.readdirSync(dir);
     for (const file of files) {
@@ -201,6 +209,7 @@ async function minifyAssets(dir, PUB_DIR) {
     }
 }
 
+// 主函数
 async function main() {
     const startTime = process.hrtime();
     GLOBAL_CONFIG = loadConfig();
@@ -222,11 +231,13 @@ async function main() {
 
     const IGNORE_LIST = new Set([...(GLOBAL_CONFIG.ignore || []), 'Game-data']);
     fs.readdirSync(SRC).forEach(entry => {
+        // 跳过忽略列表中的文件或目录
         if (IGNORE_LIST.has(entry)) return;
 
         const srcPath = path.join(SRC, entry);
         const destPath = path.join(PUB, entry);
 
+        // swf目录建立软链接其余复制
         if (entry === 'swf') {
             if (fs.existsSync(destPath)) {
                 const dStat = fs.lstatSync(destPath);
@@ -260,6 +271,7 @@ async function main() {
         }
     });
 
+    // 加载数据
     const loadStart = process.hrtime();
     const games = loadGames(DATA_DIR);
     updateSwfStats(SRC);
@@ -267,6 +279,7 @@ async function main() {
     const loadMs = (process.hrtime(loadStart)[0] * 1e3 + process.hrtime(loadStart)[1] / 1e6).toFixed(2);
     console.log(colors.info(`文件加载耗时 ${colors.time(loadMs + ' ms')}`));
 
+    // 生成页面
     genHomePages(TPL, PUB, games, DOMAIN);
     games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
     gen404Page(TPL, PUB, DOMAIN);
@@ -279,10 +292,11 @@ async function main() {
     genSitemapXml(PUB, DOMAIN, games);
     genRssXml(PUB, DOMAIN, games);
 
-
+    // 统计数据
     const genSec = (process.hrtime(startTime)[0] + process.hrtime(startTime)[1] / 1e9).toFixed(2);
     console.log(colors.info(`已生成 ${colors.time(fileCount)} 个文件 ${colors.time(genSec + ' s')}`));
 
+    // 压缩资源
     if (MUST_MIN) {
         const compressStart = process.hrtime();
         console.log(colors.info('执行压缩中...'));
@@ -297,7 +311,9 @@ async function main() {
         console.log(colors.info(`原大小: ${oldTotal.value}${oldTotal.unit}, 压缩后: ${colors.time(`${newTotal.value}${newTotal.unit}`)}, 压缩率: ${colors.time(ratio + '%')}`));
     }
 
+    // 实时预览
     if (IS_WATCH) {
+        // 启动服务器，默认端口3000
         const port = GLOBAL_CONFIG.port || 3000;
         const server = http.createServer((request, response) => {
             return handler(request, response, {
@@ -312,6 +328,7 @@ async function main() {
             console.log(colors.info(`Server is running at ${colors.time(`http://localhost:${port}/`)}`));
         });
 
+        // 监听文件变化
         const watcher = chokidar.watch([SRC, TPL], {
             ignored: /(^|[\/\\])\../,
             persistent: true,
@@ -387,6 +404,7 @@ async function main() {
     }
 }
 
+// 加载JSON数据
 function loadGames(DATA_DIR) {
     if (!fs.existsSync(DATA_DIR)) return [];
     const games = fs.readdirSync(DATA_DIR)
@@ -407,23 +425,24 @@ function loadGames(DATA_DIR) {
     return games;
 }
 
+// 生成游玩页
 function genGamePages(TPL, PUB, game, DOMAIN) {
     let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
-    // ===== 作者 =====
+    // 作者
     const authorName = (game['Author'] || '').trim();
     const author =
         !authorName || authorName === '未知'
             ? { text: '未知', link: null }
             : { text: authorName, link: `/authors/${authorName}/` };
 
-    // ===== 汉化者 =====
+    // 汉化者
     const cnAuthorName = (game['CN-Author'] || '').trim();
     const translator =
         !cnAuthorName || cnAuthorName === '无'
             ? null
             : { text: cnAuthorName, link: `/translators/${cnAuthorName}/` };
 
-    // ===== 发布时间 =====
+    // 发布时间
     const pubTime = formatDisplayTime(game.pubDate);
     const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translator, pubTime });
     const gameDir = path.join(PUB, game.dir);
@@ -431,6 +450,7 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
     writeFile(path.join(gameDir, 'index.html'), html, PUB);
 }
 
+// 加载单游戏JSON
 function loadSingleGame(jsonPath) {
     const g = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
     if (!g.files || g.files.length === 0) {
@@ -444,6 +464,7 @@ function loadSingleGame(jsonPath) {
     return g;
 }
 
+// 渲染美化
 function renderTpl(tplDir, name, data) {
     const tplPath = path.join(tplDir, name + '.ejs');
     const rawHtml = ejs.render(fs.readFileSync(tplPath, 'utf-8'), data, { filename: tplPath });
@@ -451,6 +472,7 @@ function renderTpl(tplDir, name, data) {
     return beautify(rawHtml, { indent_size: 4, space_in_empty_tag: true, preserve_newlines: false });
 }
 
+// 生成首页及分页
 function genHomePages(TPL, PUB, games, DOMAIN) {
     const PAGE_SIZE = 20;
     const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
@@ -462,11 +484,13 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
     }
 }
 
+// 404
 function gen404Page(TPL, PUB, DOMAIN) {
     const html = renderTpl(TPL, '404', { domain: DOMAIN, pageType: '404' });
     writeFile(path.join(PUB, '404.html'), html, PUB);
 }
 
+// 关于
 function genAboutPage(TPL, PUB, DOMAIN) {
     const html = renderTpl(TPL, 'about', { 
         domain: DOMAIN, 
@@ -479,6 +503,7 @@ function genAboutPage(TPL, PUB, DOMAIN) {
     writeFile(path.join(aboutDir, 'index.html'), html, PUB);
 }
 
+// 剔除无效作者、汉化者名称
 function getCleanNames(str) {
     const ignoreList = ['无', '未知'];
     if (!str) return [];
@@ -487,6 +512,7 @@ function getCleanNames(str) {
         .filter(name => name && !ignoreList.includes(name));
 }
 
+// 作者汉化者索引页及个人页
 function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
     const isAuthor = type === 'author';
     const folder = isAuthor ? 'authors' : 'translators';
@@ -546,6 +572,7 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
     });
 }
 
+// 友链
 function genFriendPage(TPL, PUB, DOMAIN) {
     const RUNDIR = process.cwd();
     const friendsPath = path.join(RUNDIR, 'friends.yml');
@@ -581,6 +608,7 @@ function genFriendPage(TPL, PUB, DOMAIN) {
     writeFile(path.join(friendDir, 'index.html'), html, PUB);
 }
 
+// 游戏元信息大合集
 function genGamesNameJson(DATA_DIR, API_DIR, PUB) {
     ensureDir(API_DIR);
     const arr = fs.readdirSync(DATA_DIR)
@@ -593,6 +621,7 @@ function genGamesNameJson(DATA_DIR, API_DIR, PUB) {
     writeFile(path.join(API_DIR, 'games_name.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
 }
 
+// 搜索JSON
 function genSearchJson(DATA_DIR, API_DIR, PUB) {
     ensureDir(API_DIR);
     const arr = fs.readdirSync(DATA_DIR)
@@ -605,6 +634,7 @@ function genSearchJson(DATA_DIR, API_DIR, PUB) {
     writeFile(path.join(API_DIR, 'search.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
 }
 
+// 格式化显示时间
 function formatDisplayTime(timeString) {
     if (!timeString) {
         return { text: '----.--.-- --:--', valid: false };
@@ -622,6 +652,7 @@ function formatDisplayTime(timeString) {
     };
 }
 
+// RSS、Sitemap时间格式化
 function formatDate(timeString, type) {
     if (!timeString) return '';
     const d = new Date(timeString.replace(/-/g, '/'));
@@ -629,6 +660,7 @@ function formatDate(timeString, type) {
     if (type === 'sitemap') return d.toISOString().replace('.000', '').replace('Z', '+00:00');
 }
 
+// Sitemap.xml
 function genSitemapXml(PUB, DOMAIN, games) {
     const n = IS_MIN ? "" : "\n";
     const s = IS_MIN ? "" : "  ";
@@ -643,6 +675,7 @@ function genSitemapXml(PUB, DOMAIN, games) {
     writeFile(path.join(PUB, 'sitemap.xml'), xml, PUB);
 }
 
+// RSS.xml
 function genRssXml(PUB, DOMAIN, games) {
     const now = new Date().toUTCString();
     const n = IS_MIN ? "" : "\n";
