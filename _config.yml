@@ -6,3 +6,19 @@ ignore:
   - 模板.json
 domain: flash.hcyhub.com
 port: 8080
+
+templateAffect:
+  game.ejs: game
+  home.ejs: home
+  about.ejs: about
+  404.ejs: "404"
+  friend.ejs: friend
+  author.ejs: author
+  author-games.ejs: author-games
+
+clean:
+  keep:
+    - .stignore
+    - .stfolder
+    - .git
+    - .gitignore

@@ -26,15 +26,7 @@ let CACHED_STATS = {
 };
 
 // 模板影响范围映射
-const TEMPLATE_AFFECT = {
-    'game.ejs': 'game',
-    'home.ejs': 'home',
-    'about.ejs': 'about',
-    '404.ejs': '404',
-    'friend.ejs': 'friend',
-    'author.ejs': 'author',
-    'author-games.ejs': 'author-games'
-};
+let TEMPLATE_AFFECT = {};
 
 // 统计SWF文件信息
 function updateSwfStats(SRC_DIR) {
@@ -140,21 +132,15 @@ function ensureDir(dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-// 清理目录但保留 .git 和 .gitignore
-function cleanDirExceptGit(dir) {
+// 清理目录但保留指定文件或目录
+function cleanDirWithKeep(dir, keepList) {
     if (!fs.existsSync(dir)) return;
     for (const entry of fs.readdirSync(dir)) {
-        if (entry === '.git' || entry === '.gitignore') continue;
-        const fullPath = path.join(dir, entry);
-        
-        const stat = fs.lstatSync(fullPath); 
-        if (stat.isSymbolicLink()) {
-            fs.unlinkSync(fullPath);
-        } else if (stat.isDirectory()) {
-            fse.removeSync(fullPath);
-        } else {
-            fs.unlinkSync(fullPath);
-        }
+        if (keepList.includes(entry)) continue;
+        const p = path.join(dir, entry);
+        const stat = fs.lstatSync(p);
+        if (stat.isDirectory()) fse.removeSync(p);
+        else fs.unlinkSync(p);
     }
 }
 
@@ -213,6 +199,7 @@ async function minifyAssets(dir, PUB_DIR) {
 async function main() {
     const startTime = process.hrtime();
     GLOBAL_CONFIG = loadConfig();
+    TEMPLATE_AFFECT = GLOBAL_CONFIG.templateAffect || {};
     const IS_WATCH = argv.s || argv.serve;
     const MUST_MIN = argv.min || argv.m || false;
 
@@ -227,7 +214,7 @@ async function main() {
     console.log(colors.info('开始处理'));
 
     ensureDir(PUB);
-    cleanDirExceptGit(PUB);
+    cleanDirWithKeep(PUB, GLOBAL_CONFIG.clean?.keep || []);
 
     const IGNORE_LIST = new Set([...(GLOBAL_CONFIG.ignore || []), 'Game-data']);
     fs.readdirSync(SRC).forEach(entry => {

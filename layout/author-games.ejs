@@ -13,7 +13,7 @@
         <%= personName %> <%= personType === 'author' ? '所有的作品' : '汉化的游戏' %>
     </h1>
     <div class="card-container">     
-        <div id="game-list">
+      <main id="game-list">
         <% games.forEach(game => { %>
           <div class="card">
             <a href="<%= game.dir %>/">
@@ -23,7 +23,7 @@
             </a>
           </div>
         <% }); %>
-      </div>
+      </main>
     </div>
     <div class="pagination">
       <button id="prevBtn">上一页</button>

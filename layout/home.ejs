@@ -4,8 +4,8 @@
 <body>
     <div class="card-container">
       <%- include('header') %>
-      <div id="game-list">
-        <% games.forEach(game => { %>
+      <main id="game-list">
+        <% games.forEach((game, i) => { %>
           <div class="card">
             <a href="<%= game.dir %>/">
               <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
@@ -14,7 +14,7 @@
             </a>
           </div>
         <% }); %>
-      </div>
+      </main>
     </div>
     <div class="pagination">
       <button id="prevBtn">上一页</button>

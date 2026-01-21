@@ -1,17 +1,17 @@
 {
-  "id": "25",
-  "title": "过年吓唬人",
-  "pubDate": "2025-10-28 22:38:09",
-  "brief": "使用道具吓唬人，挺有意思的小游戏",
-  "play": "这个游戏是优游杯Flash游戏大赛的参赛作品，7k7k上可以查看<a href=\"http://www.7k7k.com/flash/55092.htm\" target=\"_blank\" rel=\"nofollow\">优游杯7k7k主题</a>，<a href=\"https://web.archive.org/web/20110217192253/https://news.7k7k.com/youyouflash/index.html\" target=\"_blank\" rel=\"nofollow\">互联网档案馆留存</a>",
-  "cover": "/images/过年吓唬人/过年吓唬人.webp",
-  "dir": "/Games/过年吓唬人",
-  "Author": "二亮",
-  "CN-Author": "无",
-  "files": [
-    {
-      "name": "原版",
-      "path": "/swf/过年吓唬人/过年吓唬人.swf"
-    }
-  ]
+    "id": "25",
+    "title": "过年吓唬人",
+    "pubDate": "2025-10-28 22:38:09",
+    "brief": "使用道具吓唬人，挺有意思的小游戏",
+    "play": "这个游戏是优游杯Flash游戏大赛的参赛作品，7k7k上可以查看<a href=\"http://www.7k7k.com/flash/55092.htm\" target=\"_blank\" rel=\"nofollow\">优游杯7k7k主题</a>，<a href=\"https://web.archive.org/web/20110217192253/https://news.7k7k.com/youyouflash/index.html\" target=\"_blank\" rel=\"nofollow\">互联网档案馆留存</a>",
+    "cover": "/images/过年吓唬人/过年吓唬人.webp",
+    "dir": "/Games/过年吓唬人",
+    "Author": "二亮",
+    "CN-Author": "无",
+    "files": [
+        {
+            "name": "原版",
+            "path": "/swf/过年吓唬人/过年吓唬人.swf"
+        }
+    ]
 }
