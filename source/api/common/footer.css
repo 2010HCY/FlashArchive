@@ -20,3 +20,10 @@
     margin-top: 2px;
     margin-bottom: 2px;
 }
+/* 卡片页脚分割线 */
+.divider {
+    border: none;
+    border-top: 1px dashed #ccc;
+    margin: 20px auto;
+    width: 80%;
+}

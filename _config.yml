@@ -10,6 +10,7 @@ port: 8080
 templateAffect:
   game.ejs: game
   home.ejs: home
+  game-card.ejs: home
   about.ejs: about
   404.ejs: "404"
   friend.ejs: friend
@@ -18,6 +19,7 @@ templateAffect:
   header.ejs: all
   footer.ejs: all
   search.ejs: all
+  head.ejs: all
 
 clean:
   keep:

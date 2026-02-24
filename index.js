@@ -195,6 +195,33 @@ async function minifyAssets(dir, PUB_DIR) {
     }
 }
 
+// 显示的页码列表
+function getPagination(current, total) {
+    const delta = 2;   // 桌面端
+    const mDelta = 1;  // 移动端
+    const rangeWithDots = [];
+    let pages = [];
+    for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+            pages.push({
+                value: i,
+                isMHide: !(i === 1 || i === total || (i >= current - mDelta && i <= current + mDelta))
+            });
+        }
+    }
+    for (let i = 0; i < pages.length; i++) {
+        if (i > 0) {
+            const prevValue = pages[i - 1].value;
+            const currValue = pages[i].value;
+            if (currValue - prevValue > 1) {
+                rangeWithDots.push({ isDot: true });
+            }
+        }
+        rangeWithDots.push(pages[i]);
+    }
+    return rangeWithDots;
+}
+
 // 主函数
 async function main() {
     const startTime = process.hrtime();
@@ -493,7 +520,14 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
     const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
         const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
-        const html = renderTpl(TPL, 'home', { games: pageGames, page: p, totalPages: totalPages, domain: DOMAIN });
+        const pagination = getPagination(p, totalPages);
+        const html = renderTpl(TPL, 'home', { 
+            games: pageGames, 
+            page: p, 
+            totalPages: totalPages, 
+            pagination: pagination,
+            domain: DOMAIN 
+        });
         const dest = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
         writeFile(dest, html, PUB);
     }
@@ -569,6 +603,7 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
 
         for (let p = 1; p <= totalPages; p++) {
             const pageGames = personGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+            const pagination = getPagination(p, totalPages);
             
             const html = renderTpl(TPL, 'author-games', { 
                 games: pageGames, 
@@ -578,6 +613,7 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
                 title: `${name} 的作品`,
                 pageType: 'author-games', 
                 personName: name,
+                pagination: pagination,
                 personType: type
             });
 

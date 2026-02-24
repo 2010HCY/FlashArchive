@@ -26,9 +26,34 @@
       </main>
     </div>
     <div class="pagination">
-      <button id="prevBtn">上一页</button>
-      <span id="pageNumbers"></span>
-      <button id="nextBtn">下一页</button>
+        <a <% if (page > 1) { %> 
+                href="<%= page === 2 ? '/' : '/' + (page - 1) + '.html' %>" 
+          <% } %> 
+          class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+            <i class="fas fa-chevron-left"></i>
+            <span class="desktop-text">上一页</span>
+        </a>
+
+        <div class="page-numbers-container">
+            <% pagination.forEach(item => { %>
+                <% if (item.isDot) { %>
+                    <span class="page-dot"><i class="fa-solid fa-ellipsis"></i></span>
+                <% } else { %>
+                    <a href="<%= item.value === 1 ? '/' : '/' + item.value + '.html' %>" 
+                      class="page-link <%= item.value === page ? 'active' : '' %> <%= item.isMHide ? 'm-hide' : '' %>">
+                        <%= item.value %>
+                    </a>
+                <% } %>
+            <% }); %>
+        </div>
+
+        <a <% if (page < totalPages) { %> 
+                href="/<%= page + 1 %>.html" 
+          <% } %> 
+          class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+            <span class="desktop-text">下一页</span>
+            <i class="fas fa-chevron-right"></i>
+        </a>
     </div>
     <span id="totalPages" data-total-pages="<%= totalPages %>" data-current-page="<%= page %>" style="display:none;"></span>
     <%- include('footer') %>

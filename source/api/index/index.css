@@ -65,15 +65,82 @@ body {
 }
 /* 翻页按钮 */
 .pagination {
-    text-align: center;
-    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 40px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.pagination button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    cursor: pointer;
+.pagination .page-link.active {
+    color: rgb(163, 163, 0); 
+    font-weight: bold;
+    cursor: default;
 }
-.pagination span {
-    margin: 0 5px;
+.pagination .page-item, 
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #3c4043;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.pagination .page-item i {
+    font-size: 14px;
+    margin: 0 8px;
+}
+.pagination .page-item:hover, 
+.pagination .page-link:hover {
+    transform: translateY(-1px);
+    color: rgb(163, 163, 0)
+}
+.page-item.disabled {
+    color: #ccc !important;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.pagination .page-item:disabled {
+    color: #abb0b6;
+    cursor: not-allowed;
+    transform: none;
+}
+.pagination .dots {
+    color: #5f6368;
+    margin: 0 4px;
+}
+/* 分页 */
+.page-numbers-container {
+    display: flex !important;
+    align-items: center;
+}
+.page-link, .page-dot, .page-item {
+    margin: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #555;
+}
+@media (max-width: 640px) {
+    .page-link.m-hide {
+        display: none !important;
+    }
+    .page-dot {
+        display: inline-flex !important;
+        margin: 0 4px;
+    }
+    .desktop-text {
+        display: none !important;
+    }
+    .page-link, .page-item {
+        margin: 0 4px;
+    }
 }
