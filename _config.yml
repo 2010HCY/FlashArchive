@@ -15,6 +15,9 @@ templateAffect:
   friend.ejs: friend
   author.ejs: author
   author-games.ejs: author-games
+  header.ejs: all
+  footer.ejs: all
+  search.ejs: all
 
 clean:
   keep:

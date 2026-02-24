@@ -323,6 +323,8 @@ async function main() {
         });
         watcher.on('all', async (event, filePath) => {
             try {
+                const relPath = path.relative(SRC, filePath);
+                const ext = path.extname(filePath);
                 function findGamePageIndex(games, gameDir, pageSize) {
                     const index = games.findIndex(g => g.dir === gameDir);
                     if (index === -1) return null;
@@ -359,9 +361,19 @@ async function main() {
                     const affect = TEMPLATE_AFFECT[tplName];
                     const games = loadGames(DATA_DIR);
 
-                    if (affect === 'game') {
+                if (affect === 'all') {
+                        updateSwfStats(SRC);
+                        genHomePages(TPL, PUB, games, DOMAIN);
                         games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+                        gen404Page(TPL, PUB, DOMAIN);
+                        genAboutPage(TPL, PUB, DOMAIN);
+                        genFriendPage(TPL, PUB, DOMAIN);
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
                     } 
+                    else if (affect === 'game') {
+                        games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+                    }
                     else if (affect === 'home') {
                         genHomePages(TPL, PUB, games, DOMAIN);
                     } 
@@ -383,6 +395,22 @@ async function main() {
                 if (filePath.includes(path.join('swf'))) {
                     updateSwfStats(SRC);
                     genAboutPage(TPL, PUB, DOMAIN);
+                }
+                const isIgnored = [...IGNORE_LIST].some(dir => relPath.startsWith(dir));
+                if (!isIgnored) {
+                    const destPath = path.join(PUB, relPath);
+                    
+                    if (event === 'unlink' || event === 'unlinkDir') {
+                        fse.removeSync(destPath);
+                        console.log(colors.info(`已删除文件: ${relPath}`));
+                    } else {
+                        ensureDir(path.dirname(destPath));
+                        fse.copySync(filePath, destPath);
+                        console.log(colors.info(`静态文件同步: ${relPath}`));
+                        
+                        if (MUST_MIN && (ext === '.css' || ext === '.js')) {
+                        }
+                    }
                 }
             } catch (err) {
                 console.error(colors.error(`热更新失败: ${err.message}`));

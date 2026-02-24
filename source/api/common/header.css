@@ -55,13 +55,26 @@
   align-items: center;
   margin-left: auto;
   margin-right: 36px;
-  gap: 20px;
   font-weight: 400;
+  height: 100%;
 }
 .nav-menu a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  height: 64px;
   color: oklch(0.55 0.12 112);
   text-decoration: none;
   font-size: 18px;
+}
+li.nav-item {
+  list-style-type: none;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+}
+li.nav-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .nav-search {
   background: none;
@@ -71,7 +84,7 @@
   cursor: pointer;
   flex-shrink: 0;
 }
-@media (max-width: 700px) {
+@media (max-width: 775px) {
   .header-content {
     width: 100%;
     padding: 0 5%;
@@ -108,16 +121,25 @@
 }
 /* 侧边菜单 */
 .nav-drawer {
-  display: none;
-}
-.nav-drawer.active {
-  display: block;
-}
-.nav-drawer-mask {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.24);
   z-index: 2010;
+  visibility: hidden;
+  transition: visibility 0.22s; 
+}
+.nav-drawer.active {
+  visibility: visible;
+  transition: none; /* 开启时不需要延迟 */
+}
+.nav-drawer-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.24);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.nav-drawer.active .nav-drawer-mask {
+  opacity: 1;
 }
 .nav-drawer-panel {
   position: fixed;
@@ -132,7 +154,11 @@
   display: flex;
   flex-direction: column;
   padding: 0 0 20px 0;
-  animation: navDrawerIn .22s cubic-bezier(0.4,0,0.2,1);
+  transform: translateX(-100%);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-drawer.active .nav-drawer-panel {
+  transform: translateX(0);
 }
 @keyframes navDrawerIn {
   from { transform: translateX(-100%);}
@@ -144,6 +170,11 @@
   color: #444;
   text-decoration: none;
   border-bottom: 1px solid #eee;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+}
+.nav-drawer-panel a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .nav-drawer-panel a:last-child {
   border-bottom: none;
@@ -157,8 +188,8 @@
   align-self: flex-end;
   margin: 16px 18px 0 0;
 }
-@media (min-width: 700px) {
-  .nav-drawer { display: none!important; }
+@media (min-width: 775px) {
+  .nav-drawer { display: none; }
 }
 /* 搜索窗口 */
 .search-modal {
