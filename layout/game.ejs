@@ -73,15 +73,7 @@
         <p>评论区在下面，你们遇到问题可以反馈给我，但大概率我也只能建议你们下载到本地游玩...Flash的兼容性安全性真是太差了</p>
     </section>
     <section id="twikoo" aria-label="评论区">
-        <div id="tcomment"></div>
-        <script src="/api/play/twikoo.min.js"></script>
-        <script>
-            twikoo.init({
-            envId: 'https://twikoo.hcyhub.com/.netlify/functions/twikoo',
-            el: '#tcomment',
-            lang: 'zh-CN',
-            })
-        </script>
+        <%- include('twikoo') %>
     </section>
     <script>
         // 初始化 Ruffle 播放器
