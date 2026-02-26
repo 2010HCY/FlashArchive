@@ -8,11 +8,11 @@ MySite:
     avatar: "/api/icon/H.svg"
     introduction: "Flash收藏站"
   - name: "音乐空间"
-    url: "https://hcyhub.com"
+    url: "https://music.hcyhub.com"
     avatar: "/api/icon/H.svg"
     introduction: "音乐空间"
   - name: "Page静态页面"
-    url: "https://hcyhub.com"
+    url: "https://page.hcyhub.com"
     avatar: "/api/icon/H.svg"
     introduction: "Page静态页面"
 
