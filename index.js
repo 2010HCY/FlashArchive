@@ -12,6 +12,7 @@ const chokidar = require('chokidar');
 const http = require('http');
 const handler = require('serve-handler');
 
+const RUNDIR = process.cwd();
 const IS_MIN = argv.min || false;
 let fileCount = 0;
 let totalOriginalSize = 0;
@@ -125,6 +126,25 @@ function loadConfig() {
     if (!cfg.src || !cfg.public || !cfg.template || !cfg.domain) throw new Error('配置项不全');
     if (!cfg.ignore) cfg.ignore = [];
     return cfg;
+}
+
+// 读取作者、汉化者JSON数据
+let EXTRA_PEOPLE_DATA = { author: {}, translator: {} };
+
+try {
+    const authorsPath = path.join(RUNDIR, 'authors.json');
+    const transPath = path.join(RUNDIR, 'translators.json');
+    
+    if (fs.existsSync(authorsPath)) {
+        const authorsArr = JSON.parse(fs.readFileSync(authorsPath, 'utf8'));
+        authorsArr.forEach(item => { EXTRA_PEOPLE_DATA.author[item.name] = item; });
+    }
+    if (fs.existsSync(transPath)) {
+        const transArr = JSON.parse(fs.readFileSync(transPath, 'utf8'));
+        transArr.forEach(item => { EXTRA_PEOPLE_DATA.translator[item.name] = item; });
+    }
+} catch (e) {
+    console.error(colors.error(`读取作者/汉化者 JSON 失败: ${e.message}`));
 }
 
 // 确保目录存在
@@ -343,7 +363,7 @@ async function main() {
         });
 
         // 监听文件变化
-        const watcher = chokidar.watch([SRC, TPL], {
+        const watcher = chokidar.watch([SRC, TPL, path.join(RUNDIR, 'authors.json'), path.join(RUNDIR, 'translators.json')], {
             ignored: /(^|[\/\\])\../,
             persistent: true,
             ignoreInitial: true
@@ -352,6 +372,7 @@ async function main() {
             try {
                 const relPath = path.relative(SRC, filePath);
                 const ext = path.extname(filePath);
+                const fileName = path.basename(filePath);
                 function findGamePageIndex(games, gameDir, pageSize) {
                     const index = games.findIndex(g => g.dir === gameDir);
                     if (index === -1) return null;
@@ -423,6 +444,22 @@ async function main() {
                     updateSwfStats(SRC);
                     genAboutPage(TPL, PUB, DOMAIN);
                 }
+
+                // 作者、汉化者数据变更
+                if (fileName === 'authors.json' || fileName === 'translators.json') {
+                    if (fs.existsSync(filePath)) {
+                        const type = fileName.startsWith('authors') ? 'author' : 'translator';
+                        const newData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                        
+                        EXTRA_PEOPLE_DATA[type] = {};
+                        newData.forEach(item => { EXTRA_PEOPLE_DATA[type][item.name] = item; });
+                        
+                        const games = loadGames(DATA_DIR);
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+                    }
+                    return;
+                }
                 const isIgnored = [...IGNORE_LIST].some(dir => relPath.startsWith(dir));
                 if (!isIgnored) {
                     const destPath = path.join(PUB, relPath);
@@ -479,14 +516,23 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
 
     // 汉化者
     const cnAuthorName = (game['CN-Author'] || '').trim();
-    const translator =
-        !cnAuthorName || cnAuthorName === '无'
-            ? null
-            : { text: cnAuthorName, link: `/translators/${cnAuthorName}/` };
+    let translators = null;
+    let translator = null;
+
+    if (cnAuthorName && cnAuthorName !== '无') {
+        translators = cnAuthorName.split(/\s*,\s*/).map(name => ({
+            text: name,
+            link: `/translators/${name}/`
+        }));
+        if (translators.length === 1) {
+            translator = translators[0];
+        }
+    }
 
     // 发布时间
     const pubTime = formatDisplayTime(game.pubDate);
-    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translator, pubTime });
+    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime });
+
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
     writeFile(path.join(gameDir, 'index.html'), html, PUB);
@@ -601,6 +647,10 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
         const personDir = path.join(indexDir, name);
         ensureDir(personDir);
 
+        const extraInfo = EXTRA_PEOPLE_DATA[type][name] || {};
+        const personLink = extraInfo.link || null;
+        const personInfo = extraInfo.info || "";
+
         for (let p = 1; p <= totalPages; p++) {
             const pageGames = personGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
             const pagination = getPagination(p, totalPages);
@@ -613,6 +663,8 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
                 title: `${name} 的作品`,
                 pageType: 'author-games', 
                 personName: name,
+                personLink: personLink,
+                personInfo: personInfo,
                 pagination: pagination,
                 personType: type
             });

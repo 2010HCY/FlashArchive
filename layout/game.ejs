@@ -55,11 +55,13 @@
                 <span><%= author.text %></span>
             <% } %>
         </span>
-        <% if (translator) { %>
+        <% if (translators && translators.length) { %>
             <span class="stat-item">
                 <i class="fas fa-language fa-fw"></i>
                 <span class="stat-label">汉化者:</span>
-                <a href="<%= translator.link %>"><%= translator.text %></a>
+                <% translators.forEach(function(t, idx) { %>
+                    <a href="<%= t.link %>"><%= t.text %></a><%= idx < translators.length - 1 ? ', ' : '' %>
+                <% }) %>
             </span>
         <% } %>
         <span class="stat-item">
