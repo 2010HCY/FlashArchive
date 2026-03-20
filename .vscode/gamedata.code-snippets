@@ -1,0 +1,37 @@
+{
+"Flash Game Metadata": {
+    "scope": "json",
+    "prefix": "fgame",
+    "include": ["**/Game-data/*.json"],
+    "body": [
+      "{",
+      "  \"id\": \"${1:游戏ID}\",",
+      "  \"title\": \"${2:游戏名}\",",
+      "  \"pubDate\": \"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND\",",
+      "  \"brief\": \"${3:首页短介绍}\",",
+      "  \"play\": \"${4:玩法说明}\",",
+      "  \"cover\": \"/images/${2:游戏名}/${2:游戏名}.webp\",",
+      "  \"dir\": \"/Games/${2:游戏名}\",",
+      "  \"Author\": \"${5:未知}\",",
+      "  \"CN-Author\": \"${6:无}\",",
+      "  \"files\": [",
+      "    {",
+      "      \"name\": \"汉化版\",",
+      "      \"path\": \"/swf/${2:游戏名}/${2:游戏名}汉化版.swf\"",
+      "    },",
+      "    {",
+      "      \"name\": \"原版\",",
+      "      \"path\": \"/swf/${2:游戏名}/${2:游戏名}.swf\"",
+      "    }",
+      "  ],",
+      "  \"DownFiles\": [",
+      "    {",
+      "      \"name\": \"主文件.swf\",",
+      "      \"path\": \"/swf/${2:游戏名}/${2:游戏名}.swf\"",
+      "    }",
+      "  ]",
+      "}$0"
+    ],
+    "description": "快速填入 Flash 游戏元数据模板"
+  }
+}
