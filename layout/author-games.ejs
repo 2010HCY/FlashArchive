@@ -11,7 +11,7 @@
     <h1 style="font-size: 24px; color: #333; padding: 50px 0 0 0; text-align: center;">
         <i class="fas <%= personType === 'author' ? 'fa-pen-nib' : 'fa-language' %>"></i>
         <% if (personLink) { %>
-            <a href="<%= personLink %>" target="_blank" style="color: #a3a300; text-decoration: none;">
+            <a href="<%= personLink %>" target="_blank" rel="nofollow" style="color: #a3a300; text-decoration: none;">
                 <%= personName %>
             </a>
         <% } else { %>
@@ -51,8 +51,9 @@
                 <% if (item.isDot) { %>
                     <span class="page-dot"><i class="fa-solid fa-ellipsis"></i></span>
                 <% } else { %>
-                    <a href="<%= item.value === 1 ? '/' : '/' + item.value + '.html' %>" 
-                      class="page-link <%= item.value === page ? 'active' : '' %> <%= item.isMHide ? 'm-hide' : '' %>">
+                    <% const targetUrl = item.value === 1 ? './' : item.value + '.html'; %>
+                    <a href="<%= targetUrl %>" 
+                    class="page-link <%= item.value === page ? 'active' : '' %> <%= item.isMHide ? 'm-hide' : '' %>">
                         <%= item.value %>
                     </a>
                 <% } %>

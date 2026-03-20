@@ -21,8 +21,9 @@
         <meta property="og:title" content="<%= game.title %>">
         <meta property="og:description" content="<%= game.brief %>">
         <meta property="og:image" content="https://<%= domain + game.cover %>">
-    <% } else if (pageType === '404' && typeof game !== 'undefined') { %>
-        <title>404</title>
+    <% } else if (pageType === '404' ) { %>
+        <title>404 Not Found</title>
+        <meta name="description" content="页面不存在">
     <% } else if (pageType === 'about') { %>
         <title>关于 | Flash收藏站</title>
         <meta name="description" content="关于本站的统计信息与介绍">
@@ -31,10 +32,7 @@
         <title><%= title %></title>
         <link rel="stylesheet" href="/api/common/author.css">
     <% } else if (pageType==='author-games' ) { %>
-        <%
-            dynamicKeywords="" ; if (personType==='author' ) { dynamicTitle=personName + " 所有的作品" ; dynamicDesc="此为 " +
-            personName + " 被收藏的所有作品" ; dynamicKeywords=personName + "开发的Flash游戏, " ; } else { dynamicTitle=personName + " 汉化的游戏"
-            ; dynamicDesc="此为 " + personName + " 汉化的游戏" ; dynamicKeywords=personName + "汉化的Flash游戏, " ;} %>
+        <% dynamicKeywords="" ; if (personType==='author' ) { dynamicTitle=personName + " 所有的作品" ; dynamicDesc="此为 " + personName + " 被收藏的所有作品" ; dynamicKeywords=personName + "开发的Flash游戏, " ; } else { dynamicTitle=personName + " 汉化的游戏" ; dynamicDesc="此为 " + personName + " 汉化的游戏" ; dynamicKeywords=personName + "汉化的Flash游戏, " ;} %>
         <title><%= dynamicTitle %> | Flash收藏站</title>
         <meta name="keywords" content="<%= dynamicKeywords %><%= personName %>,Flash游戏收藏站,Flash收藏站,在线小游戏,Flash游戏">
         <meta name="description" content="<%= dynamicDesc %>。部分游戏还附有攻略，希望你玩得高兴！">

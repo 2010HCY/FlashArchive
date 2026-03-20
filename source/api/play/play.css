@@ -167,10 +167,11 @@ a:not(.header a):not(.footer a):not(.nav-drawer a):hover::after {
     box-shadow: 0 0 8px 0 rgba(232,237,250,.6), 0 2px 4px 0 rgba(232,237,250,.5);
 
 }
+
 #zan {
 	margin-top:40px;
 	position:relative;
-	    -webkit-transition: box-shadow .3s ease-in-out;
+	  -webkit-transition: box-shadow .3s ease-in-out;
     -moz-transition: box-shadow .3s ease-in-out;
     -o-transition: box-shadow .3s ease-in-out;
     -ms-transition: box-shadow .3s ease-in-out;
@@ -221,6 +222,9 @@ a:not(.header a):not(.footer a):not(.nav-drawer a):hover::after {
   animation-duration: 0.8s;
   animation-iteration-count: 1;
   animation-timing-function: steps(28);
+  background-position: right;
+}
+#zan .heart.liked {
   background-position: right;
 }
 /* 按钮栏 */
