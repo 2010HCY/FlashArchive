@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     
     <% if (pageType === 'home') { %>
+        <% let currentUrl = "https://" + domain + "/";if (typeof currentPage !== 'undefined' && currentPage > 1) {currentUrl += currentPage } %>
         <title>静水深流 | Flash收藏站</title>
         <meta name="keywords" content="静水深流,Flash游戏收藏站,Flash收藏站,在线小游戏,Flash游戏,Flash游戏汉化版">
         <meta name="description" content="欢迎来到我的个人Flash收藏空间！所以游戏都是人工汉化，支持一键切换原版和汉化版，你也可以直接下载喜欢的游戏。部分游戏还附有攻略，希望你玩得高兴！">
@@ -10,6 +11,19 @@
         <meta property="og:title" content="静水深流 | Flash收藏站">
         <meta property="og:description" content="Flash收藏站，收集大量好玩的Flash游戏，支持在线游玩和下载。">
         <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "<%= currentUrl %>",
+            "name": "静水深流 | Flash收藏站",
+            "description": "欢迎来到我的个人Flash收藏空间！所有游戏人工汉化，支持在线游玩与下载。",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "query-input": "required name=search_term_string"
+            }
+        }
+        </script>
     <% } else if (pageType === 'game' && typeof game !== 'undefined') { %>
         <title><%= game.title %></title>
         <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,<%= game.title %><% if (typeof versionKeywords !== 'undefined' && versionKeywords.length > 0) { %>,<%= versionKeywords.join(',') %><% } %>">
@@ -23,19 +37,19 @@
         <meta property="og:image" content="https://<%= domain + game.cover %>">
         <script type="application/ld+json">
         {
-        "@context": "https://schema.org/",
-        "@type": "SoftwareApplication",
-        "name": "<%= game.title %>",
-        "description": "<%= game.brief %>",
-        "image": "https://<%= domain + game.cover %>",
-        "applicationCategory": "GameApplication",
-        "operatingSystem": "Windows, macOS, Linux",
-        "softwareVersion": "Flash Player / Ruffle",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "category": "Free"
-        }
+            "@context": "https://schema.org/",
+            "@type": "SoftwareApplication",
+            "name": "<%= game.title %>",
+            "description": "<%= game.brief %>",
+            "image": "https://<%= domain + game.cover %>",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Windows, macOS, Linux",
+            "softwareVersion": "Flash Player / Ruffle",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "category": "Free"
+            }
         }
         </script>
     <% } else if (pageType === '404' ) { %>
@@ -45,11 +59,33 @@
         <title>关于 | Flash收藏站</title>
         <meta name="description" content="关于本站的统计信息与介绍">
         <link rel="stylesheet" href="/api/common/about.css">
-    <% } else if (pageType === 'author') { %>
-        <title><%= title %></title>
-        <link rel="stylesheet" href="/api/common/author.css">
-    <% } else if (pageType==='author-games' ) { %>
-        <% dynamicKeywords="" ; if (personType==='author' ) { dynamicTitle=personName + " 所有的作品" ; dynamicDesc="此为 " + personName + " 被收藏的所有作品" ; dynamicKeywords=personName + "开发的Flash游戏, " ; } else { dynamicTitle=personName + " 汉化的游戏" ; dynamicDesc="此为 " + personName + " 汉化的游戏" ; dynamicKeywords=personName + "汉化的Flash游戏, " ;} %>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "mainEntity": {
+                "@type": "Organization",
+                "name": "HcyHub",
+                "description": "关于本站的统计信息与介绍",
+                "logo": "https://<%= domain %>/api/icon/H.svg"
+            }
+        }
+        </script>
+    <% } else if (pageType === 'author-games') { %>
+        <% 
+            var dynamicKeywords = ""; 
+            var dynamicTitle = "";
+            var dynamicDesc = "";
+            if (personType === 'author') { 
+                dynamicTitle = personName + " 所有的作品"; 
+                dynamicDesc = "此为 " + personName + " 被收藏的所有作品"; 
+                dynamicKeywords = personName + "开发的Flash游戏, "; 
+            } else { 
+                dynamicTitle = personName + " 汉化的游戏"; 
+                dynamicDesc = "此为 " + personName + " 汉化的游戏"; 
+                dynamicKeywords = personName + "汉化的Flash游戏, "; 
+            } 
+        %>
         <title><%= dynamicTitle %> | Flash收藏站</title>
         <meta name="keywords" content="<%= dynamicKeywords %><%= personName %>,Flash游戏收藏站,Flash收藏站,在线小游戏,Flash游戏">
         <meta name="description" content="<%= dynamicDesc %>。部分游戏还附有攻略，希望你玩得高兴！">
@@ -57,7 +93,42 @@
         <meta property="og:title" content="<%= dynamicTitle %> | Flash收藏站">
         <meta property="og:description" content="<%= dynamicDesc %>">
         <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
-        <link rel="stylesheet" href="/api/common/author-games.css">
+        <link rel="stylesheet" href="/api/common/author-games.css"> 
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "mainEntity": {
+                "@type": "Person",
+                "name": "<%= personName %>",
+                "description": "<%= dynamicDesc %>",
+                "jobTitle": "<%= personType === 'author' ? '游戏开发者' : '游戏汉化者' %>",
+                "url": "https://<%= domain %>/<%= personType === 'author' ? 'authors' : 'translators' %>/<%= personName %>/"
+            }
+        }
+        </script>
+    <% } else if (pageType === 'authors' || pageType === 'translators' || pageType === 'author') { %>
+        <title><%= title %> | Flash收藏站</title>
+        <link rel="stylesheet" href="/api/common/author.css">
+        <% if (typeof list !== 'undefined') { %>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "<%= title %>",
+            "itemListElement": [
+                <% list.forEach(function(item, idx) { %>
+                {
+                    "@type": "ListItem",
+                    "position": <%= idx + 1 %>,
+                    "url": "https://<%= domain %>/<%= pageType === 'author' ? 'authors' : (pageType === 'translators' ? 'translators' : 'authors') %>/<%= item.name %>/",
+                    "name": "<%= item.name %>"
+                }<%= idx < list.length - 1 ? ',' : '' %>
+                <% }) %>
+            ]
+        }
+        </script>
+    <% } %>
     <% } else if (pageType==='friend' ) { %>
         <title>友链 | Flash收藏站</title>
         <meta name="description" content="友情链接，欢迎交换友链！">

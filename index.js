@@ -587,7 +587,8 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
             page: p, 
             totalPages: totalPages, 
             pagination: pagination,
-            domain: DOMAIN 
+            domain: DOMAIN,
+            currentPage: p
         });
         const dest = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
         writeFile(dest, html, PUB);
