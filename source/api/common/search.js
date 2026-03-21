@@ -5,6 +5,7 @@
     let searchData = null;
     const searchInput = document.querySelector('.search-modal-input');
     const searchResult = document.getElementById('searchResult');
+    const searchModal = document.getElementById('searchModal');  
 
     async function initData() {
         if (searchData) return;
@@ -67,4 +68,44 @@
         searchInput.addEventListener('focus', initData);
         searchInput.addEventListener('input', (e) => doSearch(e.target.value));
     }
+
+    async function checkUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('search');
+
+        if (query && searchInput) {
+            const modal = document.getElementById('searchModal');
+            searchInput.value = query;
+
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            const closeSearch = () => {
+                if (modal) modal.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeSearch();
+            });
+
+            const mask = document.getElementById('searchModalMask');
+            const closeBtn = document.getElementById('searchModalCloseBtn');
+            if (mask) mask.onclick = closeSearch;
+            if (closeBtn) closeBtn.onclick = closeSearch;
+
+            await initData();
+            doSearch(query);
+
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('focus', initData);
+        searchInput.addEventListener('input', (e) => doSearch(e.target.value));
+    }
+
+checkUrlParams();
 })();
