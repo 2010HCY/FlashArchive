@@ -507,6 +507,21 @@ function loadGames(DATA_DIR) {
 // 生成游玩页
 function genGamePages(TPL, PUB, game, DOMAIN) {
     let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
+
+    // 版本关键词
+    let versionKeywords = [];
+    if (game.files && Array.isArray(game.files)) {
+        versionKeywords = game.files.map(file => {
+            // 如果文件名里已经包含了标题，就直接用；否则拼接 标题 + 版本名
+            if (file.name && game.title && file.name.includes(game.title)) {
+                return file.name;
+            }
+            return `${game.title}${file.name}`;
+        });
+    }
+    // 去重，防止出现重复的关键词
+    versionKeywords = [...new Set(versionKeywords)];
+
     // 作者
     const authorName = (game['Author'] || '').trim();
     const author =
@@ -531,7 +546,7 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
 
     // 发布时间
     const pubTime = formatDisplayTime(game.pubDate);
-    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime });
+    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords });
 
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);

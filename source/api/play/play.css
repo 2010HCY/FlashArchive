@@ -278,6 +278,29 @@ h2#desc-title {
 .stats a:hover {
     text-decoration: underline;
 }
+.description-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 15px;
+}
+.desc-image-box {
+    flex: 0 0 240px;
+}
+.desc-image-box img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    border: 1px solid #ddd;
+}
+.desc-text-box {
+    flex: 1;
+}
+.desc-text-box p {
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+}
 /* 评论区 */
 .twikoo {
     padding-left: 5%;
@@ -305,7 +328,6 @@ h2#desc-title {
         margin-right: auto;
     }
     .game-container {
-        height: 300px;
         max-width: 100%;
         min-width: 240px;
     }
@@ -315,6 +337,30 @@ h2#desc-title {
     }
     .game-container, .text-container {
         margin-bottom: 10px;
+    }
+}
+@media (max-width: 700px) and (min-width: 350px) {
+.description-container {
+        flex-direction: column; 
+        align-items: center;
+    }
+    .desc-image-box {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 15px;
+    }
+    .desc-text-box {
+        width: 100%;
+        text-align: left;
+    }
+}
+@media (max-width: 350px) {
+    .description-container {
+        flex-direction: column;
+    }
+    .desc-image-box {
+        flex: 0 0 auto;
+        width: 100%;
     }
 }
 /* 切换版本 */
