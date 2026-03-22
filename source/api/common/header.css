@@ -4,8 +4,8 @@
 */
 .header {
   width: 100%;
-  background: oklch(0.95 0.025 112);
-  color: oklch(0.55 0.12 112);
+  background: #eef1de;
+  color: #747806;
   position: fixed;
   top: 0;
   left: 0;
@@ -46,7 +46,7 @@
   margin-right: 8px;
 }
 .logo-span {
-  color: oklch(0.55 0.12 112);
+  color: #747806;
   font-size: 24px;
   font-weight: 400;
 }
@@ -64,7 +64,7 @@
   justify-content: center;
   padding: 0 10px;
   height: 64px;
-  color: oklch(0.55 0.12 112);
+  color: #747806;
   text-decoration: none;
   font-size: 18px;
 }

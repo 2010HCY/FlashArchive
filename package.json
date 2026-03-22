@@ -9,6 +9,7 @@
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
     "serve-handler": "^6.1.6",
+    "sharp": "^0.34.5",
     "terser": "^5.44.1"
   }
 }

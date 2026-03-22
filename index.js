@@ -7,13 +7,17 @@ const yaml = require('js-yaml');
 const minifyHtml = require('html-minifier').minify;
 const CleanCSS = require('clean-css');
 const Terser = require('terser');
-const argv = require('minimist')(process.argv.slice(2));
+const rawArgs = process.argv.slice(2);
+const argv = require('minimist')(rawArgs, { boolean: ['debug', 'c', 'clean', 's', 'serve', 'm', 'min'] });
+const DEBUG_MODE = argv.debug || argv.d || rawArgs.includes('-debug') || rawArgs.includes('--debug');
 const chokidar = require('chokidar');
 const http = require('http');
 const handler = require('serve-handler');
+const crypto = require('crypto');
+const sharp = require('sharp');
 
 const RUNDIR = process.cwd();
-const IS_MIN = argv.min || false;
+const IS_MIN = argv.min || argv.m || false;
 let fileCount = 0;
 let totalOriginalSize = 0;
 let totalMinifiedSize = 0;
@@ -28,6 +32,252 @@ let CACHED_STATS = {
 
 // 模板影响范围映射
 let TEMPLATE_AFFECT = {};
+let IGNORE_LIST = new Set();
+
+// ============ 首页缩略图模块 ============
+
+// 图片文件扩展名
+const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.tif']);
+
+// 检查是否为图片文件
+function isImageFile(filename) {
+    const ext = path.extname(filename).toLowerCase();
+    return IMAGE_EXTENSIONS.has(ext);
+}
+
+// 加载或初始化数据库
+function loadImageDB(RUNDIR) {
+    const dbPath = path.join(RUNDIR, 'db.json');
+    if (!fs.existsSync(dbPath)) {
+        return { sourceHashes: {}, imageHashes: {}, miniHashes: {} };
+    }
+    try {
+        const data = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+        return {
+            sourceHashes: data.sourceHashes || {},
+            imageHashes: data.imageHashes || {},
+            miniHashes: data.miniHashes || {}
+        };
+    } catch (e) {
+        console.error(colors.error(`读取 db.json 失败: ${e.message}`));
+        return { sourceHashes: {}, imageHashes: {}, miniHashes: {} };
+    }
+}
+
+// 保存数据库
+function saveImageDB(RUNDIR, db) {
+    const dbPath = path.join(RUNDIR, 'db.json');
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+}
+
+// 计算文件哈希值
+function getFileHash(filePath) {
+    try {
+        const content = fs.readFileSync(filePath);
+        return crypto.createHash('sha256').update(content).digest('hex');
+    } catch (e) {
+        return null;
+    }
+}
+
+// 获取目录下文件的哈希映射
+// onlyImages=false: 返回所有文件（除 Game-data 目录）；true：仅返回图片文件
+function getDirectoryHashes(dir, onlyImages = false) {
+    const hashes = {};
+    if (!fs.existsSync(dir)) return hashes;
+    
+    const scanDir = (currentDir, relativePath = '') => {
+        try {
+            const files = fs.readdirSync(currentDir);
+            files.forEach(file => {
+                const fullPath = path.join(currentDir, file);
+                const relPath = relativePath ? path.join(relativePath, file) : file;
+                const stat = fs.statSync(fullPath);
+                
+                if (stat.isDirectory()) {
+                    scanDir(fullPath, relPath);
+                } else {
+                    if (onlyImages && !isImageFile(file)) return;
+                    if (!onlyImages && relPath.startsWith('Game-data')) return;
+
+                    const hash = getFileHash(fullPath);
+                    if (hash) hashes[relPath.replace(/\\/g, '/')] = hash;
+                }
+            });
+        } catch (e) {
+            console.error(colors.error(`扫描目录失败 ${currentDir}: ${e.message}`));
+        }
+    };
+    
+    scanDir(dir);
+    return hashes;
+}
+
+// 处理单个图片
+async function processImage(sourcePath, outputPath, miniPath) {
+    try {
+        const metadata = await sharp(sourcePath).metadata();
+        const { width, height } = metadata;
+        
+        // 确保输出目录存在
+        ensureDir(path.dirname(outputPath));
+        ensureDir(path.dirname(miniPath));
+        
+        // 复制原图到 public/images（保持原格式）
+        await fse.copy(sourcePath, outputPath);
+        
+        // 处理缩略图：统一输出为 webp
+        if (width > 660 || height > 390) {
+            // 大于 660×390 的图片：缩放到 660×390 后输出 webp（不缩放）
+            await sharp(sourcePath)
+                .resize(660, 390, {
+                    fit: 'cover',
+                    position: 'center',
+                    kernel: sharp.kernel.lanczos3,
+                    withoutEnlargement: true
+                })
+                .webp({ quality: 80, effort: 6 })
+                .toFile(miniPath);
+        } else {
+            // 小于等于 660×390 的图片：直接转为 webp（不缩放）
+            await sharp(sourcePath)
+                .webp({ quality: 80, effort: 6 })
+                .toFile(miniPath);
+        }
+        
+        return true;
+    } catch (e) {
+        console.error(colors.error(`处理图片失败 ${path.basename(sourcePath)}: ${e.message}`));
+        return false;
+    }
+}
+
+// 处理所有图片
+async function processAllImages(RUNDIR, SRC, PUB, db = null, cleanMode = false) {
+    const startTime = process.hrtime();
+    const sourceDir = path.join(SRC, 'images');
+    const outputDir = path.join(PUB, 'images');
+    const miniDir = path.join(outputDir, 'mini');
+    
+    if (!fs.existsSync(sourceDir)) {
+        console.log(colors.info('未找到 source/images 目录，跳过图片处理'));
+        return;
+    }
+    
+    console.log(colors.info('开始处理图片...'));
+    
+    if (!db) db = loadImageDB(RUNDIR);
+    
+    // 获取源目录的文件哈希（仅图片）
+    const newSourceHashes = getDirectoryHashes(sourceDir, true);
+    const oldSourceHashes = db.imageHashes || {};
+
+    if (Object.keys(newSourceHashes).length === 0) {
+        console.log(colors.info('未找到任何图片文件'));
+        return;
+    }
+    
+    // 获取旧的 mini 哈希（用于检查 mini 文件是否存在）
+    const oldMiniHashes = db.miniHashes || {};
+    
+    // 标记要处理的文件
+    let filesToProcess = [];
+    let deletedFiles = [];
+    
+    // 检查源文件变化
+    Object.keys(newSourceHashes).forEach(relativePath => {
+        const newHash = newSourceHashes[relativePath];
+        const oldHash = oldSourceHashes[relativePath];
+        
+        // 源文件新增或修改
+        if (!oldHash || oldHash !== newHash) {
+            filesToProcess.push(relativePath);
+        } else {
+            // 源文件未修改，但检查对应的 mini 文件是否存在
+            const ext = path.extname(relativePath);
+            const basenameWithoutExt = path.basename(relativePath, ext);
+            const dir = path.dirname(relativePath);
+            const miniRelPath = (dir && dir !== '.' ? dir + '/' : '') + basenameWithoutExt + '.webp';
+            const miniPath = path.join(miniDir, miniRelPath.replace(/\//g, path.sep));
+            
+            if (!oldMiniHashes[miniRelPath] || !fs.existsSync(miniPath)) {
+                // mini 文件在上次缓存中不存在或物理文件已被删除，需要创建
+                filesToProcess.push(relativePath);
+            }
+        }
+    });
+    
+    // 检查删除的源文件
+    Object.keys(oldSourceHashes).forEach(relativePath => {
+        if (!newSourceHashes[relativePath]) {
+            deletedFiles.push(relativePath);
+        }
+    });
+    
+    // -c时才删除旧图片输出（默认保留不重复处理）
+    if (cleanMode && deletedFiles.length > 0) {
+        deletedFiles.forEach(relativePath => {
+            const ext = path.extname(relativePath);
+            const basenameWithoutExt = path.basename(relativePath, ext);
+            const dir = path.dirname(relativePath);
+            
+            const outputPath = path.join(outputDir, relativePath);
+            const miniRelPath = (dir && dir !== '.' ? dir + '/' : '') + basenameWithoutExt + '.webp';
+            const miniPath = path.join(miniDir, miniRelPath.replace(/\//g, path.sep));
+            
+            try {
+                if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+                if (fs.existsSync(miniPath)) fs.unlinkSync(miniPath);
+                console.log(colors.info(`已删除图片: ${relativePath}`));
+            } catch (e) {
+                console.error(colors.error(`删除图片失败: ${relativePath}`));
+            }
+        });
+    }
+
+    
+    // 处理文件
+    if (filesToProcess.length === 0) {
+        console.log(colors.info('没有图片需要更新'));
+    } else {
+        let processedCount = 0;
+        for (const relativePath of filesToProcess) {
+            const sourcePath = path.join(sourceDir, relativePath);
+            const ext = path.extname(sourcePath);
+            const basenameWithoutExt = path.basename(sourcePath, ext);
+            const dir = path.dirname(relativePath);
+            
+            // 输出路径保持原格式，mini 路径统一为 webp
+            const relDirParts = dir && dir !== '.' ? dir.split('/') : [];
+            const outputPath = path.join(outputDir, dir, path.basename(sourcePath));
+            const miniFileName = basenameWithoutExt + '.webp';
+            const miniPath = path.join(miniDir, ...relDirParts, miniFileName);
+            
+            if (fs.existsSync(sourcePath) && fs.statSync(sourcePath).isFile()) {
+                try {
+                    const success = await processImage(sourcePath, outputPath, miniPath);
+                    if (success) {
+                        processedCount++;
+                        console.log(colors.info(`已处理图片: ${relativePath}`));
+                    }
+                } catch (e) {
+                    console.error(colors.error(`处理图片异常 ${relativePath}: ${e.message}`));
+                }
+            }
+        }
+        console.log(colors.info(`图片处理完成，共处理 ${colors.time(processedCount)} 个文件`));
+    }
+    
+    // 更新数据库 - 保存图片相关哈希值
+    db.imageHashes = newSourceHashes;
+    db.miniHashes = getDirectoryHashes(miniDir, true);
+    saveImageDB(RUNDIR, db);
+    
+    // 输出耗时
+    const diff = process.hrtime(startTime);
+    const timeSec = (diff[0] + diff[1] / 1e9).toFixed(2);
+    console.log(colors.info(`图片处理耗时 ${colors.time(timeSec + ' s')}`));
+}
 
 // 统计SWF文件信息
 function updateSwfStats(SRC_DIR) {
@@ -108,10 +358,20 @@ const colors = {
 
 // 写入文件并输出日志
 function writeFile(dest, content, PUB_DIR) {
-    fs.writeFileSync(dest, content, 'utf8');
     const relPath = path.relative(PUB_DIR, dest);
+    if (fs.existsSync(dest)) {
+        const oldContent = fs.readFileSync(dest, 'utf8');
+        if (oldContent === content) {
+            if (DEBUG_MODE) console.log(colors.info(`未改动: ${relPath}`));
+            return false;
+        }
+    } else {
+        ensureDir(path.dirname(dest));
+    }
+    fs.writeFileSync(dest, content, 'utf8');
     console.log(colors.info(`已生成: ${relPath}`));
     fileCount++;
+    return true;
 }
 
 // 加载配置文件
@@ -162,6 +422,65 @@ function cleanDirWithKeep(dir, keepList) {
         if (stat.isDirectory()) fse.removeSync(p);
         else fs.unlinkSync(p);
     }
+}
+
+// 同步源目录到公共目录（增量复制）
+function syncSourceFiles(SRC, PUB, db, cleanMode = false) {
+    const oldSourceHashes = db.sourceHashes || {};
+    const newSourceHashes = getDirectoryHashes(SRC, false);
+
+    // 删除已从源中删除的文件（仅包括由源生成的）
+    Object.keys(oldSourceHashes).forEach(relPath => {
+        if (!newSourceHashes.hasOwnProperty(relPath)) {
+            if (relPath.startsWith('Game-data') || relPath.startsWith('images') || relPath.startsWith('swf')) return;
+            if (!cleanMode) return; // 默认保留源曾存在但已删除的文件
+
+            const destPath = path.join(PUB, relPath);
+            if (fs.existsSync(destPath)) {
+                try {
+                    fs.unlinkSync(destPath);
+                    console.log(colors.info(`已删除文件: ${relPath}`));
+                } catch (e) {
+                    console.error(colors.error(`删除文件失败 ${relPath}: ${e.message}`));
+                }
+            }
+        }
+    });
+
+    // 复制或更新源文件
+    Object.keys(newSourceHashes).forEach(relPath => {
+        if (relPath === 'Game-data' || relPath.startsWith('Game-data/')) return;
+        if (relPath === 'images' || relPath.startsWith('images/')) return;
+        if (relPath === 'swf' || relPath.startsWith('swf/')) return;
+
+        const srcPath = path.join(SRC, relPath);
+        const destPath = path.join(PUB, relPath);
+
+        if (isImageFile(srcPath)) return; // images用processAllImages处理
+
+        if (!fs.existsSync(srcPath) || !fs.statSync(srcPath).isFile()) return;
+
+        const sourceHash = newSourceHashes[relPath];
+        let destHash = null;
+        if (fs.existsSync(destPath) && fs.statSync(destPath).isFile()) {
+            destHash = getFileHash(destPath);
+        }
+
+        if (destHash && destHash === sourceHash) {
+            // 跳过未修改文件
+            if (DEBUG_MODE) console.log(colors.info(`文件未修改: ${relPath}`));
+        } else {
+            ensureDir(path.dirname(destPath));
+            fse.copySync(srcPath, destPath, { overwrite: true });
+            console.log(colors.info(`已复制文件: ${relPath}`));
+        }
+
+        db.sourceHashes = db.sourceHashes || {};
+        db.sourceHashes[relPath] = sourceHash;
+    });
+
+    // 现有源写DB
+    db.sourceHashes = newSourceHashes;
 }
 
 // 递归压缩文件
@@ -248,6 +567,7 @@ async function main() {
     GLOBAL_CONFIG = loadConfig();
     TEMPLATE_AFFECT = GLOBAL_CONFIG.templateAffect || {};
     const IS_WATCH = argv.s || argv.serve;
+    const CLEAN_MODE = argv.c || argv.clean || false;
     const MUST_MIN = argv.min || argv.m || false;
 
     const RUNDIR = process.cwd();
@@ -261,49 +581,61 @@ async function main() {
     console.log(colors.info('开始处理'));
 
     ensureDir(PUB);
-    cleanDirWithKeep(PUB, GLOBAL_CONFIG.clean?.keep || []);
+    if (CLEAN_MODE) {
+        cleanDirWithKeep(PUB, GLOBAL_CONFIG.clean?.keep || []);
+        console.log(colors.info('已清空输出目录'));
+    }
 
-    const IGNORE_LIST = new Set([...(GLOBAL_CONFIG.ignore || []), 'Game-data']);
-    fs.readdirSync(SRC).forEach(entry => {
-        // 跳过忽略列表中的文件或目录
-        if (IGNORE_LIST.has(entry)) return;
+    // 读取缓存数据
+    let db = loadImageDB(RUNDIR);
 
-        const srcPath = path.join(SRC, entry);
-        const destPath = path.join(PUB, entry);
+    // 源目录增量复制
+    syncSourceFiles(SRC, PUB, db, CLEAN_MODE);
 
-        // swf目录建立软链接其余复制
-        if (entry === 'swf') {
-            if (fs.existsSync(destPath)) {
-                const dStat = fs.lstatSync(destPath);
-                if (dStat.isSymbolicLink() || (process.platform === 'win32' && dStat.isDirectory())) {
-                    fse.removeSync(destPath); 
-                }
-            }
-            
-            const type = process.platform === "win32" ? 'junction' : 'dir';
+    // 保证 swf 软链接存在
+    const swfSrc = path.join(SRC, 'swf');
+    const swfDest = path.join(PUB, 'swf');
+    if (fs.existsSync(swfSrc)) {
+        let shouldCreateLink = true;
+
+        if (fs.existsSync(swfDest)) {
             try {
-                fs.symlinkSync(srcPath, destPath, type);
-                console.log(colors.info(`已建立软链接: ${entry} -> ${srcPath}`));
+                const dStat = fs.lstatSync(swfDest);
+                if (dStat.isSymbolicLink()) {
+                    const currentTarget = fs.readlinkSync(swfDest);
+                    if (currentTarget === swfSrc) {
+                        shouldCreateLink = false;
+                        if (DEBUG_MODE) console.log(colors.info('软连接已存在且目标一致，跳过'));                        
+                    } else {
+                        fse.removeSync(swfDest);
+                    }
+                } else if (process.platform === 'win32' && dStat.isDirectory()) {
+                    const realPath = fs.realpathSync(swfDest);
+                    if (realPath === swfSrc) {
+                        shouldCreateLink = false;
+                        if (DEBUG_MODE) console.log(colors.info('SWF 目录已存在，且与源一致，跳过'));
+                    } else {
+                        fse.removeSync(swfDest);
+                    }
+                } else {
+                    fse.removeSync(swfDest);
+                }
+            } catch (e) {
+                // 读取链接失败时重建
+                fse.removeSync(swfDest);
+            }
+        }
+
+        if (shouldCreateLink) {
+            const type = process.platform === 'win32' ? 'junction' : 'dir';
+            try {
+                fs.symlinkSync(swfSrc, swfDest, type);
+                console.log(colors.info(`已建立软链接: swf -> ${swfSrc}`));
             } catch (e) {
                 console.error(colors.error(`软链接建立失败: ${e.message}`));
             }
-        } else {
-            fse.copySync(srcPath, destPath, { overwrite: true });
-            
-            if (fs.statSync(destPath).isFile()) {
-                fileCount++;
-            } else {
-                const countFiles = (dir) => {
-                    fs.readdirSync(dir).forEach(f => {
-                        const p = path.join(dir, f);
-                        if (fs.statSync(p).isFile()) fileCount++;
-                        else countFiles(p);
-                    });
-                };
-                countFiles(destPath);
-            }
         }
-    });
+    }
 
     // 加载数据
     const loadStart = process.hrtime();
@@ -312,6 +644,9 @@ async function main() {
     updateAuthorStats(games);
     const loadMs = (process.hrtime(loadStart)[0] * 1e3 + process.hrtime(loadStart)[1] / 1e6).toFixed(2);
     console.log(colors.info(`文件加载耗时 ${colors.time(loadMs + ' ms')}`));
+
+    // 处理图片
+    await processAllImages(RUNDIR, SRC, PUB, db, CLEAN_MODE);
 
     // 生成页面
     genHomePages(TPL, PUB, games, DOMAIN);
@@ -346,7 +681,7 @@ async function main() {
     }
 
     // 实时预览
-    if (IS_WATCH) {
+    if (IS_WATCH && !CLEAN_MODE) {
         // 启动服务器，默认端口3000
         const port = GLOBAL_CONFIG.port || 3000;
         const server = http.createServer((request, response) => {
@@ -379,6 +714,13 @@ async function main() {
                     return Math.floor(index / pageSize) + 1;
                 }
 
+                // 图片处理
+                const isImagesDir = filePath.includes(path.join('images')) && filePath.startsWith(path.join(SRC, 'images'));
+                if (isImagesDir) {
+                    await processAllImages(RUNDIR, SRC, PUB);
+                    return;
+                }
+
                 // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
                     const game = loadSingleGame(filePath);
@@ -391,11 +733,14 @@ async function main() {
                     const page = findGamePageIndex(games, game.dir, PAGE_SIZE);
                     if (page !== null) {
                         const pageGames = games.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+                        const pagination = getPagination(page, Math.ceil(games.length / PAGE_SIZE));
                         const html = renderTpl(TPL, 'home', {
                             games: pageGames,
                             page: page,
                             totalPages: Math.ceil(games.length / PAGE_SIZE),
-                            domain: DOMAIN
+                            pagination: pagination,
+                            domain: DOMAIN,
+                            currentPage: page
                         });
                         const dest = path.join(PUB, page === 1 ? 'index.html' : `${page}.html`);
                         writeFile(dest, html, PUB);
@@ -581,9 +926,20 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
     const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
         const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+
+        // 首页使用 mini 缩略图
+        const pageGamesWithMiniCover = pageGames.map(g => {
+            const cover = g.cover || '';
+            if (cover.startsWith('/images/')) {
+                const miniCover = cover.replace('/images/', '/images/mini/');
+                return Object.assign({}, g, { cover: miniCover });
+            }
+            return g;
+        });
+
         const pagination = getPagination(p, totalPages);
         const html = renderTpl(TPL, 'home', { 
-            games: pageGames, 
+            games: pageGamesWithMiniCover, 
             page: p, 
             totalPages: totalPages, 
             pagination: pagination,
@@ -670,9 +1026,18 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
         for (let p = 1; p <= totalPages; p++) {
             const pageGames = personGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
             const pagination = getPagination(p, totalPages);
-            
+
+            const pageGamesWithMiniCover = pageGames.map(g => {
+                const cover = g.cover || '';
+                if (cover.startsWith('/images/')) {
+                    const miniCover = cover.replace('/images/', '/images/mini/');
+                    return Object.assign({}, g, { cover: miniCover });
+                }
+                return g;
+            });
+
             const html = renderTpl(TPL, 'author-games', { 
-                games: pageGames, 
+                games: pageGamesWithMiniCover,
                 page: p, 
                 totalPages: totalPages, 
                 domain: DOMAIN,
