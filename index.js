@@ -359,15 +359,7 @@ const colors = {
 // 写入文件并输出日志
 function writeFile(dest, content, PUB_DIR) {
     const relPath = path.relative(PUB_DIR, dest);
-    if (fs.existsSync(dest)) {
-        const oldContent = fs.readFileSync(dest, 'utf8');
-        if (oldContent === content) {
-            if (DEBUG_MODE) console.log(colors.info(`未改动: ${relPath}`));
-            return false;
-        }
-    } else {
-        ensureDir(path.dirname(dest));
-    }
+    ensureDir(path.dirname(dest));
     fs.writeFileSync(dest, content, 'utf8');
     console.log(colors.info(`已生成: ${relPath}`));
     fileCount++;

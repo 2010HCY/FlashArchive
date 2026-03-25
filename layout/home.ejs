@@ -3,24 +3,24 @@
 <%- include('head', { pageType: 'home' }) %>
 <body>
     <div class="card-container">
-      <%- include('header') %>
-      <main id="game-list">
-        <% games.forEach((game, i) => { %>
-          <div class="card">
-            <a href="<%= game.dir %>/">
-              <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
-              <h3><%= game.title %></h3>
-              <p><%= game.brief %></p>
-            </a>
-          </div>
-        <% }); %>
-      </main>
+      	<%- include('header') %>
+      	<main id="game-list">
+    	  	<% games.forEach((game, i) => { %>
+          		<div class="card">
+            		<a href="<%= game.dir %>/">
+            	  		<img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+            	  		<h3><%= game.title %></h3>
+            	  		<p><%= game.brief %></p>
+            		</a>
+          		</div>
+        	<% }); %>
+      	</main>
     </div>
     <div class="pagination">
         <a <% if (page > 1) { %> 
                 href="<%= page === 2 ? '/' : '/' + (page - 1) + '.html' %>" 
-          <% } %> 
-          class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+          	<% } %> 
+          	class="page-item <%= page <= 1 ? 'disabled' : '' %>">
             <i class="fas fa-chevron-left"></i>
             <span class="desktop-text">上一页</span>
         </a>

@@ -29,9 +29,9 @@
         <% games.forEach(game => { %>
           <div class="card">
             <a href="<%= game.dir %>/">
-              <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
-              <h2><%= game.title %></h2>
-              <p><%= game.brief %></p>
+                <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+                <h2><%= game.title %></h2>
+                <p><%= game.brief %></p>
             </a>
           </div>
         <% }); %>
@@ -40,8 +40,8 @@
     <div class="pagination">
         <a <% if (page > 1) { %> 
                 href="<%= page === 2 ? '/' : '/' + (page - 1) + '.html' %>" 
-          <% } %> 
-          class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+            <% } %> 
+            class="page-item <%= page <= 1 ? 'disabled' : '' %>">
             <i class="fas fa-chevron-left"></i>
             <span class="desktop-text">上一页</span>
         </a>
@@ -62,8 +62,8 @@
 
         <a <% if (page < totalPages) { %> 
                 href="/<%= page + 1 %>.html" 
-          <% } %> 
-          class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+            <% } %> 
+            class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
             <span class="desktop-text">下一页</span>
             <i class="fas fa-chevron-right"></i>
         </a>
