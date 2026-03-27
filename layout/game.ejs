@@ -27,6 +27,8 @@
                     </div>
                 <% } %>
                 <button id="downloadBtn" class="bottomP">下载</button>
+                <button id="simple-keyboard-btn" class="bottomP">屏幕键盘</button>
+                <button onclick="enterPureFull()">全屏畅玩</button>
             </div>
             <br>
             <h2>如何游玩</h2>
@@ -79,6 +81,7 @@
                 <p><strong>游戏名称：</strong><%= game.title %></p>
                 <p><strong>兼容引擎：</strong><a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>, Adobe Flash Player</p>
                 <p><strong>收录版本：</strong><%= versionKeywords.join(' / ') %></p>
+                <p><strong>文件大小：</strong><% if (fileSizes && fileSizes.length) { %><%= fileSizes.map(s => s.value + s.unit).join(' / ') %><% } %></p>
                 <p>觉得好玩的话就点个赞吧</p>
             </div>
         </div>
@@ -153,29 +156,186 @@
             }
         });
     </script>
+    <script src="/api/play/simple-keyboard.js"></script>
+    <!-- ========== 屏幕键盘全屏功能 ========== -->
     <script>
-        // 下载模态框
+        window.keyboardContainer = window.keyboardContainer || null;
+        window.activeKeys = new Set();
+
+        function toggleKeyboard() {
+            const body = document.body;
+
+            if (!window.keyboardContainer) {
+                // 创建键盘容器
+                window.keyboardContainer = document.createElement('div');
+                window.keyboardContainer.id = 'simple-keyboard-container';
+                window.keyboardContainer.className = 'simple-keyboard hg-theme-default';
+                document.body.appendChild(window.keyboardContainer);
+
+                // 初始化键盘库
+                const KBClass = window.SimpleKeyboard.default || window.SimpleKeyboard;
+                new KBClass(".simple-keyboard", {
+                    onRender: () => {
+                        document.querySelectorAll('.hg-button').forEach(button => {
+                            const btnAttr = button.getAttribute('data-skbtn');
+                            button.onpointerdown = (e) => { e.preventDefault(); handleKeyAction(btnAttr, 'down'); };
+                            button.onpointerup = (e) => { e.preventDefault(); handleKeyAction(btnAttr, 'up'); };
+                            button.onpointerleave = (e) => { handleKeyAction(btnAttr, 'up'); };
+                        });
+                    },
+                    layout: {
+                        'default': [
+                            '1 2 3 4 5 6 7 8 9 0', 'Q W E R T Y U I O P', 'A S D F G H J K L',
+                            '{shiftalt} Z X C V B N M {bksp}', 'Fn Ctrl Alt {arrowup} Enter',
+                            '{exit} {space} {arrowleft} {arrowdown} {arrowright}'
+                        ]
+                    },
+                    display: {
+                        '{bksp}': '⌫', '{enter}': 'Enter', '{shiftalt}': '⇧', '{exit}': 'Exit',
+                        '{space}': '␣', '{arrowup}': '↑', '{arrowleft}': '←', '{arrowdown}': '↓', '{arrowright}': '→'
+                    }
+                });
+            }
+
+            // 切换显示/隐藏
+            const isOpening = window.keyboardContainer.style.display === 'none' || !document.body.classList.contains('is-theater-mode');
+            const gameEmbed = document.getElementById('gameEmbed');
+
+            if (isOpening) {
+                document.body.classList.add('is-theater-mode');
+                window.keyboardContainer.style.display = 'block';
+                gameEmbed.style.cssText = 'width: 100%; flex: 1;';
+                ensureExitBtn();
+            } else {
+                document.body.classList.remove('is-theater-mode');
+                window.keyboardContainer.style.display = 'none';
+                gameEmbed.style.cssText = 'width: 100%; height: 100%;';
+            }
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        function handleKeyAction(button, type) {
+            if (button === '{exit}' && type === 'down') {
+                toggleKeyboard();
+                return;
+            }
+
+            const keyMap = {
+                '{bksp}': { k: 'Backspace', c: 'Backspace', v: 8 },
+                '{enter}': { k: 'Enter', c: 'Enter', v: 13 },
+                '{shiftalt}': { k: 'Shift', c: 'ShiftLeft', v: 16 },
+                'Ctrl': { k: 'Control', c: 'ControlLeft', v: 17 },
+                'Alt': { k: 'Alt', c: 'AltLeft', v: 18 },
+                '{space}': { k: ' ', c: 'Space', v: 32 },
+                '{arrowup}': { k: 'ArrowUp', c: 'ArrowUp', v: 38 },
+                '{arrowdown}': { k: 'ArrowDown', c: 'ArrowDown', v: 40 },
+                '{arrowleft}': { k: 'ArrowLeft', c: 'ArrowLeft', v: 37 },
+                '{arrowright}': { k: 'ArrowRight', c: 'ArrowRight', v: 39 }
+            };
+
+            const eventData = keyMap[button] || { k: button, c: 'Key' + button.toUpperCase(), v: button.toUpperCase().charCodeAt(0) };
+            const target = document.querySelector('#gameEmbed canvas') || document.querySelector('#gameEmbed').firstChild;
+
+            if (!target) return;
+
+            if (type === 'down') {
+                if (window.activeKeys.has(button)) return;
+                window.activeKeys.add(button);
+                target.focus();
+                target.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: eventData.k, code: eventData.c, keyCode: eventData.v, which: eventData.v, bubbles: true
+                }));
+            } else {
+                if (!window.activeKeys.has(button)) return;
+                window.activeKeys.delete(button);
+                target.dispatchEvent(new KeyboardEvent('keyup', {
+                    key: eventData.k, code: eventData.c, keyCode: eventData.v, which: eventData.v, bubbles: true
+                }));
+            }
+        }
+    </script>
+
+    <!-- ========== 纯全屏功能 ========== -->
+    <script>
+        function enterPureFull() {
+            const body = document.body;
+            const gameEmbed = document.getElementById('gameEmbed');
+            
+            body.classList.add('is-pure-fullscreen');
+            gameEmbed.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9998;';
+            ensureExitBtn();
+            window.dispatchEvent(new Event('resize'));
+
+            const preventEsc = (e) => {
+                if (e.key === 'Escape' && body.classList.contains('is-pure-fullscreen')) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    console.log("若要退出全屏，请点击右下角按钮退出全屏");
+                }
+            };
+            window.addEventListener('keydown', preventEsc, true);
+        }
+    </script>
+
+    <!-- ========== 通用退出按钮 ========== -->
+    <script>
+        function ensureExitBtn() {
+            let btn = document.getElementById('exit-fullscreen-btn');
+            if (!btn) {
+                btn = document.createElement('div');
+                btn.id = 'exit-fullscreen-btn';
+                btn.innerHTML = '<i class="fas fa-compress"></i>';
+                btn.onclick = () => {
+                    document.body.classList.remove('is-theater-mode', 'is-pure-fullscreen');
+                    if (window.keyboardContainer) window.keyboardContainer.style.display = 'none';
+                    document.getElementById('gameEmbed').style.cssText = 'width: 100%; height: 100%;';
+                    window.dispatchEvent(new Event('resize'));
+                };
+            }
+            const gameContainer = document.querySelector('.game-container');
+            if (gameContainer) {
+                gameContainer.appendChild(btn); 
+            } else {
+                document.body.appendChild(btn);
+            }
+        }
+
+        // 初始化：绑定屏幕键盘按钮
+        document.addEventListener('DOMContentLoaded', function () {
+            const keyboardBtn = document.getElementById('simple-keyboard-btn');
+            if (keyboardBtn) {
+                keyboardBtn.addEventListener('click', toggleKeyboard);
+            }
+        });
+    </script>
+
+    <!-- ========== 下载模态框 ========== -->
+    <script>
         function toggleDownloadModal(show) {
-            var md = document.getElementById('downloadModal');
+            const md = document.getElementById('downloadModal');
             if (md) {
                 md.style.display = show ? 'flex' : 'none';
             }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            var btn = document.getElementById('downloadBtn');
+            const btn = document.getElementById('downloadBtn');
             if (btn) {
                 btn.onclick = function () {
                     toggleDownloadModal(true);
-                }
+                };
             }
-            var modal = document.getElementById('downloadModal');
-            if (modal) modal.onclick = function () {
-                toggleDownloadModal(false);
-            };
-            var panel = document.querySelector('.download-modal-panel');
-            if (panel) panel.onclick = function (e) {
-                e.stopPropagation();
+            const modal = document.getElementById('downloadModal');
+            if (modal) {
+                modal.onclick = function () {
+                    toggleDownloadModal(false);
+                };
+            }
+            const panel = document.querySelector('.download-modal-panel');
+            if (panel) {
+                panel.onclick = function (e) {
+                    e.stopPropagation();
+                };
             }
         });
     </script>

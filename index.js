@@ -8,7 +8,7 @@ const minifyHtml = require('html-minifier').minify;
 const CleanCSS = require('clean-css');
 const Terser = require('terser');
 const rawArgs = process.argv.slice(2);
-const argv = require('minimist')(rawArgs, { boolean: ['debug', 'c', 'clean', 's', 'serve', 'm', 'min'] });
+const argv = require('minimist')(rawArgs, { boolean: ['debug', 's', 'serve', 'm', 'min'] });
 const DEBUG_MODE = argv.debug || argv.d || rawArgs.includes('-debug') || rawArgs.includes('--debug');
 const chokidar = require('chokidar');
 const http = require('http');
@@ -153,7 +153,7 @@ async function processImage(sourcePath, outputPath, miniPath) {
 }
 
 // 处理所有图片
-async function processAllImages(RUNDIR, SRC, PUB, db = null, cleanMode = false) {
+async function processAllImages(RUNDIR, SRC, PUB, db = null) {
     const startTime = process.hrtime();
     const sourceDir = path.join(SRC, 'images');
     const outputDir = path.join(PUB, 'images');
@@ -213,28 +213,6 @@ async function processAllImages(RUNDIR, SRC, PUB, db = null, cleanMode = false) 
             deletedFiles.push(relativePath);
         }
     });
-    
-    // -c时才删除旧图片输出（默认保留不重复处理）
-    if (cleanMode && deletedFiles.length > 0) {
-        deletedFiles.forEach(relativePath => {
-            const ext = path.extname(relativePath);
-            const basenameWithoutExt = path.basename(relativePath, ext);
-            const dir = path.dirname(relativePath);
-            
-            const outputPath = path.join(outputDir, relativePath);
-            const miniRelPath = (dir && dir !== '.' ? dir + '/' : '') + basenameWithoutExt + '.webp';
-            const miniPath = path.join(miniDir, miniRelPath.replace(/\//g, path.sep));
-            
-            try {
-                if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-                if (fs.existsSync(miniPath)) fs.unlinkSync(miniPath);
-                console.log(colors.info(`已删除图片: ${relativePath}`));
-            } catch (e) {
-                console.error(colors.error(`删除图片失败: ${relativePath}`));
-            }
-        });
-    }
-
     
     // 处理文件
     if (filesToProcess.length === 0) {
@@ -404,40 +382,9 @@ function ensureDir(dir) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-// 清理目录但保留指定文件或目录
-function cleanDirWithKeep(dir, keepList) {
-    if (!fs.existsSync(dir)) return;
-    for (const entry of fs.readdirSync(dir)) {
-        if (keepList.includes(entry)) continue;
-        const p = path.join(dir, entry);
-        const stat = fs.lstatSync(p);
-        if (stat.isDirectory()) fse.removeSync(p);
-        else fs.unlinkSync(p);
-    }
-}
-
 // 同步源目录到公共目录（增量复制）
-function syncSourceFiles(SRC, PUB, db, cleanMode = false) {
-    const oldSourceHashes = db.sourceHashes || {};
+function syncSourceFiles(SRC, PUB, db) {
     const newSourceHashes = getDirectoryHashes(SRC, false);
-
-    // 删除已从源中删除的文件（仅包括由源生成的）
-    Object.keys(oldSourceHashes).forEach(relPath => {
-        if (!newSourceHashes.hasOwnProperty(relPath)) {
-            if (relPath.startsWith('Game-data') || relPath.startsWith('images') || relPath.startsWith('swf')) return;
-            if (!cleanMode) return; // 默认保留源曾存在但已删除的文件
-
-            const destPath = path.join(PUB, relPath);
-            if (fs.existsSync(destPath)) {
-                try {
-                    fs.unlinkSync(destPath);
-                    console.log(colors.info(`已删除文件: ${relPath}`));
-                } catch (e) {
-                    console.error(colors.error(`删除文件失败 ${relPath}: ${e.message}`));
-                }
-            }
-        }
-    });
 
     // 复制或更新源文件
     Object.keys(newSourceHashes).forEach(relPath => {
@@ -448,7 +395,7 @@ function syncSourceFiles(SRC, PUB, db, cleanMode = false) {
         const srcPath = path.join(SRC, relPath);
         const destPath = path.join(PUB, relPath);
 
-        if (isImageFile(srcPath)) return; // images用processAllImages处理
+        if (relPath.startsWith('images/') && isImageFile(srcPath)) return; // 仅images用processAllImages处理
 
         if (!fs.existsSync(srcPath) || !fs.statSync(srcPath).isFile()) return;
 
@@ -559,7 +506,6 @@ async function main() {
     GLOBAL_CONFIG = loadConfig();
     TEMPLATE_AFFECT = GLOBAL_CONFIG.templateAffect || {};
     const IS_WATCH = argv.s || argv.serve;
-    const CLEAN_MODE = argv.c || argv.clean || false;
     const MUST_MIN = argv.min || argv.m || false;
 
     const RUNDIR = process.cwd();
@@ -573,16 +519,12 @@ async function main() {
     console.log(colors.info('开始处理'));
 
     ensureDir(PUB);
-    if (CLEAN_MODE) {
-        cleanDirWithKeep(PUB, GLOBAL_CONFIG.clean?.keep || []);
-        console.log(colors.info('已清空输出目录'));
-    }
 
     // 读取缓存数据
     let db = loadImageDB(RUNDIR);
 
     // 源目录增量复制
-    syncSourceFiles(SRC, PUB, db, CLEAN_MODE);
+    syncSourceFiles(SRC, PUB, db);
 
     // 保证 swf 软链接存在
     const swfSrc = path.join(SRC, 'swf');
@@ -637,8 +579,8 @@ async function main() {
     const loadMs = (process.hrtime(loadStart)[0] * 1e3 + process.hrtime(loadStart)[1] / 1e6).toFixed(2);
     console.log(colors.info(`文件加载耗时 ${colors.time(loadMs + ' ms')}`));
 
-    // 处理图片
-    await processAllImages(RUNDIR, SRC, PUB, db, CLEAN_MODE);
+    // 处理图片（保留缓存，仅处理修改的）
+    await processAllImages(RUNDIR, SRC, PUB, db);
 
     // 生成页面
     genHomePages(TPL, PUB, games, DOMAIN);
@@ -673,7 +615,7 @@ async function main() {
     }
 
     // 实时预览
-    if (IS_WATCH && !CLEAN_MODE) {
+    if (IS_WATCH) {
         // 启动服务器，默认端口3000
         const port = GLOBAL_CONFIG.port || 3000;
         const server = http.createServer((request, response) => {
@@ -859,6 +801,20 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
     // 去重，防止出现重复的关键词
     versionKeywords = [...new Set(versionKeywords)];
 
+    // 计算文件大小（与files顺序一致）
+    let fileSizes = [];
+    if (game.files && Array.isArray(game.files)) {
+        fileSizes = game.files.map(file => {
+            const relativeSwfPath = file.path.startsWith('/') ? file.path.substring(1) : file.path;
+            const srcPath = path.join(RUNDIR, GLOBAL_CONFIG.src, relativeSwfPath);
+            if (fs.existsSync(srcPath)) {
+                const stat = fs.statSync(srcPath);
+                return formatSize(stat.size);
+            }
+            return formatSize(0);
+        });
+    }
+
     // 作者
     const authorName = (game['Author'] || '').trim();
     const author =
@@ -883,7 +839,7 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
 
     // 发布时间
     const pubTime = formatDisplayTime(game.pubDate);
-    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords });
+    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords, fileSizes });
 
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
