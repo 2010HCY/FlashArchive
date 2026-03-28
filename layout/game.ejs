@@ -12,25 +12,27 @@
                 <%= game.title %>
             </h1>
             <div class="switch-buttons" id="gameVerSwitchBox">
-                <% if (game.files.length <=3) { %>
-                <% game.files.forEach((file, index)=> { -%>
-                    <button onclick="switchGame('<%= index %>')"><%= file.name %></button>
-                <% }) %>
-                <% } else { %>
-                    <button id="gameVerDropdownBtn">切换版本 (<span id="curVerName"><%= game.files[0].name %></span>) <i class="fas fa-chevron-down dropdown-icon"></i></button>
-                        <div id="gameVerDropdown" class="ver-dropdown-menu" style="display:none;">
-                            <% game.files.forEach((file, index)=> { -%>
-                            <div class="ver-dropdown-item" id="verItem<%= index %>" onclick="switchGame('<%= index %>');toggleVerDropdown(false)">
-                                <%= file.name %><i class="fas fa-check ver-check" style="display:none; margin-right:8px;"></i>
-                            </div>
-                            <% }) %>
+                <button id="gameVerDropdownBtn" class="ver-dropdown-btn">
+                    <span id="curVerName"><%= game.files[0].name %></span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div id="gameVerDropdown" class="ver-dropdown-menu" style="display:none;">
+                    <% if (game.files.length === 1) { %>
+                    <div class="ver-dropdown-item disabled">无更多版本</div>
+                    <% } else { %>
+                    <% game.files.forEach((file, index)=> { -%>
+                    <div class="ver-dropdown-item" id="verItem<%= index %>" data-index="<%= index %>" onclick="switchGame(<%= index %>);toggleVerDropdown(false)">
+                        <%= file.name %>
                     </div>
-                <% } %>
-                <button id="downloadBtn" class="bottomP">下载</button>
-                <button id="simple-keyboard-btn" class="bottomP">屏幕键盘</button>
-                <button onclick="enterPureFull()">全屏畅玩</button>
+                    <% }) %>
+                    <% } %>
+                </div>
             </div>
-            <br>
+            <div class="switch-buttons" id="gameVerSwitchBox">
+                <button id="downloadBtn" class="tool-btn" data-tooltip="下载"><i class="fas fa-download"></i></button>
+                <button id="simple-keyboard-btn" class="tool-btn" data-tooltip="屏幕键盘"><i class="fas fa-keyboard"></i></button>
+                <button id="fullscreen-btn" class="tool-btn" data-tooltip="全屏畅玩"><i class="fas fa-expand"></i></button>
+            </div>
             <h2>如何游玩</h2>
             <p><%- game.play %></p>
             <p>你可以按上面的按钮切换不同版本</p>
@@ -109,6 +111,12 @@
             container.appendChild(player);
 
             switchGame(0);
+            
+            // 初始化版本选中状态
+            const firstItem = document.getElementById('verItem0');
+            if (firstItem) {
+                firstItem.classList.add('active');
+            }
         });
     </script>
     <script>
@@ -126,6 +134,15 @@
             });
             const nameEl = document.getElementById('curVerName');
             if (nameEl) nameEl.textContent = file.name;
+            
+            // 更新下拉菜单选中状态
+            document.querySelectorAll('.ver-dropdown-item').forEach((item, idx) => {
+                if (idx == index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         }
     </script>
     <script>
@@ -138,9 +155,9 @@
             dropdown.style.display = show ? 'block' : 'none';
 
             if (show) {
-                btn.classList.add('ver-dropdown-open');
+                btn.classList.add('active');
             } else {
-                btn.classList.remove('ver-dropdown-open');
+                btn.classList.remove('active');
             }
         }
         document.addEventListener('DOMContentLoaded', function () {
@@ -305,6 +322,10 @@
             const keyboardBtn = document.getElementById('simple-keyboard-btn');
             if (keyboardBtn) {
                 keyboardBtn.addEventListener('click', toggleKeyboard);
+            }
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', enterPureFull);
             }
         });
     </script>
