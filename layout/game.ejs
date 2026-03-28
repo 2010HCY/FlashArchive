@@ -12,23 +12,23 @@
                 <%= game.title %>
             </h1>
             <div class="switch-buttons" id="gameVerSwitchBox">
-                <button id="gameVerDropdownBtn" class="ver-dropdown-btn">
-                    <span id="curVerName"><%= game.files[0].name %></span>
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </button>
-                <div id="gameVerDropdown" class="ver-dropdown-menu" style="display:none;">
-                    <% if (game.files.length === 1) { %>
-                    <div class="ver-dropdown-item disabled">无更多版本</div>
-                    <% } else { %>
-                    <% game.files.forEach((file, index)=> { -%>
-                    <div class="ver-dropdown-item" id="verItem<%= index %>" data-index="<%= index %>" onclick="switchGame(<%= index %>);toggleVerDropdown(false)">
-                        <%= file.name %>
+                <div class="ver-dropdown-wrapper">
+                    <button id="gameVerDropdownBtn" class="ver-dropdown-btn">
+                        版本切换 - <span id="curVerName"><%= game.files[0].name %></span>
+                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </button>
+                    <div id="gameVerDropdown" class="ver-dropdown-menu" style="display:none;">
+                        <% if (game.files.length === 1) { %>
+                        <div class="ver-dropdown-item disabled">无更多版本</div>
+                        <% } else { %>
+                        <% game.files.forEach((file, index)=> { -%>
+                        <div class="ver-dropdown-item" id="verItem<%= index %>" data-index="<%= index %>" onclick="switchGame(<%= index %>);toggleVerDropdown(false)">
+                            <%= file.name %>
+                        </div>
+                        <% }) %>
+                        <% } %>
                     </div>
-                    <% }) %>
-                    <% } %>
                 </div>
-            </div>
-            <div class="switch-buttons" id="gameVerSwitchBox">
                 <button id="downloadBtn" class="tool-btn" data-tooltip="下载"><i class="fas fa-download"></i></button>
                 <button id="simple-keyboard-btn" class="tool-btn" data-tooltip="屏幕键盘"><i class="fas fa-keyboard"></i></button>
                 <button id="fullscreen-btn" class="tool-btn" data-tooltip="全屏畅玩"><i class="fas fa-expand"></i></button>
@@ -92,27 +92,32 @@
         <%- include('twikoo') %>
     </section>
     <script>
-        // 初始化 Ruffle 播放器
+        let player;
+        let rufflePlayer;
+
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            "letterbox": "on",
+            "scale": "showAll",
+            "forceScale": true,
+            "autoplay": "on",
+            "unmuteOverlay": "hidden"
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
-            window.RufflePlayer = window.RufflePlayer || {};
             rufflePlayer = window.RufflePlayer.newest();
 
-            player = rufflePlayer.createPlayer({
-                allowScriptAccess: true,
-                scale: "showall",
-                forceScale: true,
-                autoplay: "on",
-                backgroundColor: null,
-                polyfills: true,
-                allowNetworking: "internal",
-            });
+            player = rufflePlayer.createPlayer();
 
             const container = document.getElementById('gameEmbed');
-            container.appendChild(player);
+            if (container) {
+                container.appendChild(player);
+            }
 
-            switchGame(0);
+            if (typeof switchGame === "function") {
+                switchGame(0);
+            }
             
-            // 初始化版本选中状态
             const firstItem = document.getElementById('verItem0');
             if (firstItem) {
                 firstItem.classList.add('active');
@@ -174,8 +179,8 @@
         });
     </script>
     <script src="/api/play/simple-keyboard.js"></script>
-    <!-- ========== 屏幕键盘全屏功能 ========== -->
     <script>
+        // 屏幕键盘全屏功能
         window.keyboardContainer = window.keyboardContainer || null;
         window.activeKeys = new Set();
 
@@ -271,9 +276,8 @@
             }
         }
     </script>
-
-    <!-- ========== 纯全屏功能 ========== -->
     <script>
+        // 纯全屏功能
         function enterPureFull() {
             const body = document.body;
             const gameEmbed = document.getElementById('gameEmbed');
@@ -293,9 +297,8 @@
             window.addEventListener('keydown', preventEsc, true);
         }
     </script>
-
-    <!-- ========== 通用退出按钮 ========== -->
     <script>
+        // 通用退出按钮
         function ensureExitBtn() {
             let btn = document.getElementById('exit-fullscreen-btn');
             if (!btn) {
@@ -330,8 +333,8 @@
         });
     </script>
 
-    <!-- ========== 下载模态框 ========== -->
     <script>
+        // 下载模态框
         function toggleDownloadModal(show) {
             const md = document.getElementById('downloadModal');
             if (md) {

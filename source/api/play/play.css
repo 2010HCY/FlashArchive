@@ -281,7 +281,6 @@ body.is-theater-mode #gameEmbed {
     box-shadow: 0 0 8px 0 rgba(232,237,250,.6), 0 2px 4px 0 rgba(232,237,250,.5);
 
 }
-
 #zan {
 	margin-top:40px;
 	position:relative;
@@ -558,7 +557,6 @@ h2#desc-title {
     width:100%;
     height:0; 
 }
-
 /* 按钮栏样式 */
 .switch-buttons {
     position: relative;
@@ -568,7 +566,6 @@ h2#desc-title {
     flex-wrap: wrap;
     margin-bottom: 5px;
 }
-
 /* 工具按钮 */
 .tool-btn {
     position: relative;
@@ -585,52 +582,45 @@ h2#desc-title {
     justify-content: center;
     transition: all 0.3s ease;
 }
-
 .tool-btn:hover {
     background: rgba(0, 0, 0, 0.08);
     color: #333;
 }
-
 /* tooltip样式 */
 .tool-btn::before {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% + 8px);
     left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
+    transform: translateX(-50%) scale(0.85);
+    background: #000;
+    color: #fff;
     padding: 6px 10px;
     border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    z-index: 100;
 }
-
-.tool-btn::after {
-    content: '';
-    position: absolute;
-    bottom: calc(100% - 2px);
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.8);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.tool-btn:hover::before,
-.tool-btn:hover::after {
+.tool-btn:hover::before {
     opacity: 1;
+    transform: translateX(-50%) scale(1);
 }
-
 /* 版本切换按钮 */
 #gameVerSwitchBox {
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.ver-dropdown-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-basis: 100%
 }
 .ver-dropdown-btn {
     position: relative;
@@ -645,26 +635,23 @@ h2#desc-title {
     font-size: 14px;
     color: #333;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-basis: 100%
 }
-
 .ver-dropdown-btn:hover {
     background: rgba(0, 0, 0, 0.02);
 }
-
 .ver-dropdown-btn.active {
     background: rgba(0, 0, 0, 0.04);
 }
-
 .dropdown-icon {
     margin-left: 4px;
     font-size: 11px;
     transition: transform 0.3s ease;
 }
-
 .ver-dropdown-btn.active .dropdown-icon {
     transform: rotate(180deg);
 }
-
 /* 版本下拉菜单 */
 .ver-dropdown-menu {
     position: absolute;
@@ -678,8 +665,8 @@ h2#desc-title {
     margin-top: 4px;
     top: 100%;
     left: 0;
+    width: 100%;
 }
-
 .ver-dropdown-item {
     padding: 8px 14px;
     cursor: pointer;
@@ -691,20 +678,16 @@ h2#desc-title {
     justify-content: space-between;
     transition: all 0.2s ease;
 }
-
 .ver-dropdown-item:hover {
     background: #f5f5f5;
     color: #0066cc;
 }
-
 .ver-dropdown-item.disabled {
     cursor: not-allowed;
 }
-
 .ver-dropdown-item.disabled:hover {
     background: transparent;
 }
-
 /* 当前选中的版本样式 */
 .ver-dropdown-item.active {
     background: #e8e8e8;
