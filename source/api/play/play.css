@@ -131,11 +131,15 @@ body.is-pure-fullscreen .text-container {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     border: 1px solid rgba(255, 255, 255, 0.3);
+}
+body.is-pure-fullscreen #exit-fullscreen-btn,
+body.is-theater-mode #exit-fullscreen-btn {
+    display: flex;
 }
 /* 键盘模式 */
 body.is-theater-mode {
