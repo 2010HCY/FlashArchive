@@ -20,6 +20,7 @@ templateAffect:
   footer.ejs: all
   search.ejs: all
   head.ejs: all
+  GamesList.ejs: gameslist
 
 clean:
   keep:

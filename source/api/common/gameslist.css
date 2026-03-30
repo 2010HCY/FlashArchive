@@ -1,0 +1,223 @@
+/* 游戏列表页CSS */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: oklch(0.95 0.025 112);
+}
+.main-list {
+    max-width: 1100px;
+    margin: 100px auto auto;
+    padding: 0 20px 40px 20px; 
+    background-color: rgba(255, 255, 255, 0.5);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+.games-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.games-table .label {
+    display: none;
+}
+.games-table thead {
+    border-bottom: 1px solid #ccc;
+}
+.games-table th, .games-table td {
+    padding: 15px 10px;
+    text-align: left;
+}
+.games-table tr {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+/* PC样式 */
+.game-id {
+    width: 50px;
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
+.game-title {
+    flex: 1;
+    min-width: 150px;
+}
+.game-title a {
+    color: #0066cc;
+    text-decoration: none;
+}
+.game-title a:hover {
+    text-decoration: underline;
+}
+.game-pubdate {
+    width: 140px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+}
+.game-brief {
+    width: 250px;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+.game-author {
+    width: 120px;
+    text-align: center;
+    font-size: 13px;
+}
+.game-author a {
+    color: #0066cc;
+    text-decoration: none;
+}
+.game-author a:hover {
+    text-decoration: underline;
+}
+.game-cn-author {
+    width: 120px;
+    text-align: center;
+    font-size: 13px;
+}
+.game-cn-author a {
+    color: #0066cc;
+    text-decoration: none;
+}
+.game-cn-author a:hover {
+    text-decoration: underline;
+}
+/* 移动端 */
+@media (max-width: 768px) {
+    .main-list {
+        padding: 0 15px 20px 15px; 
+        background-color: transparent;
+    }
+    /* 隐藏表头、ID */
+    .games-table thead {
+        display: none;
+    }
+    .games-table th, .games-table td {
+        padding: 0px 0px;
+        text-align: left;
+    }
+    .game-id {
+        display: none;
+    }
+    /* 表格转卡片式 */
+    .games-table tbody {
+        display: block;
+    }
+    .games-table tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .game-title {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 0;
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        word-break: break-word;
+        min-width: 0;
+    }
+    .game-title a {
+        color: #000;
+    }
+    td.game-pubdate {
+        grid-column: 2;
+        grid-row: 1;
+        padding: 0;
+        margin: 0;
+        text-align: right;
+        font-size: 12px;
+        color: #888;
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 0 10px 0 0;
+    }
+    .game-brief {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        padding: 5px 0;
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: initial;
+        width: 100%;
+    }
+    .game-author {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        padding: 5px 0;
+        margin: 0;
+        font-size: 12px;
+        text-align: left;
+        width: 100%;
+        display: inline;
+    }
+    .game-cn-author {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+        text-align: left;
+        width: 100%;
+        display: inline;
+    }
+    .game-author, 
+    .game-cn-author {
+        display: inline-block;
+        grid-column: auto;
+        grid-row: 3;
+        width: auto;
+    }
+    .games-table .label {
+        display: inline;
+        color: #888;
+        font-weight: normal;
+        margin-right: 3px;
+    }
+    .game-author a,
+    .game-cn-author a {
+        color: #0066cc;
+        text-decoration: none;
+    }
+    .game-author a:active,
+    .game-cn-author a:active {
+        color: #0052a3;
+    }
+}
+/* 手机 */
+@media (max-width: 480px) {
+    .main-list {
+        padding: 0 10px 15px 10px;
+    }
+    .games-table tr {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        padding-left: 10px;
+    }
+    .game-title {
+        font-size: 14px;
+    }
+    .game-pubdate {
+        font-size: 11px;
+    }
+    .game-brief {
+        font-size: 12px;
+    }
+    .game-author, .game-cn-author {
+        font-size: 11px;
+    }
+    .games-table .label {
+        font-size: 11px;
+    }
+}

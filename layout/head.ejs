@@ -11,20 +11,6 @@
         <meta property="og:title" content="静水深流 | Flash收藏站">
         <meta property="og:description" content="Flash收藏站，收集大量好玩的Flash游戏，支持在线游玩和下载。">
         <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "url": "<%= currentUrl %>",
-            "name": "静水深流 | Flash收藏站",
-            "description": "欢迎来到我的个人Flash收藏空间！所有游戏人工汉化，支持在线游玩与下载。",
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://flash.hcyhub.com/?search={search_term_string}",
-                "query-input": "required name=search_term_string"
-            }
-        }
-        </script>
     <% } else if (pageType === 'game' && typeof game !== 'undefined') { %>
         <title><%= game.title %></title>
         <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,Flash游戏汉化版,<%= game.title %><% if (typeof versionKeywords !== 'undefined' && versionKeywords.length > 0) { %>,<%= versionKeywords.join(',') %><% } %>">
@@ -37,23 +23,6 @@
         <meta property="og:title" content="<%= game.title %>">
         <meta property="og:description" content="<%= game.brief %>">
         <meta property="og:image" content="https://<%= domain + game.cover %>">
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org/",
-            "@type": "SoftwareApplication",
-            "name": "<%= game.title %>",
-            "description": "<%= game.brief %>",
-            "image": "https://<%= domain + game.cover %>",
-            "applicationCategory": "GameApplication",
-            "operatingSystem": "Windows, macOS, Linux",
-            "softwareVersion": "Flash Player / Ruffle",
-            "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "category": "Free"
-            }
-        }
-        </script>
     <% } else if (pageType === '404' ) { %>
         <title>404 Not Found</title>
         <meta name="description" content="页面不存在">
@@ -61,18 +30,6 @@
         <title>关于 | Flash收藏站</title>
         <meta name="description" content="关于本站的统计信息与介绍">
         <link rel="stylesheet" href="/api/common/about.css">
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            "mainEntity": {
-                "@type": "Organization",
-                "name": "HcyHub",
-                "description": "关于本站的统计信息与介绍",
-                "logo": "https://<%= domain %>/api/icon/H.svg"
-            }
-        }
-        </script>
     <% } else if (pageType === 'author-games') { %>
         <% 
             var dynamicKeywords = ""; 
@@ -96,6 +53,68 @@
         <meta property="og:description" content="<%= dynamicDesc %>">
         <meta property="og:image" content="https://<%= domain %>/api/icon/H.svg">
         <link rel="stylesheet" href="/api/common/author-games.css"> 
+    <% } else if (pageType === 'authors' || pageType === 'translators' || pageType === 'author') { %>
+        <title><%= title %> | Flash收藏站</title>
+        <link rel="stylesheet" href="/api/common/author.css">
+    <% } else if (pageType==='friend' ) { %>
+        <title>友链 | Flash收藏站</title>
+        <meta name="description" content="友情链接，欢迎交换友链！">
+        <link rel="stylesheet" href="/api/common/friend.css"> 
+        <script src="/api/play/zan.js" defer></script>
+    <% } else if (pageType==='gameslist' ) { %>
+        <title>游戏列表 | Flash收藏站</title>
+        <meta name="description" content="浏览所有Flash游戏的完整列表，包括游戏ID、标题、发布日期、简介、开发者等信息。">
+        <link rel="stylesheet" href="/api/common/gameslist.css">
+    <% } %>
+    <%# JSON-LD %>
+    <% if (pageType === 'home') { %>
+        <% let currentUrl = "https://" + domain + "/";if (typeof currentPage !== 'undefined' && currentPage > 1) {currentUrl += currentPage } %>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "<%= currentUrl %>",
+            "name": "静水深流 | Flash收藏站",
+            "description": "欢迎来到我的个人Flash收藏空间！所有游戏人工汉化，支持在线游玩与下载。",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://flash.hcyhub.com/?search={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+        </script>
+    <% } else if (pageType === 'game' && typeof game !== 'undefined') { %>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org/",
+            "@type": "SoftwareApplication",
+            "name": "<%= game.title %>",
+            "description": "<%= game.brief %>",
+            "image": "https://<%= domain + game.cover %>",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Windows, macOS, Linux",
+            "softwareVersion": "Flash Player / Ruffle",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "category": "Free"
+            }
+        }
+        </script>
+    <% } else if (pageType === 'about') { %>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "mainEntity": {
+                "@type": "Organization",
+                "name": "HcyHub",
+                "description": "关于本站的统计信息与介绍",
+                "logo": "https://<%= domain %>/api/icon/H.svg"
+            }
+        }
+        </script>
+    <% } else if (pageType === 'author-games') { %>
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -103,15 +122,21 @@
             "mainEntity": {
                 "@type": "Person",
                 "name": "<%= personName %>",
-                "description": "<%= dynamicDesc %>",
+                "description": "<% 
+                    var dynamicDesc2 = "";
+                    if (personType === 'author') { 
+                        dynamicDesc2 = "此为 " + personName + " 被收藏的所有作品";
+                    } else { 
+                        dynamicDesc2 = "此为 " + personName + " 汉化的游戏";
+                    } 
+                %>
+                <%= dynamicDesc2 %>",
                 "jobTitle": "<%= personType === 'author' ? '游戏开发者' : '游戏汉化者' %>",
                 "url": "https://<%= domain %>/<%= personType === 'author' ? 'authors' : 'translators' %>/<%= personName %>/"
             }
         }
         </script>
     <% } else if (pageType === 'authors' || pageType === 'translators' || pageType === 'author') { %>
-        <title><%= title %> | Flash收藏站</title>
-        <link rel="stylesheet" href="/api/common/author.css">
         <% if (typeof list !== 'undefined') { %>
         <script type="application/ld+json">
         {
@@ -130,24 +155,13 @@
             ]
         }
         </script>
+        <% } %>
     <% } %>
-    <% } else if (pageType==='friend' ) { %>
-        <title>友链 | Flash收藏站</title>
-        <meta name="description" content="友情链接，欢迎交换友链！">
-        <link rel="stylesheet" href="/api/common/friend.css"> 
-        <script src="/api/play/zan.js" defer></script>
-    <% } %>
+    <%# 公共JS %>
     <script type="text/javascript" src="/api/common/sitetime.js" defer></script>
     <script type="text/javascript" src="/api/common/count.js" defer></script>
     <script type="text/javascript" src="/api/common/toggle.js" defer></script>
     <script type="text/javascript" src="/api/common/search.js" defer></script>
-    <link rel="stylesheet" href="/api/icon/css/all.min.css">
-    <link rel="stylesheet" href="/api/common/header.css">
-    <link rel="stylesheet" href="/api/common/footer.css">
-    <link rel="icon" href="/api/icon/H.svg">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Ethaniel">
-    <meta name="google-site-verification" content="mD2l3_aOmwjXLEvIAyB7bLGNGBnq7u88vPoK2oNuy3c" />
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -155,4 +169,12 @@
 
         gtag('config', 'G-9C3EYEPPQ1');
     </script>
+    <%# 公共CSS %>
+    <link rel="stylesheet" href="/api/icon/css/all.min.css">
+    <link rel="stylesheet" href="/api/common/header.css">
+    <link rel="stylesheet" href="/api/common/footer.css">
+    <link rel="icon" href="/api/icon/H.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Ethaniel">
+    <meta name="google-site-verification" content="mD2l3_aOmwjXLEvIAyB7bLGNGBnq7u88vPoK2oNuy3c" />
 </head>

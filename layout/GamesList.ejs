@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<%- include('head', { pageType: 'gameslist' }) %>
+<body>
+    <%- include('header') %>
+    <main class="main-list">
+        <table class="games-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>标题</th>
+                    <th>发布日期</th>
+                    <th>简介</th>
+                    <th>开发者</th>
+                    <th>汉化者</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% games.forEach(function(game) { %>
+                <tr class="game-row">
+                    <td class="game-id"><%= game.id %></td>
+                    <td class="game-title"><a href="/<%= game.dir %>"><%= game.title %></a></td>
+                    <td class="game-pubdate"><%= pubDateFormatted[game.id] %></td>
+                    <td class="game-brief"><%= game.brief %></td>
+                    
+                    <td class="game-author">
+                        <span class="label">作者：</span>
+                        <% if (game['Author'] && game['Author'] !== '无' && game['Author'] !== '未知') { %>
+                            <a href="/authors/<%= game['Author'] %>"><%= game['Author'] %></a>
+                        <% } else { %>
+                            <%= game['Author'] || '无' %>
+                        <% } %>
+                    </td>
+                    
+                    <td class="game-cn-author">
+                        <span class="label">汉化者：</span>
+                        <% if (game['CN-Author'] && game['CN-Author'] !== '无') { %>
+                            <% game['CN-Author'].split(',').forEach(function(author, index) { %>
+                                <% if (index > 0) { %>, <% } %>
+                                <% var trimmedAuthor = author.trim(); %>
+                                <% if (trimmedAuthor && trimmedAuthor !== '无' && trimmedAuthor !== '未知') { %>
+                                    <a href="/translators/<%= trimmedAuthor %>"><%= trimmedAuthor %></a>
+                                <% } else { %>
+                                    <%= trimmedAuthor || '无' %>
+                                <% } %>
+                            <% }); %>
+                        <% } else { %>
+                            <%= game['CN-Author'] || '无' %>
+                        <% } %>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <section id="twikoo" aria-label="评论区">
+            <%- include('twikoo') %>
+        </section>
+    </main>
+    <%- include('footer') %>
+    <%- include('search') %>
+</body>
+</html>

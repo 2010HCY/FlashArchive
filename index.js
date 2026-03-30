@@ -588,6 +588,7 @@ async function main() {
     gen404Page(TPL, PUB, DOMAIN);
     genAboutPage(TPL, PUB, DOMAIN);
     genFriendPage(TPL, PUB, DOMAIN);
+    genGamesListPage(TPL, PUB, games, DOMAIN);
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
@@ -661,6 +662,7 @@ async function main() {
                     genGamePages(TPL, PUB, game, DOMAIN);
                     const games = loadGames(DATA_DIR);
                     updateAuthorStats(games);
+                    genGamesListPage(TPL, PUB, games, DOMAIN);
                     genSitemapXml(PUB, DOMAIN, games);
                     genRssXml(PUB, DOMAIN, games);
                     const PAGE_SIZE = 20;
@@ -710,6 +712,9 @@ async function main() {
                     }
                     else if (affect === 'friend') {
                         genFriendPage(TPL, PUB, DOMAIN);
+                    }
+                    else if (affect === 'gameslist') {
+                        genGamesListPage(TPL, PUB, games, DOMAIN);
                     }
                     else if (affect === 'author' || affect === 'author-games') {
                         genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
@@ -871,9 +876,15 @@ function renderTpl(tplDir, name, data) {
 // 生成首页及分页
 function genHomePages(TPL, PUB, games, DOMAIN) {
     const PAGE_SIZE = 20;
-    const totalPages = Math.ceil(games.length / PAGE_SIZE) || 1;
+    // 过滤掉HideIn包含"Home"的游戏
+    const filteredGames = games.filter(g => {
+        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
+        return !g.HideIn.includes('Home');
+    });
+    
+    const totalPages = Math.ceil(filteredGames.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
-        const pageGames = games.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+        const pageGames = filteredGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
 
         // 首页使用 mini 缩略图
         const pageGamesWithMiniCover = pageGames.map(g => {
@@ -1040,6 +1051,32 @@ function genFriendPage(TPL, PUB, DOMAIN) {
     writeFile(path.join(friendDir, 'index.html'), html, PUB);
 }
 
+// 生成游戏列表页
+function genGamesListPage(TPL, PUB, games, DOMAIN) {
+    // 过滤掉HideIn包含"List"的游戏
+    const filteredGames = games.filter(g => {
+        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
+        return !g.HideIn.includes('List');
+    });
+
+    // 格式化发布日期
+    const pubDateFormatted = {};
+    filteredGames.forEach(g => {
+        pubDateFormatted[g.id] = formatDisplayTime(g.pubDate).text;
+    });
+
+    const html = renderTpl(TPL, 'GamesList', {
+        games: filteredGames,
+        domain: DOMAIN,
+        pageType: 'gameslist',
+        pubDateFormatted: pubDateFormatted
+    });
+
+    const gamesDir = path.join(PUB, 'Games');
+    ensureDir(gamesDir);
+    writeFile(path.join(gamesDir, 'index.html'), html, PUB);
+}
+
 // 游戏元信息大合集
 function genGamesNameJson(DATA_DIR, API_DIR, PUB) {
     ensureDir(API_DIR);
@@ -1119,7 +1156,13 @@ function genRssXml(PUB, DOMAIN, games) {
     xml += `${s}${s}<description>最新Flash游戏列表 RSS 订阅</description>${n}`;
     xml += `${s}${s}<lastBuildDate>${now}</lastBuildDate>${n}`;
 
-    games.forEach(g => {
+    // 过滤掉HideIn包含"Rss"的游戏
+    const filteredGames = games.filter(g => {
+        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
+        return !g.HideIn.includes('Rss');
+    });
+
+    filteredGames.forEach(g => {
         const link = `https://${DOMAIN}/${g.dir}/`;
         const pubDate = g.pubDate ? formatDate(g.pubDate) : now;
         xml += `${s}${s}<item>${n}`;
