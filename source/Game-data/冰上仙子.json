@@ -1,0 +1,24 @@
+{
+    "id": "H2",
+    "title": "冰上仙子",
+    "pubDate": "2026-03-30 18:09:50",
+    "brief": "冰上仙子",
+    "play": "鼠标操作，首次输入check解锁全部内容",
+    "cover": "/images/冰上仙子/冰上仙子.webp",
+    "dir": "/Games/冰上仙子",
+    "Author": "エロエロ王国",
+    "CN-Author": "无",
+    "HideIn": ["Home", "List"],
+    "files": [
+        {
+        "name": "原版",
+        "path": "/swf/冰上仙子/fairy.swf"
+        }
+    ],
+    "DownFiles": [
+            {
+                "name": "完整版.7z",
+                "path": "/swf/冰上仙子/冰上仙子.7z"
+            }
+	]
+}

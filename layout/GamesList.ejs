@@ -19,7 +19,7 @@
                 <% games.forEach(function(game) { %>
                 <tr class="game-row">
                     <td class="game-id"><%= game.id %></td>
-                    <td class="game-title"><a href="/<%= game.dir %>"><%= game.title %></a></td>
+                    <td class="game-title"><a href="<%= game.dir %>"><%= game.title %></a></td>
                     <td class="game-pubdate"><%= pubDateFormatted[game.id] %></td>
                     <td class="game-brief"><%= game.brief %></td>
                     

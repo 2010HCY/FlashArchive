@@ -582,19 +582,13 @@ async function main() {
     // 处理图片（保留缓存，仅处理修改的）
     await processAllImages(RUNDIR, SRC, PUB, db);
 
-    // 生成页面
-    genHomePages(TPL, PUB, games, DOMAIN);
-    games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+    // 生成所有页面
+    regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
+
+    // 生成不受元信息影响的页面
     gen404Page(TPL, PUB, DOMAIN);
     genAboutPage(TPL, PUB, DOMAIN);
     genFriendPage(TPL, PUB, DOMAIN);
-    genGamesListPage(TPL, PUB, games, DOMAIN);
-    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
-    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
-    genGamesNameJson(DATA_DIR, API_DIR, PUB);
-    genSearchJson(DATA_DIR, API_DIR, PUB);
-    genSitemapXml(PUB, DOMAIN, games);
-    genRssXml(PUB, DOMAIN, games);
 
     // 统计数据
     const genSec = (process.hrtime(startTime)[0] + process.hrtime(startTime)[1] / 1e9).toFixed(2);
@@ -658,29 +652,7 @@ async function main() {
 
                 // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
-                    const game = loadSingleGame(filePath);
-                    genGamePages(TPL, PUB, game, DOMAIN);
-                    const games = loadGames(DATA_DIR);
-                    updateAuthorStats(games);
-                    genGamesListPage(TPL, PUB, games, DOMAIN);
-                    genSitemapXml(PUB, DOMAIN, games);
-                    genRssXml(PUB, DOMAIN, games);
-                    const PAGE_SIZE = 20;
-                    const page = findGamePageIndex(games, game.dir, PAGE_SIZE);
-                    if (page !== null) {
-                        const pageGames = games.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-                        const pagination = getPagination(page, Math.ceil(games.length / PAGE_SIZE));
-                        const html = renderTpl(TPL, 'home', {
-                            games: pageGames,
-                            page: page,
-                            totalPages: Math.ceil(games.length / PAGE_SIZE),
-                            pagination: pagination,
-                            domain: DOMAIN,
-                            currentPage: page
-                        });
-                        const dest = path.join(PUB, page === 1 ? 'index.html' : `${page}.html`);
-                        writeFile(dest, html, PUB);
-                    }
+                    regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
                     return;
                 }
 
@@ -688,37 +660,34 @@ async function main() {
                 if (filePath.endsWith('.ejs')) {
                     const tplName = path.basename(filePath);
                     const affect = TEMPLATE_AFFECT[tplName];
-                    const games = loadGames(DATA_DIR);
 
-                if (affect === 'all') {
-                        updateSwfStats(SRC);
-                        genHomePages(TPL, PUB, games, DOMAIN);
-                        games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+                    if (affect === 'all') {
+                        regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
                         gen404Page(TPL, PUB, DOMAIN);
                         genAboutPage(TPL, PUB, DOMAIN);
                         genFriendPage(TPL, PUB, DOMAIN);
-                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
-                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
-                    } 
-                    else if (affect === 'game') {
-                        games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
-                    }
-                    else if (affect === 'home') {
-                        genHomePages(TPL, PUB, games, DOMAIN);
-                    } 
-                    else if (affect === 'about') {
-                        updateSwfStats(SRC);
-                        genAboutPage(TPL, PUB, DOMAIN);
-                    }
-                    else if (affect === 'friend') {
-                        genFriendPage(TPL, PUB, DOMAIN);
-                    }
-                    else if (affect === 'gameslist') {
-                        genGamesListPage(TPL, PUB, games, DOMAIN);
-                    }
-                    else if (affect === 'author' || affect === 'author-games') {
-                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
-                        genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+                    } else {
+                        const games = loadGames(DATA_DIR);
+                        if (affect === 'game') {
+                            games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+                        }
+                        else if (affect === 'home') {
+                            genHomePages(TPL, PUB, games, DOMAIN);
+                        } 
+                        else if (affect === 'about') {
+                            updateSwfStats(SRC);
+                            genAboutPage(TPL, PUB, DOMAIN);
+                        }
+                        else if (affect === 'friend') {
+                            genFriendPage(TPL, PUB, DOMAIN);
+                        }
+                        else if (affect === 'gameslist') {
+                            genGamesListPage(TPL, PUB, games, DOMAIN);
+                        }
+                        else if (affect === 'author' || affect === 'author-games') {
+                            genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+                            genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+                        }
                     }
                     return;
                 }
@@ -871,6 +840,23 @@ function renderTpl(tplDir, name, data) {
     const rawHtml = ejs.render(fs.readFileSync(tplPath, 'utf-8'), data, { filename: tplPath });
     if (IS_MIN) return rawHtml;
     return beautify(rawHtml, { indent_size: 4, space_in_empty_tag: true, preserve_newlines: false });
+}
+
+// 生成所有游戏相关页面（首页、列表、作者页、RSS等）
+function regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN) {
+    const games = loadGames(DATA_DIR);
+    updateAuthorStats(games);
+    updateSwfStats(SRC);
+    
+    genHomePages(TPL, PUB, games, DOMAIN);
+    games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+    genGamesListPage(TPL, PUB, games, DOMAIN);
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+    genGamesNameJson(DATA_DIR, API_DIR, PUB);
+    genSearchJson(DATA_DIR, API_DIR, PUB);
+    genSitemapXml(PUB, DOMAIN, games);
+    genRssXml(PUB, DOMAIN, games);
 }
 
 // 生成首页及分页
