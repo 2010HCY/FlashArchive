@@ -811,9 +811,16 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
         }
     }
 
+    // \n分段
+    const playContent = (game.play || "")
+        .split('\n')
+        .filter(p => p.trim())
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('');
+        
     // 发布时间
     const pubTime = formatDisplayTime(game.pubDate);
-    const html = renderTpl(TPL, 'game', { game, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords, fileSizes });
+    const html = renderTpl(TPL, 'game', { game: { ...game, play: playContent }, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords, fileSizes });
 
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
