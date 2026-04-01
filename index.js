@@ -794,7 +794,7 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
     const author =
         !authorName || authorName === '未知'
             ? { text: '未知', link: null }
-            : { text: authorName, link: `/authors/${authorName}/` };
+            : { text: authorName, link: `/authors/${encodeURIComponent(authorName)}/` };
 
     // 汉化者
     const cnAuthorName = (game['CN-Author'] || '').trim();
@@ -804,7 +804,7 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
     if (cnAuthorName && cnAuthorName !== '无') {
         translators = cnAuthorName.split(/\s*,\s*/).map(name => ({
             text: name,
-            link: `/translators/${name}/`
+            link: `/translators/${encodeURIComponent(name)}/`
         }));
         if (translators.length === 1) {
             translator = translators[0];
@@ -896,6 +896,7 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
             totalPages: totalPages, 
             pagination: pagination,
             domain: DOMAIN,
+            pageType: 'home',
             currentPage: p
         });
         const dest = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
@@ -1025,6 +1026,7 @@ function genFriendPage(TPL, PUB, DOMAIN) {
 
     const html = renderTpl(TPL, 'friend', { 
         domain: DOMAIN,
+        pageType: 'friend',
         site: {
             data: {
                 friends: friendsData
@@ -1077,8 +1079,13 @@ function genGamesNameJson(DATA_DIR, API_DIR, PUB) {
         .filter(f => f.endsWith('.json'))
         .map(fn => {
             const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
+            // 过滤掉HideIn包含"Search"的游戏
+            if (g.HideIn && Array.isArray(g.HideIn) && g.HideIn.includes('Search')) {
+                return null;
+            }
             return { id: g.id || "", name: g.title || "", desc: g.brief || "", time: g.pubDate || "" };
-        });
+        })
+        .filter(item => item !== null);
     arr.sort((a, b) => Number(a.id) - Number(b.id));
     writeFile(path.join(API_DIR, 'games_name.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
 }
@@ -1090,8 +1097,13 @@ function genSearchJson(DATA_DIR, API_DIR, PUB) {
         .filter(f => f.endsWith('.json'))
         .map(fn => {
             const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
+            // 过滤掉HideIn包含"Search"的游戏
+            if (g.HideIn && Array.isArray(g.HideIn) && g.HideIn.includes('Search')) {
+                return null;
+            }
             return { id: g.id || "", title: g.title || "", brief: g.brief || "", pubDate: g.pubDate || "", play: g.dir || "" };
-        });
+        })
+        .filter(item => item !== null);
     arr.sort((a, b) => Number(a.id) - Number(b.id));
     writeFile(path.join(API_DIR, 'search.json'), JSON.stringify(arr, null, IS_MIN ? 0 : 4), PUB);
 }
@@ -1117,9 +1129,29 @@ function formatDisplayTime(timeString) {
 // RSS、Sitemap时间格式化
 function formatDate(timeString, type) {
     if (!timeString) return '';
-    const d = new Date(timeString.replace(/-/g, '/'));
-    if (type === 'rss') return d.toUTCString();
-    if (type === 'sitemap') return d.toISOString().replace('.000', '').replace('Z', '+00:00');
+    let dateStr = timeString;
+    if (timeString.includes('T')) {
+        dateStr = timeString.split('T')[0];
+    }
+    
+    // 解析日期
+    const d = new Date(dateStr.replace(/-/g, '/'));
+    
+    if (isNaN(d.getTime())) {
+        return '';
+    }
+    
+    if (type === 'rss') {
+        return d.toUTCString();
+    } else if (type === 'sitemap') {
+        // 格式：YYYY-MM-DD
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const date = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${date}`;
+    }
+    
+    return '';
 }
 
 // Sitemap.xml
@@ -1127,12 +1159,71 @@ function genSitemapXml(PUB, DOMAIN, games) {
     const n = IS_MIN ? "" : "\n";
     const s = IS_MIN ? "" : "  ";
 
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>${n}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${n}`;
-    games.forEach(g => {
-        const url = `https://${DOMAIN}/${g.dir}/`;
-        const lastmod = formatDate(g.pubDate);
-        xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}${s}${s}<lastmod>${lastmod}</lastmod>${n}${s}</url>${n}`;
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>${n}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${n}`;
+    
+    // 首页
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 关于页
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/about/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 友链页
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/friend/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 游戏列表页
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/Games/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 作者列表
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/authors/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 汉化者列表
+    xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/translators/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    
+    // 过滤掉HideIn包含"SiteMap"的游戏
+    const filteredGames = games.filter(g => {
+        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
+        return !g.HideIn.includes('SiteMap');
     });
+    
+    // 收集所有作者和汉化者
+    const allAuthors = new Set();
+    const allTranslators = new Set();
+    filteredGames.forEach(g => {
+        const authors = getCleanNames(g['Author']);
+        const translators = getCleanNames(g['CN-Author']);
+        authors.forEach(a => allAuthors.add(a));
+        translators.forEach(t => allTranslators.add(t));
+    });
+    
+    // 作者个人页
+    allAuthors.forEach(author => {
+        const encodedAuthor = encodeURIComponent(author);
+        xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/authors/${encodedAuthor}/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    });
+    
+    // 汉化者个人页
+    allTranslators.forEach(translator => {
+        const encodedTranslator = encodeURIComponent(translator);
+        xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/translators/${encodedTranslator}/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
+    });
+    
+    // 游戏页面
+    filteredGames.forEach(g => {
+        // 对路径的每个段分别编码，保留 / 不编码
+        const pathSegments = g.dir.split('/').filter(Boolean).map(segment => encodeURIComponent(segment));
+        const url = `https://${DOMAIN}/${pathSegments.join('/')}/`;
+        const lastmod = formatDate(g.pubDate, 'sitemap');
+        const cover = g.cover || `/images/${g.dir}/${g.dir}.webp`;
+        
+        xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}`;
+        xml += `${s}${s}<lastmod>${lastmod}</lastmod>${n}`;
+        xml += `${s}${s}<image:image>${n}`;
+        xml += `${s}${s}${s}<image:loc>https://${DOMAIN}${cover}</image:loc>${n}`;
+        xml += `${s}${s}${s}<image:title>${g.title || ''}</image:title>${n}`;
+        xml += `${s}${s}</image:image>${n}`;
+        xml += `${s}</url>${n}`;
+    });
+    
     xml += `</urlset>${n}`;
     writeFile(path.join(PUB, 'sitemap.xml'), xml, PUB);
 }
@@ -1156,8 +1247,10 @@ function genRssXml(PUB, DOMAIN, games) {
     });
 
     filteredGames.forEach(g => {
-        const link = `https://${DOMAIN}/${g.dir}/`;
-        const pubDate = g.pubDate ? formatDate(g.pubDate) : now;
+        // 对路径的每个段分别编码，保留 / 不编码
+        const pathSegments = g.dir.split('/').filter(Boolean).map(segment => encodeURIComponent(segment));
+        const link = `https://${DOMAIN}/${pathSegments.join('/')}/`;
+        const pubDate = g.pubDate ? formatDate(g.pubDate, 'rss') : now;
         xml += `${s}${s}<item>${n}`;
         xml += `${s}${s}${s}<title>${g.title}</title>${n}`;
         xml += `${s}${s}${s}<link>${link}</link>${n}`;
