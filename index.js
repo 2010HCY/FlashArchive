@@ -753,7 +753,9 @@ function loadGames(DATA_DIR) {
             if (!g.cover) g.cover = `/images/${g.dir}/${g.dir}.webp`;
             return g;
         });
-    games.sort((a, b) => b.pubDate.localeCompare(a.pubDate));
+    games.sort((a, b) =>
+        (b.updateDate || b.pubDate || '').localeCompare(a.updateDate || a.pubDate || '')
+    );
     return games;
 }
 
@@ -818,9 +820,10 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
         .map(p => `<p>${p.trim()}</p>`)
         .join('');
         
-    // 发布时间
+    // 发布时间和更新时间
     const pubTime = formatDisplayTime(game.pubDate);
-    const html = renderTpl(TPL, 'game', { game: { ...game, play: playContent }, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, versionKeywords, fileSizes });
+    const updateTime = game.updateDate ? formatDisplayTime(game.updateDate) : null;
+    const html = renderTpl(TPL, 'game', { game: { ...game, play: playContent }, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, updateTime, versionKeywords, fileSizes });
 
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
@@ -1054,10 +1057,10 @@ function genGamesListPage(TPL, PUB, games, DOMAIN) {
         return !g.HideIn.includes('List');
     });
 
-    // 格式化发布日期
+    // 格式化更新日期
     const pubDateFormatted = {};
     filteredGames.forEach(g => {
-        pubDateFormatted[g.id] = formatDisplayTime(g.pubDate).text;
+        pubDateFormatted[g.id] = formatDisplayTime(g.updateDate || g.pubDate).text;
     });
 
     const html = renderTpl(TPL, 'GamesList', {
@@ -1212,7 +1215,7 @@ function genSitemapXml(PUB, DOMAIN, games) {
         // 对路径的每个段分别编码，保留 / 不编码
         const pathSegments = g.dir.split('/').filter(Boolean).map(segment => encodeURIComponent(segment));
         const url = `https://${DOMAIN}/${pathSegments.join('/')}/`;
-        const lastmod = formatDate(g.pubDate, 'sitemap');
+        const lastmod = formatDate(g.updateDate || g.pubDate, 'sitemap');
         const cover = g.cover || `/images/${g.dir}/${g.dir}.webp`;
         
         xml += `${s}<url>${n}${s}${s}<loc>${url}</loc>${n}`;
@@ -1241,16 +1244,22 @@ function genRssXml(PUB, DOMAIN, games) {
     xml += `${s}${s}<lastBuildDate>${now}</lastBuildDate>${n}`;
 
     // 过滤掉HideIn包含"Rss"的游戏
-    const filteredGames = games.filter(g => {
+    let filteredGames = games.filter(g => {
         if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
         return !g.HideIn.includes('Rss');
+    });
+
+    filteredGames.sort((a, b) => {
+        const dateA = a.updateDate || a.pubDate;
+        const dateB = b.updateDate || b.pubDate;
+        return dateB.localeCompare(dateA);
     });
 
     filteredGames.forEach(g => {
         // 对路径的每个段分别编码，保留 / 不编码
         const pathSegments = g.dir.split('/').filter(Boolean).map(segment => encodeURIComponent(segment));
         const link = `https://${DOMAIN}/${pathSegments.join('/')}/`;
-        const pubDate = g.pubDate ? formatDate(g.pubDate, 'rss') : now;
+        const pubDate = (g.updateDate || g.pubDate) ? formatDate(g.updateDate || g.pubDate, 'rss') : now;
         xml += `${s}${s}<item>${n}`;
         xml += `${s}${s}${s}<title>${g.title}</title>${n}`;
         xml += `${s}${s}${s}<link>${link}</link>${n}`;

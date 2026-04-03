@@ -70,10 +70,20 @@
             <% } %>
             <span class="stat-item">
                 <i class="far fa-calendar-alt fa-fw"></i>
+                <span class="stat-label">发布时间：</span>
                 <span class="<%= pubTime.valid ? '' : 'time-invalid' %>">
                     <%= pubTime.text %>
                 </span>
             </span>
+            <% if (updateTime) { %>
+            <span class="stat-item">
+                <i class="far fa-calendar-alt fa-fw"></i>
+                <span class="stat-label">最后更新：</span>
+                <span class="<%= updateTime.valid ? '' : 'time-invalid' %>">
+                    <%= updateTime.text %>
+                </span>
+            </span>
+            <% } %>
         </div>
         <div class="description-container">
             <div class="desc-image-box">
@@ -101,7 +111,15 @@
             "scale": "showAll",
             "forceScale": true,
             "autoplay": "on",
-            "unmuteOverlay": "hidden"
+            "unmuteOverlay": "hidden",
+            "defaultFonts": {
+                "sans": ["Microsoft YaHei", "微软雅黑", "PingFang SC", "Arial", "sans-serif"],
+                "serif": ["SimSun", "宋体", "Times New Roman", "serif"],
+                "typewriter": ["Consolas", "Courier New", "monospace"]
+            },
+            "fontSources": [
+                "/api/common/微软雅黑.ttf"
+            ]
         };
 
         document.addEventListener('DOMContentLoaded', function () {
