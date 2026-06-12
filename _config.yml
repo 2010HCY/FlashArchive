@@ -16,6 +16,8 @@ templateAffect:
   friend.ejs: friend
   author.ejs: author
   author-games.ejs: author-games
+  tags.ejs: tags
+  categories.ejs: categories
   header.ejs: all
   footer.ejs: all
   search.ejs: all

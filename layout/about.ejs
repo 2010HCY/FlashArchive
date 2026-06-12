@@ -8,8 +8,8 @@
         <section class="about-section bio-card">
             <h2 class="section-title"><i class="fas fa-info-circle"></i> 关于本站</h2>
             <div class="bio-content">
-                <p>欢迎来到我的个人Flash收藏空间！</p>
-                <p>创立于2024年，旨在收集展示经典Flash作品</p>
+                <p>欢迎</p>
+                <p>这是我的Flash收藏站，创立于2024年，我将会在这里发布我汉化的Flash游戏、我觉得不错的游戏，你可以在这里在线游玩想玩的游戏，也可以下载下来游玩。</p>
                 <p>也欢迎各位汉化者投稿汉化的作品，投稿邮箱<a href="mailto:Ethaniel@HcyHub.com?subject=Flash游戏投稿：[游戏名称]&body=1. 游戏名称：[必填]%0A2. 作者/汉化者：[可选]%0A3. 游戏简介：[可选]%0A4. 文件链接：[附件或公开链接]">Ethaniel@HcyHub.com</a></p>
                 <p style="color: #666; margin-bottom: 8px;">投稿模板参考：</p>
                     <pre style="background: rgba(0,0,0,0.05); padding: 15px; font-size: 0.85em; font-family: monospace; line-height: 1.5; border-radius: 0 4px 4px 0; white-space: pre-line;">
@@ -31,6 +31,26 @@
                 <p>游戏元信息：https://flash.hcyhub.com/api/games_name.json</p>
                 <p>SWF 文件: https://flash.hcyhub.com/{name}.swf</p>
                 <p>截图文件: https://flash.hcyhub.com/{name}.png</p>
+                <h3 id="faq">常见问题解答</h3>
+                <div class="faq">
+                    <p>Q：如何运行下载下来的SWF文件？</p>
+                    <p>A：你需要下载<a href="/Falsh播放器.exe">离线Flash播放器</a>，然后将SWF文件拖动到播放器上使用播放器打开</p>
+                    <hr class="faq-line">
+                    <p>Q：本地Flash播放器存档位置在哪里？</p>
+                    <p>A：<code>C:\Users\<你的用户名>\AppData\Roaming\Macromedia\Flash Player</code> ，你也可以按下 Win + R 然后输入 <code>%AppData%\Macromedia\Flash Player</code> 快速打开</p>
+                    <hr class="faq-line">
+                    <p>Q：如何修改Flash的SOL存档？</p>
+                    <p>A：使用<a href="https://page.hcyhub.com/%E5%B0%8F%E5%B7%A5%E5%85%B7/FlashSol%E7%BC%96%E8%BE%91%E5%99%A8/">FlashSOL编辑器网页版</a>拖入SOL文件进行在线修改，或者下载<a href="">FlashSOL编辑器</a>桌面版编辑（2026.6.12桌面版还没做好，做好了放链接）</p>
+                    <hr class="faq-line">
+                    <p>Q：好像本页面（关于页）的留言板和首页的一样？</p>
+                    <p>A：好像去掉，本页面（关于页）的留言数据和首页的互通的，在本页、首页留言是一样的。</p>
+                    <hr class="faq-line">
+                    <p>Q：关于本站运营</p>
+                    <p>A：本站是存放Flash游戏以供在线游玩、分发汉化补丁的，如果有人能够赞助我帮我一起运营的话我就可以上传更多游戏上来，汉化速度也会些许提升，毕竟心情会好很多做事效率自然也更高</p>
+                </div>
+                <h3 id="sponsor">赞助</h3>
+                <p>可以留言哦，我会把赞助者以及留言放在页面末位的赞助者列表中</p>
+                <img alt="PayQrcode" src="/images/PayQrcode.jpg" style="width: auto;height: 300px;">
             </div>
         </section>
 
@@ -82,6 +102,33 @@
                     <span class="stat-value"><%= stats.translators %><small>人</small></span>
                 </div>
             </div>
+        </section>
+
+        <section class="about-twikoo" id="twikoo" aria-label="评论区">
+            <h2 class="about-title"><i class="fas fa-comments"></i>留言本</h2>
+            <%- include('twikoo') %>
+        </section>
+
+        <section class="about-sponsor" aria-label="赞助者列表">
+            <h2 class="about-title"><i class="fa-solid fa-mug-hot"></i>赞助者列表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>昵称</th>
+                        <th>日期</th>
+                        <th>金额</th>
+                        <th>留言</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>虚位以待</td>
+                        <td>虚位以待</td>
+                        <td>虚位以待</td>
+                        <td>虚位以待</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
 

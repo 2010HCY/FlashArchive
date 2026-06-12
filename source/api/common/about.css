@@ -37,7 +37,33 @@ a {
     color: #666;
     line-height: 1.8;
     font-size: 1.1rem;
-    margin-bottom: 15px;
+    margin: 10px 0 0;
+}
+.faq p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.faq-line {
+    border: none;
+    border-top: 1px dashed #e0e0e0;
+    margin: 10px 0;
+    height: 0;
+}
+.about-twikoo {
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    word-break: break-all;
+}
+h2.about-title{
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
 }
 .stats-grid {
     display: grid;
@@ -94,4 +120,70 @@ a {
     .stat-value {
         font-size: 1.3rem;
     }
+}
+.about-sponsor {
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-sizing: border-box
+}
+.about-sponsor h2.about-title {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.about-sponsor .table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+.about-sponsor table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+.about-sponsor th,
+.about-sponsor td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    text-align: left;
+    color: #444;
+}
+.about-sponsor th:last-child,
+.about-sponsor td:last-child {
+    border-right: none;
+}
+.about-sponsor tbody tr:last-child td {
+    border-bottom: none;
+}
+.about-sponsor th {
+    background-color: #fafafa;
+    color: #333;
+    font-weight: 600;
+}
+.about-sponsor tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+.about-sponsor tbody tr:hover {
+    background-color: #f7f7f7;
+}
+@media (max-width: 768px) {
+    .about-sponsor {
+        padding: 25px 15px;
+    }
+    .about-sponsor th,
+    .about-sponsor td {
+        padding: 10px 12px;
+    }
+}
+h3[id], h2[id], div[id] {
+    scroll-margin-top: 90px; 
 }

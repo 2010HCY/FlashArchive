@@ -65,6 +65,26 @@
         <title>游戏列表 | Flash收藏站</title>
         <meta name="description" content="浏览所有Flash游戏的完整列表，包括游戏ID、标题、发布日期、简介、开发者等信息。">
         <link rel="stylesheet" href="/api/common/gameslist.css">
+    <% } else if (pageType === 'tags') { %>
+        <title>标签列表 | Flash收藏站</title>
+        <meta name="description" content="浏览所有Flash游戏标签，通过标签云和标签列表快速查找喜欢的Flash游戏。">
+        <link rel="stylesheet" href="/api/common/tags.css">
+    <% } else if (pageType === 'tag-games') { %>
+        <title>标签：<%= tagName %> | Flash收藏站</title>
+        <meta name="keywords" content="<%= tagName %>,Flash游戏标签,Flash游戏收藏站,在线小游戏">
+        <meta name="description" content="此为包含标签“<%= tagName %>”的Flash游戏列表。部分游戏还附有攻略，希望你玩得高兴！">
+        <link rel="stylesheet" href="/api/common/tags.css">
+        <link rel="stylesheet" href="/api/common/author-games.css">
+    <% } else if (pageType === 'categories') { %>
+        <title>分类列表 | Flash收藏站</title>
+        <meta name="description" content="浏览所有Flash游戏分类，快捷直达喜欢的游戏题材。">
+        <link rel="stylesheet" href="/api/common/categories.css">
+    <% } else if (pageType === 'category-games') { %>
+        <title>分类：<%= catName %> | Flash收藏站</title>
+        <meta name="keywords" content="<%= catName %>,Flash游戏分类,Flash游戏收藏站,在线小游戏">
+        <meta name="description" content="此为分类“<%= catName %>”下的Flash游戏列表。部分游戏还附有攻略，希望你玩得高兴！">
+        <link rel="stylesheet" href="/api/common/categories.css">
+        <link rel="stylesheet" href="/api/common/author-games.css">
     <% } %>
     <% if (pageType === 'home') { %>
         <% let currentUrl = "https://" + domain + "/";if (typeof currentPage !== 'undefined' && currentPage > 1) {currentUrl += currentPage } %>

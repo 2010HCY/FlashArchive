@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<%- include('head', { 
+    pageType: pageType, 
+    tagName: typeof tagName !== 'undefined' ? tagName : '',
+    domain: domain 
+}) %>
+<body>
+    <%- include('header') %>
+
+    <main class="container" style="padding: 50px 20px 0 20px; max-width: 1200px; margin: 0 auto;">
+        <% const colors = ['purple', 'blue', 'green', 'yellow', 'orange', 'red', 'cyan', 'pink', 'teal', 'navy']; %>
+
+        <div class="tag-card">
+            <div id="tag-cloud" class="tag-cloud-container">
+                
+            </div>
+        </div>
+
+        <% if (pageType === 'tags') { %>
+            <div class="tag-card" style="margin-top: 30px;">
+                <h2 class="tag-card-title">
+                    <i class="fas fa-tags"></i>
+                    游戏标签
+                </h2>
+                <div class="tag-list-container">
+                    <% if (allTags && allTags.length > 0) { %>
+                        <% allTags.forEach((tag, idx) => { %>
+                            <% const colorClass = colors[idx % colors.length]; %>
+                            <a href="/tags/<%= encodeURIComponent(tag.name) %>/" class="tag-badge <%= colorClass %>">
+                                <%= tag.name %>
+                                <span class="badge-count"><%= tag.count %></span>
+                            </a>
+                        <% }) %>
+                    <% } else { %>
+                        <p style="text-align: center; color: #999; padding: 20px 0; width: 100%;">暂无标签数据</p>
+                    <% } %>
+                </div>
+            </div>
+        <% } else if (pageType === 'tag-games') { %>
+            <h2 class="section-title">
+                <i class="fas fa-tag"></i>
+                标签：<%= tagName %>
+            </h2>
+
+            <div class="card-container">     
+                <main id="game-list">
+                    <% if (games && games.length > 0) { %>
+                        <% games.forEach(game => { %>
+                            <div class="card">
+                                <a href="<%= game.dir %>/">
+                                    <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+                                    <h2><%= game.title %></h2>
+                                    <p><%= game.brief %></p>
+                                </a>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p style="text-align: center; color: #999; padding: 40px 0; width: 100%;">该标签下暂无游戏</p>
+                    <% } %>
+                </main>
+            </div>
+
+            <!-- 分页 -->
+            <% if (totalPages > 1) { %>
+                <div class="pagination">
+                    <a <% if (page > 1) { %> 
+                            href="/tags/<%= encodeURIComponent(tagName) %>/<%= page === 2 ? '' : (page - 1) + '.html' %>" 
+                        <% } %> 
+                        class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="desktop-text">上一页</span>
+                    </a>
+
+                    <div class="page-numbers-container">
+                        <% pagination.forEach(item => { %>
+                            <% if (item.isDot) { %>
+                                <span class="page-dot"><i class="fa-solid fa-ellipsis"></i></span>
+                            <% } else { %>
+                                <a href="/tags/<%= encodeURIComponent(tagName) %>/<%= item.value === 1 ? '' : item.value + '.html' %>" 
+                                class="page-link <%= item.value === page ? 'active' : '' %> <%= item.isMHide ? 'm-hide' : '' %>">
+                                    <%= item.value %>
+                                </a>
+                            <% } %>
+                        <% }); %>
+                    </div>
+
+                    <a <% if (page < totalPages) { %> 
+                            href="/tags/<%= encodeURIComponent(tagName) %>/<%= (page + 1) + '.html' %>" 
+                        <% } %> 
+                        class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+                        <span class="desktop-text">下一页</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <span id="totalPages" data-total-pages="<%= totalPages %>" data-current-page="<%= page %>" style="display:none;"></span>
+            <% } %>
+        <% } %>
+    </main>
+
+    <%- include('footer') %>
+    <%- include('search') %>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/tags.json')
+            .then(function(res) { return res.json(); })
+            .then(function(tags) {
+                var container = document.getElementById('tag-cloud');
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (!tags || tags.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">暂无标签云数据</p>';
+                    return;
+                }
+
+                if (tags.length > 50) {
+                    tags = tags.slice(0, 50);
+                }
+
+                container.style.position = 'relative';
+                var containerWidth = container.clientWidth || 800;
+                var containerHeight = container.clientHeight || 220;
+                var centerX = containerWidth / 2;
+                var centerY = containerHeight / 2;
+                var aspect = containerWidth / containerHeight;
+
+                var maxCount = 1;
+                var minCount = 1;
+                tags.forEach(function(t) {
+                    if (t.count > maxCount) maxCount = t.count;
+                });
+                minCount = maxCount;
+                tags.forEach(function(t) {
+                    if (t.count < minCount) minCount = t.count;
+                });
+
+                var tagsWithStyles = tags.map(function(tag) {
+                    var size = 12;
+                    if (maxCount !== minCount) {
+                        var ratio = (Math.log(tag.count) - Math.log(minCount)) / (Math.log(maxCount) - Math.log(minCount || 1));
+                        size = 12 + ratio * 32;
+                    }
+                    size = Math.round(size);
+
+                    var color = '#b0b4cf';
+                    var weight = '400';
+                    if (size >= 34) {
+                        color = '#00c0ff'; 
+                        weight = '800';
+                    } else if (size >= 26) {
+                        color = '#5099e5'; 
+                        weight = '700';
+                    } else if (size >= 18) {
+                        var midColors = ['#7c8bc6', '#8591da', '#8fa3eb', '#7a88be'];
+                        color = midColors[Math.floor(Math.random() * midColors.length)];
+                        weight = '500';
+                    } else {
+                        var smallColors = ['#abb8d6', '#b5bad4', '#cbd2e1', '#b8b9cf', '#abb4cc'];
+                        color = smallColors[Math.floor(Math.random() * smallColors.length)];
+                        weight = '400';
+                    }
+
+                    return {
+                        name: tag.name,
+                        count: tag.count,
+                        size: size,
+                        color: color,
+                        weight: weight
+                    };
+                });
+
+                tagsWithStyles.sort(function(a, b) { return b.size - a.size; });
+
+                var placedElements = [];
+
+                function checkCollision(el, placed) {
+                    var gap = 6;
+                    var elRect = {
+                        left: el.offsetLeft - gap,
+                        top: el.offsetTop - gap,
+                        right: el.offsetLeft + el.offsetWidth + gap,
+                        bottom: el.offsetTop + el.offsetHeight + gap
+                    };
+
+                    for (var i = 0; i < placed.length; i++) {
+                        var other = placed[i];
+                        var otherRect = {
+                            left: other.offsetLeft,
+                            top: other.offsetTop,
+                            right: other.offsetLeft + other.offsetWidth,
+                            bottom: other.offsetTop + other.offsetHeight
+                        };
+
+                        if (!(elRect.right < otherRect.left || 
+                              elRect.left > otherRect.right || 
+                              elRect.bottom < otherRect.top || 
+                              elRect.top > otherRect.bottom)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                tagsWithStyles.forEach(function(item) {
+                    var a = document.createElement('a');
+                    a.href = '/tags/' + encodeURIComponent(item.name) + '/';
+                    a.textContent = item.name;
+                    
+                    a.className = 'tag-cloud-item';
+                    a.style.fontSize = item.size + 'px';
+                    a.style.fontWeight = item.weight;
+                    a.style.color = item.color;
+                    a.style.position = 'absolute';
+                    a.style.margin = '0';
+                    
+                    container.appendChild(a);
+
+                    var wordWidth = a.offsetWidth;
+                    var wordHeight = a.offsetHeight;
+
+                    var left = centerX - wordWidth / 2;
+                    var top = centerY - wordHeight / 2;
+
+                    a.style.left = left + 'px';
+                    a.style.top = top + 'px';
+
+                    var theta = Math.random() * Math.PI * 2;
+                    var radius = 0;
+                    var radiusStep = 0.8;
+                    var thetaStep = 0.15;
+
+                    while (checkCollision(a, placedElements)) {
+                        theta += thetaStep;
+                        radius += radiusStep;
+                        
+                        left = centerX - wordWidth / 2 + radius * Math.cos(theta) * aspect;
+                        top = centerY - wordHeight / 2 + radius * Math.sin(theta);
+
+                        a.style.left = left + 'px';
+                        a.style.top = top + 'px';
+
+                        if (radius > Math.max(containerWidth, containerHeight)) {
+                            a.remove();
+                            return;
+                        }
+                    }
+
+                    placedElements.push(a);
+                });
+            })
+            .catch(function(err) {
+                var container = document.getElementById('tag-cloud');
+            });
+    });
+</script>
+</body>
+</html>

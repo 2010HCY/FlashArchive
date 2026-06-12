@@ -7,7 +7,9 @@
     "cover": "/images/光之帝国/光之帝国.webp",
     "dir": "/Games/光之帝国",
     "Author": "Flash Ninja Clan",
-    "CN-Author": "Ethaniel",
+    "CN-Author": "黄行山",
+    "categories": "Flash游戏",
+    "tags": "策略, 塔防",
     "files": [
         {
             "name": "汉化版",

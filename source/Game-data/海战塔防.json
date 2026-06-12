@@ -7,7 +7,9 @@
     "cover": "/images/海战塔防/海战塔防.webp",
     "dir": "/Games/海战塔防",
     "Author": "未知",
-    "CN-Author": "Ethaniel",
+    "CN-Author": "黄行山",
+    "categories": "Flash游戏",
+    "tags": "策略, 塔防",
     "files": [
         {
             "name": "汉化版",

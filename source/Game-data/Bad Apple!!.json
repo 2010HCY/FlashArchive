@@ -1,21 +1,23 @@
 {
-  "id": "47",
-  "title": "Bad Apple!!",
-  "pubDate": "2026-04-01 19:54:14",
-  "brief": "Bad Apple!!Flash动画",
-  "play": "Flash动画，上方是日语字幕下方是英语or中文字幕",
-  "cover": "/images/Bad Apple!!/Bad Apple!!.webp",
-  "dir": "/Games/Bad Apple!!",
-  "Author": "あにら (Anira)~",
-  "CN-Author": "Ethaniel",
-  "files": [
-    {
-      "name": "汉化版",
-      "path": "/swf/Bad Apple!!/Bad Apple!! 汉化版.swf"
-    },
-    {
-      "name": "原版",
-      "path": "/swf/Bad Apple!!/Bad Apple!!.swf"
-    }
-  ]
+    "id": "47",
+    "title": "Bad Apple!!",
+    "pubDate": "2026-04-01 19:54:14",
+    "brief": "Bad Apple!!Flash动画",
+    "play": "Flash动画，上方是日语字幕下方是英语or中文字幕",
+    "cover": "/images/Bad Apple!!/Bad Apple!!.webp",
+    "dir": "/Games/Bad Apple!!",
+    "Author": "あにら (Anira)~",
+    "CN-Author": "黄行山",
+    "categories": "Flash动画",
+    "tags": "动画, 音乐",
+    "files": [
+        {
+            "name": "汉化版",
+            "path": "/swf/Bad Apple!!/Bad Apple!! 汉化版.swf"
+        },
+        {
+            "name": "原版",
+            "path": "/swf/Bad Apple!!/Bad Apple!!.swf"
+        }
+    ]
 }

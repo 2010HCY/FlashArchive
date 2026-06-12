@@ -688,6 +688,12 @@ async function main() {
                             genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
                             genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
                         }
+                        else if (affect === 'tags') {
+                            genTagsPages(TPL, PUB, games, DOMAIN, API_DIR);
+                        }
+                        else if (affect === 'categories') {
+                            genCategoriesPages(TPL, PUB, games, DOMAIN);
+                        }
                     }
                     return;
                 }
@@ -763,6 +769,26 @@ function loadGames(DATA_DIR) {
 function genGamePages(TPL, PUB, game, DOMAIN) {
     let ruffleBase = game.base || "/swf/" + (game.title || '').replace(/[\/\\]/g, '') + "/";
 
+    // 提取并清洗分类数据
+    let categories = [];
+    if (game.categories) {
+        if (Array.isArray(game.categories)) {
+            categories = game.categories.map(c => String(c).trim()).filter(Boolean);
+        } else if (typeof game.categories === 'string') {
+            categories = game.categories.split(/\s*,\s*/).map(c => c.trim()).filter(Boolean);
+        }
+    }
+
+    // 提取并清洗标签数据
+    let tags = [];
+    if (game.tags) {
+        if (Array.isArray(game.tags)) {
+            tags = game.tags.map(t => String(t).trim()).filter(Boolean);
+        } else if (typeof game.tags === 'string') {
+            tags = game.tags.split(/\s*,\s*/).map(t => t.trim()).filter(Boolean);
+        }
+    }
+
     // 版本关键词
     let versionKeywords = [];
     if (game.files && Array.isArray(game.files)) {
@@ -823,7 +849,20 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
     // 发布时间和更新时间
     const pubTime = formatDisplayTime(game.pubDate);
     const updateTime = game.updateDate ? formatDisplayTime(game.updateDate) : null;
-    const html = renderTpl(TPL, 'game', { game: { ...game, play: playContent }, ruffleBase, domain: DOMAIN, author, translators, translator, pubTime, updateTime, versionKeywords, fileSizes });
+    const html = renderTpl(TPL, 'game', { 
+        game: { ...game, play: playContent, tags, categories }, 
+        ruffleBase, 
+        domain: DOMAIN, 
+        author, 
+        translators, 
+        translator, 
+        pubTime, 
+        updateTime, 
+        versionKeywords, 
+        fileSizes,
+        tags,
+        categories
+    });
 
     const gameDir = path.join(PUB, game.dir);
     ensureDir(gameDir);
@@ -863,6 +902,11 @@ function regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN) {
     genGamesListPage(TPL, PUB, games, DOMAIN);
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
     genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+    
+    // 生成分类和标签页
+    genTagsPages(TPL, PUB, games, DOMAIN, API_DIR);
+    genCategoriesPages(TPL, PUB, games, DOMAIN);
+    
     genGamesNameJson(DATA_DIR, API_DIR, PUB);
     genSearchJson(DATA_DIR, API_DIR, PUB);
     genSitemapXml(PUB, DOMAIN, games);
@@ -900,7 +944,9 @@ function genHomePages(TPL, PUB, games, DOMAIN) {
             pagination: pagination,
             domain: DOMAIN,
             pageType: 'home',
-            currentPage: p
+            currentPage: p,
+            isFirstPage: p === 1,
+            stats: CACHED_STATS
         });
         const dest = path.join(PUB, p === 1 ? 'index.html' : `${p}.html`);
         writeFile(dest, html, PUB);
@@ -1270,6 +1316,164 @@ function genRssXml(PUB, DOMAIN, games) {
 
     xml += `${s}</channel>${n}</rss>`;
     writeFile(path.join(PUB, 'rss.xml'), xml, PUB);
+}
+
+// 生成标签索引页和标签详情页
+function genTagsPages(TPL, PUB, games, DOMAIN, API_DIR) {
+    const PAGE_SIZE = 20;
+    const tagMap = {};
+
+    games.forEach(g => {
+        if (g.tags) {
+            let tagsArr = [];
+            if (Array.isArray(g.tags)) {
+                tagsArr = g.tags;
+            } else if (typeof g.tags === 'string') {
+                tagsArr = g.tags.split(',').map(t => t.trim()).filter(Boolean);
+            }
+            tagsArr.forEach(t => {
+                if (!tagMap[t]) tagMap[t] = [];
+                tagMap[t].push(g);
+            });
+        }
+    });
+
+    const sortedTags = Object.keys(tagMap).map(name => ({
+        name,
+        count: tagMap[name].length
+    })).sort((a, b) => b.count - a.count || a.name.localeCompare(b, 'zh-Hans-CN'));
+
+    const top40Tags = sortedTags.slice(0, 40);
+    ensureDir(API_DIR);
+    writeFile(path.join(API_DIR, 'tags.json'), JSON.stringify(top40Tags, null, IS_MIN ? 0 : 4), PUB);
+
+    const tagsHtml = renderTpl(TPL, 'tags', {
+        pageType: 'tags',
+        allTags: sortedTags,
+        title: '标签云',
+        domain: DOMAIN,
+        tagName: '',
+        games: [],
+        page: 1,
+        totalPages: 1,
+        pagination: []
+    });
+    const tagsDir = path.join(PUB, 'tags');
+    ensureDir(tagsDir);
+    writeFile(path.join(tagsDir, 'index.html'), tagsHtml, PUB);
+
+    sortedTags.forEach(tag => {
+        const tagGames = tagMap[tag.name];
+        const totalPages = Math.ceil(tagGames.length / PAGE_SIZE) || 1;
+        const tagDir = path.join(tagsDir, tag.name);
+        ensureDir(tagDir);
+
+        for (let p = 1; p <= totalPages; p++) {
+            const pageGames = tagGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+            const pagination = getPagination(p, totalPages);
+
+            const pageGamesWithMiniCover = pageGames.map(g => {
+                const cover = g.cover || '';
+                if (cover.startsWith('/images/')) {
+                    const miniCover = cover.replace('/images/', '/images/mini/');
+                    return Object.assign({}, g, { cover: miniCover });
+                }
+                return g;
+            });
+
+            const html = renderTpl(TPL, 'tags', {
+                pageType: 'tag-games',
+                allTags: sortedTags,
+                tagName: tag.name,
+                games: pageGamesWithMiniCover,
+                page: p,
+                totalPages: totalPages,
+                pagination: pagination,
+                domain: DOMAIN,
+                title: `标签：${tag.name}`
+            });
+
+            const dest = path.join(tagDir, p === 1 ? 'index.html' : `${p}.html`);
+            writeFile(dest, html, PUB);
+        }
+    });
+}
+
+// 生成分类索引页和分类详情页
+function genCategoriesPages(TPL, PUB, games, DOMAIN) {
+    const PAGE_SIZE = 20;
+    const catMap = {};
+
+    games.forEach(g => {
+        if (g.categories) {
+            let catsArr = [];
+            if (Array.isArray(g.categories)) {
+                catsArr = g.categories;
+            } else if (typeof g.categories === 'string') {
+                catsArr = g.categories.split(',').map(c => c.trim()).filter(Boolean);
+            }
+            catsArr.forEach(c => {
+                if (!catMap[c]) catMap[c] = [];
+                catMap[c].push(g);
+            });
+        }
+    });
+
+    const sortedCats = Object.keys(catMap).map(name => ({
+        name,
+        count: catMap[name].length
+    })).sort((a, b) => b.count - a.count || a.name.localeCompare(b, 'zh-Hans-CN'));
+
+    const catsHtml = renderTpl(TPL, 'categories', {
+        pageType: 'categories',
+        allCats: sortedCats,
+        title: '分类页',
+        domain: DOMAIN,
+        catName: '',
+        games: [],
+        page: 1,
+        totalPages: 1,
+        pagination: []
+    });
+    const catsDir = path.join(PUB, 'categories');
+    ensureDir(catsDir);
+    writeFile(path.join(catsDir, 'index.html'), catsHtml, PUB);
+
+    sortedCats.forEach(cat => {
+        const catGames = catMap[cat.name];
+        const totalPages = Math.ceil(catGames.length / PAGE_SIZE) || 1;
+        const catDir = path.join(catsDir, cat.name);
+        ensureDir(catDir);
+
+        for (let p = 1; p <= totalPages; p++) {
+            const pageGames = catGames.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
+            const pagination = getPagination(p, totalPages);
+
+            const pageGamesWithMiniCover = pageGames.map(g => {
+                const cover = g.cover || '';
+                if (cover.startsWith('/images/')) {
+                    const miniCover = cover.replace('/images/', '/images/mini/');
+                    return Object.assign({}, g, { cover: miniCover });
+                }
+                return g;
+            });
+
+            const html = renderTpl(TPL, 'categories', {
+                pageType: 'category-games',
+                allCats: sortedCats,
+                catName: cat.name,
+                games: pageGamesWithMiniCover,
+                page: p,
+                totalPages: totalPages,
+                pagination: pagination,
+                domain: DOMAIN,
+                title: `分类：${cat.name}`
+            });
+
+            const dest = path.join(catDir, p === 1 ? 'index.html' : `${p}.html`);
+            writeFile(dest, html, PUB);
+        }
+    });
 }
 
 if (require.main === module) {

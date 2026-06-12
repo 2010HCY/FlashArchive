@@ -90,8 +90,9 @@
                 <img src="<%= game.cover %>" alt="<%= game.title %>">
             </div>
             <div class="desc-text-box">
-                <p><strong>游戏名称：</strong><%= game.title %></p>
-                <p><strong>兼容引擎：</strong><a target="_blank" rel="noopener" href="https://ruffle.rs/">Ruffle</a>, Adobe Flash Player</p>
+                <p><strong>作品名称：</strong><%= game.title %></p>
+                <p><strong>所属分类：</strong><% game.categories.forEach(function(cat) { %><a href="/categories/<%= encodeURIComponent(cat) %>/" class="tag-link"><%= cat %></a><% }); %></p>
+                <p><strong>相关标签：</strong><%- game.tags.map(tag => `<a href="/tags/${encodeURIComponent(tag)}/" class="tag-link">${tag}</a>`).join(', ') %></p>
                 <p><strong>收录版本：</strong><%= versionKeywords.join(' / ') %></p>
                 <p><strong>文件大小：</strong><% if (fileSizes && fileSizes.length) { %><%= fileSizes.map(s => s.value + s.unit).join(' / ') %><% } %></p>
                 <p>觉得好玩的话就点个赞吧</p>

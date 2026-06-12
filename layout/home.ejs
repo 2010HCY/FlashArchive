@@ -2,6 +2,267 @@
 <html lang="zh-CN">
 <%- include('head', { pageType: 'home' }) %>
 <body>
+    <% if (typeof isFirstPage !== 'undefined' && isFirstPage) { %>
+        <div class="indexCard">
+            <div class="index-flex-wrapper">
+                <div class="index-left-content">
+                    <h2>欢迎</h2>
+                    <div class="content">
+                        <p>欢迎来到我的Flash收藏站，本站创立的初衷是存放我汉化的Flash作品以供在线游玩</p>
+                        <p>如果你有什么喜欢的Flash作品没有汉化，可以在留言板中留言告诉我哦</p>
+                        <div class="welcome-links">
+                            <a href="/about#more" class="btn-chip"><i class="fa-regular fa-lightbulb"></i> 了解更多</a>
+                            <a href="/about#faq" class="btn-chip"><i class="fa-regular fa-circle-question"></i> 常见问题</a>
+                            <a href="/about#sponsor" class="btn-chip"><i class="fa-solid fa-mug-hot"></i> 赞助支持</a>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3 class="stats-title">站点数据</h4>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                            <span class="stat-label">游戏总数</span>
+                            <span class="stat-value"><%= stats.totalCount %> 个</span>
+                            </div>
+                            <div class="stat-card">
+                            <span class="stat-label">总占空间</span>
+                            <span class="stat-value"><%= stats.totalSize.value %> <%= stats.totalSize.unit %></span>
+                            </div>
+                            <div class="stat-card">
+                            <span class="stat-label">最大文件</span>
+                            <span class="stat-value"><%= stats.maxFileSize.value %> <%= stats.maxFileSize.unit %></span>
+                            </div>
+                            <div class="stat-card">
+                            <span class="stat-label">平均大小</span>
+                            <span class="stat-value"><%= stats.avgSize.value %> <%= stats.avgSize.unit %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 留言板 -->
+                <div class="home-guestbook-aside">
+                    <div class="guestbook-header">
+                        <span class="gb-title">留言本</span>
+                        <a href="javascript:void(0);" id="open-comment-btn" class="gb-add-btn">新增留言</a>
+                    </div>
+                    <div class="guestbook-scroll-area">
+                        <div id="home-comments-display">
+                            <p style="text-align:center;color:#999;padding:20px;">正在加载留言...</p>
+                        </div>
+                    </div>
+                    <!-- 翻页 -->
+                    <div class="guestbook-footer">
+                        <div class="guestbook-pagination">
+                            <button id="gb-prev-btn" class="gb-page-btn" title="上一页">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="gb-page-indicator">
+                                <input type="number" id="gb-page-input" class="gb-page-input" value="1" min="1">
+                                <span class="gb-page-slash">/</span>
+                                <span id="gb-total-pages" class="gb-total-pages">1</span>
+                            </div>
+                            <button id="gb-next-btn" class="gb-page-btn" title="下一页">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 发表留言 -->
+            <div id="comment-modal" class="modal-mask" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-btn">&times;</span>
+                    <h3>发表留言</h3>
+                    <div id="tcomment-modal-editor"></div>
+                </div>
+            </div>
+
+            <script src="/api/play/twikoo.min.js"></script>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var ENV_ID = 'https://twikoo.hcyhub.com/.netlify/functions/twikoo';
+                var TARGET_PATH = '/about'; 
+                var isEditorInitialized = false;
+
+                var GB_PAGE_SIZE = 15;
+                var allComments = [];
+                var currentPage = 1;
+
+                function loadHomeComments() {
+                    var container = document.getElementById('home-comments-display');
+                    if (!container) return;
+
+                    twikoo.getRecentComments({
+                        envId: ENV_ID,
+                        urls: [ TARGET_PATH ],
+                        pageSize: 100,
+                        includeReply: true
+                    }).then(function (res) {
+                        allComments = res || [];
+                        currentPage = 1;
+                        renderPage();
+                    }).catch(function (err) {
+                        console.error('获取留言失败:', err);
+                        container.innerHTML = '<p style="text-align:center;color:#ff4d4f;padding:20px;">留言加载失败，请刷新</p>';
+                    });
+                }
+
+                function renderPage() {
+                    var container = document.getElementById('home-comments-display');
+                    if (!container) return;
+
+                    if (allComments.length === 0) {
+                        container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">暂无留言</p>';
+                        updatePaginationUI(1, 1);
+                        return;
+                    }
+
+                    var totalPages = Math.ceil(allComments.length / GB_PAGE_SIZE);
+                    
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    if (currentPage < 1) currentPage = 1;
+
+                    var start = (currentPage - 1) * GB_PAGE_SIZE;
+                    var end = start + GB_PAGE_SIZE;
+                    var pagedComments = allComments.slice(start, end);
+
+                    var html = '';
+                    pagedComments.forEach(function (item) {
+                        html += '<div class="home-comment-item">';
+                        html += '  <div class="home-comment-meta">';
+                        var avatarUrl = item.avatar || 'https://cravatar.cn/avatar/' + (item.mailMd5 || '') + '?d=mp';
+                        html += '    <img class="home-comment-avatar" src="' + avatarUrl + '" onerror="this.src=\'https://cravatar.cn/avatar/?d=mp\'">';
+                        html += '    <span class="home-comment-nick">' + item.nick + '</span>';
+                        html += '    <span class="home-comment-time">' + (item.relativeTime || '') + '</span>';
+                        html += '  </div>';
+                        html += '  <div class="home-comment-content">' + item.comment + '</div>';
+                        html += '</div>';
+                    });
+                    container.innerHTML = html;
+
+                    document.querySelector('.guestbook-scroll-area').scrollTop = 0;
+
+                    updatePaginationUI(totalPages, currentPage);
+                }
+
+                function updatePaginationUI(totalPages, page) {
+                    var prevBtn = document.getElementById('gb-prev-btn');
+                    var nextBtn = document.getElementById('gb-next-btn');
+                    var pageInput = document.getElementById('gb-page-input');
+                    var totalSpan = document.getElementById('gb-total-pages');
+
+                    if (totalSpan) totalSpan.innerText = totalPages;
+                    if (pageInput) pageInput.value = page;
+
+                    if (prevBtn) prevBtn.disabled = (page <= 1);
+                    if (nextBtn) nextBtn.disabled = (page >= totalPages);
+                }
+
+                var prevBtn = document.getElementById('gb-prev-btn');
+                var nextBtn = document.getElementById('gb-next-btn');
+                var pageInput = document.getElementById('gb-page-input');
+
+                if (prevBtn) {
+                    prevBtn.onclick = function() {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            renderPage();
+                        }
+                    }
+                }
+
+                if (nextBtn) {
+                    nextBtn.onclick = function() {
+                        var totalPages = Math.ceil(allComments.length / GB_PAGE_SIZE);
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            renderPage();
+                        }
+                    }
+                }
+
+                if (pageInput) {
+                    pageInput.onkeydown = function(e) {
+                        if (e.key === 'Enter' || e.keyCode === 13) {
+                            var val = parseInt(pageInput.value);
+                            var totalPages = Math.ceil(allComments.length / GB_PAGE_SIZE);
+                            if (isNaN(val) || val < 1) {
+                                pageInput.value = currentPage;
+                            } else if (val > totalPages) {
+                                currentPage = totalPages;
+                                renderPage();
+                            } else {
+                                currentPage = val;
+                                renderPage();
+                            }
+                            pageInput.blur();
+                        }
+                    }
+                    pageInput.onblur = function() {
+                        pageInput.value = currentPage;
+                    }
+                }
+
+                loadHomeComments();
+
+                var modal = document.getElementById('comment-modal');
+                var openBtn = document.getElementById('open-comment-btn');
+                var closeBtn = document.querySelector('.close-btn');
+
+                if (openBtn) {
+                    openBtn.onclick = function() {
+                        modal.style.display = "flex";
+                        if (!isEditorInitialized) {
+                            twikoo.init({
+                                envId: ENV_ID,
+                                el: '#tcomment-modal-editor',
+                                path: TARGET_PATH,
+                                lang: 'zh-CN',
+                                onCommentLoaded: function() {
+                                    loadHomeComments();
+
+                                    var sendBtn = document.querySelector('#tcomment-modal-editor .tk-send');
+                                    if (sendBtn && !sendBtn.dataset.hasListener) {
+                                        sendBtn.dataset.hasListener = 'true';
+                                        sendBtn.addEventListener('click', function() {
+                                            var checkInterval = setInterval(function() {
+                                                var textarea = document.querySelector('#tcomment-modal-editor .el-textarea__inner');
+                                                if (textarea && textarea.value === '') {
+                                                    clearInterval(checkInterval);
+                                                    loadHomeComments();
+                                                }
+                                            }, 500);
+                                            setTimeout(function() { clearInterval(checkInterval); }, 8000);
+                                        });
+                                    }
+                                }
+                            });
+                            isEditorInitialized = true;
+                        }
+                    }
+                }
+
+                if (closeBtn) {
+                    closeBtn.onclick = function() {
+                        modal.style.display = "none";
+                        loadHomeComments(); 
+                    }
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                        loadHomeComments(); 
+                    }
+                }
+            });
+            </script>
+        </div>
+    <% } %>
+
     <div class="card-container">
       	<%- include('header') %>
       	<main id="game-list">

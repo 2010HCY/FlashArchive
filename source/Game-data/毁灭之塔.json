@@ -8,7 +8,9 @@
     "cover": "/images/毁灭之塔/毁灭之塔.webp",
     "dir": "/Games/毁灭之塔",
     "Author": "Loulissi",
-    "CN-Author": "Ethaniel",
+    "CN-Author": "黄行山",
+    "categories": "Flash游戏",
+    "tags": "塔防, 策略",
     "files": [
         {
             "name": "汉化版",

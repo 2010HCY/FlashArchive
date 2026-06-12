@@ -1,0 +1,108 @@
+/* 分类页和分类详情页 CSS */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: oklch(0.95 0.025 112);
+    overflow-x: hidden;
+}
+.category-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 20px auto 30px auto;
+    max-width: 900px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+}
+.category-card-title {
+    font-size: 20px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.category-card-title i {
+    color: rgb(163, 163, 0);
+}
+.category-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+.category-badge:hover, .category-badge.active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.category-badge.active {
+    border: 1px dashed rgb(163, 163, 0);
+    box-shadow: 0 4px 10px rgba(163, 163, 0, 0.15) !important;
+}
+.category-badge .badge-count {
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 6px;
+    opacity: 0.8;
+}
+.category-badge.purple { background-color: #f3ebf7; color: #8e44ad; }
+.category-badge.blue { background-color: #e8f4fd; color: #2980b9; }
+.category-badge.green { background-color: #e8f8f5; color: #27ae60; }
+.category-badge.yellow { background-color: #fef9e7; color: #b7950b; }
+.category-badge.orange { background-color: #fdf2e9; color: #d35400; }
+.category-badge.red { background-color: #fdedec; color: #cb4335; }
+.category-badge.cyan { background-color: #eaf2f8; color: #16a085; }
+.category-badge.pink { background-color: #fbeee6; color: #db5a9b; }
+.category-badge.teal { background-color: #e8f6f3; color: #1abc9c; }
+.category-badge.navy { background-color: #ebf5fb; color: #2c3e50; }
+.category-intro {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px dashed #eaeaea;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.category-intro p {
+    margin: 8px 0;
+}
+.section-title {
+    text-align: center;
+    font-size: 22px;
+    color: #333;
+    margin: 40px 0 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.section-title i {
+    color: rgb(163, 163, 0);
+}
+@media (max-width: 640px) {
+    .category-card {
+        padding: 20px 15px;
+        margin: 15px 10px;
+    }
+    .category-badge {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+}

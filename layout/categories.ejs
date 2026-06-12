@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<%- include('head', { 
+    pageType: pageType, 
+    catName: typeof catName !== 'undefined' ? catName : '',
+    domain: domain 
+}) %>
+<body>
+    <%- include('header') %>
+
+    <main class="container" style="padding: 50px 20px 0 20px; max-width: 1200px; margin: 0 auto;">
+        <% const colors = ['purple', 'blue', 'green', 'yellow', 'orange', 'red', 'cyan', 'pink', 'teal', 'navy']; %>
+
+        <div class="category-card">
+            <h2 class="category-card-title">
+                <i class="fas fa-folder-open"></i>
+                游戏分类
+            </h2>
+            <div class="category-list-container">
+                <% if (allCats && allCats.length > 0) { %>
+                    <% allCats.forEach((cat, idx) => { %>
+                        <% const colorClass = colors[idx % colors.length]; %>
+                        <% const isActive = (typeof catName !== 'undefined' && catName === cat.name); %>
+                        <a href="/categories/<%= encodeURIComponent(cat.name) %>/" class="category-badge <%= colorClass %> <%= isActive ? 'active' : '' %>">
+                            <%= cat.name %>
+                            <span class="badge-count"><%= cat.count %></span>
+                        </a>
+                    <% }) %>
+                <% } else { %>
+                    <p style="text-align: center; color: #999; padding: 20px 0; width: 100%;">暂无分类数据</p>
+                <% } %>
+            </div>
+
+            <% if (pageType === 'categories') { %>
+                <div class="category-intro">
+                    <p><strong>关于分类：</strong></p>
+                    <p>Flash游戏，顾名思义，该分类下是Flash游戏</p>
+                    <p>Flash动画，顾名思义，该分类下是Flash动画，Flash的原始形态</p>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (pageType === 'category-games') { %>
+            <h2 class="section-title">
+                分类：<%= catName %>
+            </h2>
+
+            <div class="card-container">     
+                <main id="game-list">
+                    <% if (games && games.length > 0) { %>
+                        <% games.forEach(game => { %>
+                            <div class="card">
+                                <a href="<%= game.dir %>/">
+                                    <img alt="<%= game.title %>" class="game-thumb" src="<%= game.cover %>">
+                                    <h2><%= game.title %></h2>
+                                    <p><%= game.brief %></p>
+                                </a>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p style="text-align: center; color: #999; padding: 40px 0; width: 100%;">该分类下暂无游戏</p>
+                    <% } %>
+                </main>
+            </div>
+
+            <!-- 分页 -->
+            <% if (totalPages > 1) { %>
+                <div class="pagination">
+                    <a <% if (page > 1) { %> 
+                            href="/categories/<%= encodeURIComponent(catName) %>/<%= page === 2 ? '' : (page - 1) + '.html' %>" 
+                        <% } %> 
+                        class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="desktop-text">上一页</span>
+                    </a>
+
+                    <div class="page-numbers-container">
+                        <% pagination.forEach(item => { %>
+                            <% if (item.isDot) { %>
+                                <span class="page-dot"><i class="fa-solid fa-ellipsis"></i></span>
+                            <% } else { %>
+                                <a href="/categories/<%= encodeURIComponent(catName) %>/<%= item.value === 1 ? '' : item.value + '.html' %>" 
+                                class="page-link <%= item.value === page ? 'active' : '' %> <%= item.isMHide ? 'm-hide' : '' %>">
+                                    <%= item.value %>
+                                </a>
+                            <% } %>
+                        <% }); %>
+                    </div>
+
+                    <a <% if (page < totalPages) { %> 
+                            href="/categories/<%= encodeURIComponent(catName) %>/<%= (page + 1) + '.html' %>" 
+                        <% } %> 
+                        class="page-item <%= page >= totalPages ? 'disabled' : '' %>">
+                        <span class="desktop-text">下一页</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <span id="totalPages" data-total-pages="<%= totalPages %>" data-current-page="<%= page %>" style="display:none;"></span>
+            <% } %>
+        <% } %>
+    </main>
+
+    <%- include('footer') %>
+    <%- include('search') %>
+</body>
+</html>

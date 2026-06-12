@@ -1,0 +1,120 @@
+/* 标签页和标签详情页 CSS */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: oklch(0.95 0.025 112);
+    overflow-x: hidden;
+}
+.tag-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 20px auto 30px auto;
+    max-width: 900px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+}
+.tag-card-title {
+    font-size: 20px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.tag-card-title i {
+    color: rgb(163, 163, 0);
+}
+/* 标签云容器 */
+.tag-cloud-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 4px 18px;
+    min-height: 220px;
+    padding: 20px;
+    max-width: 860px;
+    margin: 0 auto;
+}
+.tag-cloud-item {
+    text-decoration: none;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: color 0.2s ease;
+    line-height: 1.05;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+.tag-cloud-item:hover {
+    color: #0cf;
+}
+.tag-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
+}
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+.tag-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.tag-badge .badge-count {
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 6px;
+    opacity: 0.8;
+}
+.tag-badge.purple { background-color: #f3ebf7; color: #8e44ad; }
+.tag-badge.blue { background-color: #e8f4fd; color: #2980b9; }
+.tag-badge.green { background-color: #e8f8f5; color: #27ae60; }
+.tag-badge.yellow { background-color: #fef9e7; color: #b7950b; }
+.tag-badge.orange { background-color: #fdf2e9; color: #d35400; }
+.tag-badge.red { background-color: #fdedec; color: #cb4335; }
+.tag-badge.cyan { background-color: #eaf2f8; color: #16a085; }
+.tag-badge.pink { background-color: #fbeee6; color: #db5a9b; }
+.tag-badge.teal { background-color: #e8f6f3; color: #1abc9c; }
+.tag-badge.navy { background-color: #ebf5fb; color: #2c3e50; }
+.section-title {
+    text-align: center;
+    font-size: 22px;
+    color: #333;
+    margin: 40px 0 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.section-title i {
+    color: rgb(163, 163, 0);
+}
+@media (max-width: 640px) {
+    .tag-card {
+        padding: 20px 15px;
+        margin: 15px 10px;
+    }
+    .tag-badge {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+}
