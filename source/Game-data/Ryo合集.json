@@ -8,7 +8,7 @@
     "dir": "/Games/Ryo合集",
     "Author": "Ryo (りょう)",
     "CN-Author": "无",
-    "HideIn": ["Home", "List"],
+    "HideIn": ["Home", "List", "Tags", "Categories", "Games_Name", "Search", "SiteMap", "Rss"],
     "categories": "Flash游戏",
     "tags": "",
     "files": [

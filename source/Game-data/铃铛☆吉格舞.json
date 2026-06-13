@@ -8,7 +8,7 @@
     "dir": "/Games/铃铛☆吉格舞",
     "Author": "エロエロ王国",
     "CN-Author": "无",
-    "HideIn": ["Home", "List"],
+    "HideIn": ["Home", "List", "Tags", "Categories", "Games_Name", "Search", "SiteMap", "Rss"],
     "categories": "Flash游戏",
     "tags": "拼图",
     "files": [

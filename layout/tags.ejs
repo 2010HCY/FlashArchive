@@ -103,12 +103,10 @@
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('/api/tags.json')
-            .then(function(res) { return res.json(); })
-            .then(function(tags) {
-                var container = document.getElementById('tag-cloud');
-                if (!container) return;
-                container.innerHTML = '';
+        var tags = <%- typeof TagsTop40 !== 'undefined' ? JSON.stringify(TagsTop40) : '[]' %>;
+        var container = document.getElementById('tag-cloud');
+        if (!container) return;
+        container.innerHTML = '';
 
                 if (!tags || tags.length === 0) {
                     container.innerHTML = '<p style="text-align: center; color: #999;">暂无标签云数据</p>';
@@ -249,10 +247,6 @@
 
                     placedElements.push(a);
                 });
-            })
-            .catch(function(err) {
-                var container = document.getElementById('tag-cloud');
-            });
     });
 </script>
 </body>

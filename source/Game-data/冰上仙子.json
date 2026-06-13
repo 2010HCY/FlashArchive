@@ -8,7 +8,7 @@
     "dir": "/Games/冰上仙子",
     "Author": "エロエロ王国",
     "CN-Author": "无",
-    "HideIn": ["Home", "List"],
+    "HideIn": ["Home", "List", "Tags", "Categories", "Games_Name", "Search", "SiteMap", "Rss"],
     "categories": "Flash游戏",
     "tags": "解密",
     "files": [
@@ -18,9 +18,9 @@
         }
     ],
     "DownFiles": [
-            {
-                "name": "完整版.7z",
-                "path": "/swf/冰上仙子/冰上仙子.7z"
-            }
+        {
+            "name": "完整版.7z",
+            "path": "/swf/冰上仙子/冰上仙子.7z"
+        }
 	]
 }

@@ -34,6 +34,13 @@ let CACHED_STATS = {
 let TEMPLATE_AFFECT = {};
 let IGNORE_LIST = new Set();
 
+// 核心过滤辅助函数：精确区分大小写，'All' 属性自动继承其他所有的过滤判定
+function hasHideIn(game, option) {
+    if (!game || !game.HideIn || !Array.isArray(game.HideIn)) return false;
+    if (game.HideIn.includes('All')) return true;
+    return game.HideIn.includes(option);
+}
+
 // ============ 首页缩略图模块 ============
 
 // 图片文件扩展名
@@ -916,11 +923,8 @@ function regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN) {
 // 生成首页及分页
 function genHomePages(TPL, PUB, games, DOMAIN) {
     const PAGE_SIZE = 20;
-    // 过滤掉HideIn包含"Home"的游戏
-    const filteredGames = games.filter(g => {
-        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
-        return !g.HideIn.includes('Home');
-    });
+    // 过滤掉HideIn包含"Home"或"All"的游戏
+    const filteredGames = games.filter(g => !hasHideIn(g, 'Home'));
     
     const totalPages = Math.ceil(filteredGames.length / PAGE_SIZE) || 1;
     for (let p = 1; p <= totalPages; p++) {
@@ -990,6 +994,7 @@ function genPeopleIndexPage(TPL, PUB, games, DOMAIN, type) {
 
     const peopleMap = {};
     games.forEach(g => {
+        if (hasHideIn(g, 'All')) return; // All 游戏不出现在作者/汉化者关联作品列表
         const names = isAuthor ? getCleanNames(g['Author']) : getCleanNames(g['CN-Author']);
         names.forEach(name => {
             if (!peopleMap[name]) peopleMap[name] = [];
@@ -1097,11 +1102,8 @@ function genFriendPage(TPL, PUB, DOMAIN) {
 
 // 生成游戏列表页
 function genGamesListPage(TPL, PUB, games, DOMAIN) {
-    // 过滤掉HideIn包含"List"的游戏
-    const filteredGames = games.filter(g => {
-        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
-        return !g.HideIn.includes('List');
-    });
+    // 过滤掉HideIn包含"List"或"All"的游戏
+    const filteredGames = games.filter(g => !hasHideIn(g, 'List'));
 
     // 格式化更新日期
     const pubDateFormatted = {};
@@ -1128,8 +1130,8 @@ function genGamesNameJson(DATA_DIR, API_DIR, PUB) {
         .filter(f => f.endsWith('.json'))
         .map(fn => {
             const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
-            // 过滤掉HideIn包含"Search"的游戏
-            if (g.HideIn && Array.isArray(g.HideIn) && g.HideIn.includes('Search')) {
+            // 过滤掉HideIn包含"Games_Name"或"All"的游戏
+            if (hasHideIn(g, 'Games_Name')) {
                 return null;
             }
             return { id: g.id || "", name: g.title || "", desc: g.brief || "", time: g.pubDate || "" };
@@ -1146,8 +1148,8 @@ function genSearchJson(DATA_DIR, API_DIR, PUB) {
         .filter(f => f.endsWith('.json'))
         .map(fn => {
             const g = JSON.parse(fs.readFileSync(path.join(DATA_DIR, fn), 'utf-8'));
-            // 过滤掉HideIn包含"Search"的游戏
-            if (g.HideIn && Array.isArray(g.HideIn) && g.HideIn.includes('Search')) {
+            // 过滤掉HideIn包含"Search"或"All"的游戏
+            if (hasHideIn(g, 'Search')) {
                 return null;
             }
             return { id: g.id || "", title: g.title || "", brief: g.brief || "", pubDate: g.pubDate || "", play: g.dir || "" };
@@ -1228,11 +1230,8 @@ function genSitemapXml(PUB, DOMAIN, games) {
     // 汉化者列表
     xml += `${s}<url>${n}${s}${s}<loc>https://${DOMAIN}/translators/</loc>${n}${s}${s}<lastmod>${formatDate(new Date().toISOString(), 'sitemap')}</lastmod>${n}${s}</url>${n}`;
     
-    // 过滤掉HideIn包含"SiteMap"的游戏
-    const filteredGames = games.filter(g => {
-        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
-        return !g.HideIn.includes('SiteMap');
-    });
+    // 过滤掉HideIn包含"SiteMap"或"All"的游戏
+    const filteredGames = games.filter(g => !hasHideIn(g, 'SiteMap'));
     
     // 收集所有作者和汉化者
     const allAuthors = new Set();
@@ -1289,11 +1288,8 @@ function genRssXml(PUB, DOMAIN, games) {
     xml += `${s}${s}<description>最新Flash游戏列表 RSS 订阅</description>${n}`;
     xml += `${s}${s}<lastBuildDate>${now}</lastBuildDate>${n}`;
 
-    // 过滤掉HideIn包含"Rss"的游戏
-    let filteredGames = games.filter(g => {
-        if (!g.HideIn || !Array.isArray(g.HideIn)) return true;
-        return !g.HideIn.includes('Rss');
-    });
+    // 过滤掉HideIn包含"Rss"或"All"的游戏
+    let filteredGames = games.filter(g => !hasHideIn(g, 'Rss'));
 
     filteredGames.sort((a, b) => {
         const dateA = a.updateDate || a.pubDate;
@@ -1324,6 +1320,8 @@ function genTagsPages(TPL, PUB, games, DOMAIN, API_DIR) {
     const tagMap = {};
 
     games.forEach(g => {
+        // 过滤掉HideIn包含"Tags"或"All"的游戏的标签统计
+        if (hasHideIn(g, 'Tags')) return;
         if (g.tags) {
             let tagsArr = [];
             if (Array.isArray(g.tags)) {
@@ -1344,8 +1342,6 @@ function genTagsPages(TPL, PUB, games, DOMAIN, API_DIR) {
     })).sort((a, b) => b.count - a.count || a.name.localeCompare(b, 'zh-Hans-CN'));
 
     const top40Tags = sortedTags.slice(0, 40);
-    ensureDir(API_DIR);
-    writeFile(path.join(API_DIR, 'tags.json'), JSON.stringify(top40Tags, null, IS_MIN ? 0 : 4), PUB);
 
     const tagsHtml = renderTpl(TPL, 'tags', {
         pageType: 'tags',
@@ -1356,7 +1352,8 @@ function genTagsPages(TPL, PUB, games, DOMAIN, API_DIR) {
         games: [],
         page: 1,
         totalPages: 1,
-        pagination: []
+        pagination: [],
+        TagsTop40: top40Tags
     });
     const tagsDir = path.join(PUB, 'tags');
     ensureDir(tagsDir);
@@ -1390,7 +1387,8 @@ function genTagsPages(TPL, PUB, games, DOMAIN, API_DIR) {
                 totalPages: totalPages,
                 pagination: pagination,
                 domain: DOMAIN,
-                title: `标签：${tag.name}`
+                title: `标签：${tag.name}`,
+                TagsTop40: top40Tags
             });
 
             const dest = path.join(tagDir, p === 1 ? 'index.html' : `${p}.html`);
@@ -1405,6 +1403,8 @@ function genCategoriesPages(TPL, PUB, games, DOMAIN) {
     const catMap = {};
 
     games.forEach(g => {
+        // 过滤掉HideIn包含"Categories"或"All"的游戏的分类统计
+        if (hasHideIn(g, 'Categories')) return;
         if (g.categories) {
             let catsArr = [];
             if (Array.isArray(g.categories)) {
