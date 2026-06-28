@@ -8,6 +8,12 @@ const minifyHtml = require('html-minifier').minify;
 const CleanCSS = require('clean-css');
 const Terser = require('terser');
 const rawArgs = process.argv.slice(2);
+const markdownIt = require('markdown-it');
+const md = new markdownIt({
+    html: true,
+    linkify: true
+});
+
 const argv = require('minimist')(rawArgs, { boolean: ['debug', 's', 'serve', 'm', 'min'] });
 const DEBUG_MODE = argv.debug || argv.d || rawArgs.includes('-debug') || rawArgs.includes('--debug');
 const chokidar = require('chokidar');
@@ -659,9 +665,28 @@ async function main() {
 
                 // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
-                    regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
+                    const gameData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+                    if (gameData.type === 'post') {
+                        regeneratePostHotUpdate(TPL, PUB, DATA_DIR, API_DIR, gameData, DOMAIN);
+                        console.log(colors.info(`${gameData.title}`));
+                    } else {
+                        regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
+                        console.log(colors.info(`${gameData.title}`));
+                    }
                     return;
                 }
+
+                if (filePath.endsWith('.md') && filePath.includes('Game-data')) {
+                    const games = loadGames(DATA_DIR);
+                    const game = games.find(g => g.post && filePath.endsWith(g.post));
+                    if (game) {
+                        genGamePages(TPL, PUB, game, DOMAIN);
+                        console.log(colors.info(`${game.title}`));
+                    }
+                    return;
+                }
+
+                
 
                 // 模板
                 if (filePath.endsWith('.ejs')) {
@@ -854,6 +879,28 @@ function genGamePages(TPL, PUB, game, DOMAIN) {
         .join('');
         
     // 发布时间和更新时间
+    if (game.type === 'post') {
+        const postPath = path.join(RUNDIR, 'source', 'Game-data', game.post);
+        const postContent = fs.existsSync(postPath) ? fs.readFileSync(postPath, 'utf8') : '文章内容未找到。';
+        const renderedContent = md.render(postContent);
+        
+        const html = renderTpl(TPL, 'post', {
+            game: { ...game, tags, categories },
+            content: renderedContent,
+            author,
+            translators,
+            translator,
+            pubTime: formatDisplayTime(game.pubDate),
+            domain: DOMAIN,
+            pageType: 'post'
+        });
+        
+        const destDir = path.join(PUB, game.dir);
+        ensureDir(destDir);
+        writeFile(path.join(destDir, 'index.html'), html, PUB);
+        return;
+    }
+
     const pubTime = formatDisplayTime(game.pubDate);
     const updateTime = game.updateDate ? formatDisplayTime(game.updateDate) : null;
     const html = renderTpl(TPL, 'game', { 
@@ -899,6 +946,23 @@ function renderTpl(tplDir, name, data) {
 }
 
 // 生成所有游戏相关页面（首页、列表、作者页、RSS等）
+function regeneratePostHotUpdate(TPL, PUB, DATA_DIR, API_DIR, gameData, DOMAIN) {
+    const games = loadGames(DATA_DIR);
+    updateAuthorStats(games);
+    genGamePages(TPL, PUB, gameData, DOMAIN);
+    genHomePages(TPL, PUB, games, DOMAIN);
+    genGamesListPage(TPL, PUB, games, DOMAIN);
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
+    genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
+    genTagsPages(TPL, PUB, games, DOMAIN, API_DIR);
+    genCategoriesPages(TPL, PUB, games, DOMAIN);
+    genGamesNameJson(DATA_DIR, API_DIR, PUB);
+    genSearchJson(DATA_DIR, API_DIR, PUB);
+    genSitemapXml(PUB, DOMAIN, games);
+    genRssXml(PUB, DOMAIN, games);
+}
+
+
 function regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN) {
     const games = loadGames(DATA_DIR);
     updateAuthorStats(games);

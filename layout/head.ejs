@@ -23,6 +23,16 @@
         <meta property="og:title" content="<%= game.title %>">
         <meta property="og:description" content="<%= game.brief %>">
         <meta property="og:image" content="https://<%= domain + game.cover %>">
+    <% } else if (pageType === 'post' && typeof game !== 'undefined') { %>
+        <title><%= game.title %></title>
+        <meta name="keywords" content="静水深流,Flash游戏收藏站,在线小游戏,Flash游戏,文章,<%= game.title %>">
+        <meta name="description" content="<%= game.brief %>">
+        <link rel="stylesheet" href="/api/post/post.css">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="<%= game.title %>">
+        <meta property="og:description" content="<%= game.brief %>">
+        <meta property="og:image" content="https://<%= domain + game.cover %>">
+
     <% } else if (pageType === '404' ) { %>
         <title>404 Not Found</title>
         <meta name="description" content="页面不存在">

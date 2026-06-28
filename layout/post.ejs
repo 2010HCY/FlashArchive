@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<%- include('head', { pageType: 'post' }) %>
+<body>
+    <%- include('header') %>
+    <main class="main-content post-container">
+        <article class="post-card">
+            <h1><%= game.title %></h1>
+            <div class="post-meta">
+                <span><i class="far fa-eye"></i>阅读次数: <span id="PageMeter_page_pv">加载中...</span></span>
+                
+                <% if (game.Author) { %>
+                    <% var authorName = game.Author.trim(); %>
+                    <% if (authorName && authorName !== '未知') { %>
+                        <span><i class="fas fa-user"></i> 作者: <a href="/authors/<%= encodeURIComponent(authorName) %>/"><%= authorName %></a></span>
+                    <% } else { %>
+                        <span><i class="fas fa-user"></i> 作者: 未知</span>
+                    <% } %>
+                <% } else { %>
+                    <span><i class="fas fa-user"></i> 作者: 未知</span>
+                <% } %>
+
+                <% if (game['CN-Author'] && game['CN-Author'].trim() !== '无' && game['CN-Author'].trim() !== '') { %>
+                    <% var translators = game['CN-Author'].split(/\s*,\s*/).map(function(name) { return name.trim(); }).filter(Boolean); %>
+                    <% if (translators.length > 0) { %>
+                        <span><i class="fas fa-language"></i> 汉化者: 
+                            <% translators.forEach(function(t, idx) { %>
+                                <a href="/translators/<%= encodeURIComponent(t) %>/"><%= t %></a><%= idx < translators.length - 1 ? ', ' : '' %>
+                            <% }) %>
+                        </span>
+                    <% } %>
+                <% } %>
+
+                <span><i class="far fa-calendar-alt"></i> 发布: <%= game.pubDate %></span>
+
+                <% if (game.categories && game.categories.length > 0) { %>
+                    <span><i class="fas fa-folder"></i> 分类: 
+                        <% game.categories.forEach(function(cat, idx) { %>
+                            <a href="/categories/<%= encodeURIComponent(cat) %>/"><%= cat %></a><%= idx < game.categories.length - 1 ? ', ' : '' %>
+                        <% }) %>
+                    </span>
+                <% } %>
+
+                <% if (game.tags && game.tags.length > 0) { %>
+                    <span><i class="fas fa-tags"></i> 标签: 
+                        <% game.tags.forEach(function(tag, idx) { %>
+                            <a href="/tags/<%= encodeURIComponent(tag) %>/"><%= tag %></a><%= idx < game.tags.length - 1 ? ', ' : '' %>
+                        <% }) %>
+                    </span>
+                <% } %>
+            </div>
+            <div class="post-content">
+                <%- content %>
+            </div>
+        </article>
+        <section id="twikoo" class="twikoo-section" aria-label="评论区">
+            <h2 class="twikoo-title"><i class="fas fa-comments"></i>留言本</h2>
+            <%- include('twikoo') %>
+        </section>
+    </main>
+    <%- include('footer') %>
+    <%- include('search') %>
+</body>
+</html>
