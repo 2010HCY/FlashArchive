@@ -645,16 +645,14 @@ async function main() {
             persistent: true,
             ignoreInitial: true
         });
-        watcher.on('all', async (event, filePath) => {
+        const pendingWatcherEvents = new Map();
+        let watcherFlushTimer = null;
+
+        const processWatcherEvent = async (event, filePath) => {
             try {
                 const relPath = path.relative(SRC, filePath);
                 const ext = path.extname(filePath);
                 const fileName = path.basename(filePath);
-                function findGamePageIndex(games, gameDir, pageSize) {
-                    const index = games.findIndex(g => g.dir === gameDir);
-                    if (index === -1) return null;
-                    return Math.floor(index / pageSize) + 1;
-                }
 
                 // 图片处理
                 const isImagesDir = filePath.includes(path.join('images')) && filePath.startsWith(path.join(SRC, 'images'));
@@ -665,29 +663,24 @@ async function main() {
 
                 // JSON更新
                 if (filePath.endsWith('.json') && filePath.includes('Game-data')) {
-                    const gameData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-                    if (gameData.type === 'post') {
-                        regeneratePostHotUpdate(TPL, PUB, DATA_DIR, API_DIR, gameData, DOMAIN);
-                        console.log(colors.info(`${gameData.title}`));
-                    } else {
-                        regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN);
-                        console.log(colors.info(`${gameData.title}`));
-                    }
+                    const gameData = loadSingleGame(filePath);
+                    genGamePages(TPL, PUB, gameData, DOMAIN);
                     return;
                 }
 
                 if (filePath.endsWith('.md') && filePath.includes('Game-data')) {
                     const games = loadGames(DATA_DIR);
-                    const game = games.find(g => g.post && filePath.endsWith(g.post));
+                    const game = games.find(g => {
+                        if (!g.post) return false;
+                        const relativePostPath = normalizePathForMatch(path.relative(DATA_DIR, filePath));
+                        return normalizePathForMatch(g.post) === relativePostPath;
+                    });
                     if (game) {
                         genGamePages(TPL, PUB, game, DOMAIN);
-                        console.log(colors.info(`${game.title}`));
                     }
                     return;
                 }
-
                 
-
                 // 模板
                 if (filePath.endsWith('.ejs')) {
                     const tplName = path.basename(filePath);
@@ -703,9 +696,12 @@ async function main() {
                         if (affect === 'game') {
                             games.forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
                         }
+                        else if (affect === 'post') {
+                            regeneratePostPages(TPL, PUB, DATA_DIR, DOMAIN);
+                        }
                         else if (affect === 'home') {
                             genHomePages(TPL, PUB, games, DOMAIN);
-                        } 
+                        }
                         else if (affect === 'about') {
                             updateSwfStats(SRC);
                             genAboutPage(TPL, PUB, DOMAIN);
@@ -744,7 +740,7 @@ async function main() {
                         
                         EXTRA_PEOPLE_DATA[type] = {};
                         newData.forEach(item => { EXTRA_PEOPLE_DATA[type][item.name] = item; });
-                        
+
                         const games = loadGames(DATA_DIR);
                         genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'author');
                         genPeopleIndexPage(TPL, PUB, games, DOMAIN, 'translator');
@@ -754,7 +750,7 @@ async function main() {
                 const isIgnored = [...IGNORE_LIST].some(dir => relPath.startsWith(dir));
                 if (!isIgnored) {
                     const destPath = path.join(PUB, relPath);
-                    
+
                     if (event === 'unlink' || event === 'unlinkDir') {
                         fse.removeSync(destPath);
                         console.log(colors.info(`已删除文件: ${relPath}`));
@@ -762,16 +758,40 @@ async function main() {
                         ensureDir(path.dirname(destPath));
                         fse.copySync(filePath, destPath);
                         console.log(colors.info(`静态文件同步: ${relPath}`));
-                        
-                        if (MUST_MIN && (ext === '.css' || ext === '.js')) {
-                        }
                     }
                 }
             } catch (err) {
                 console.error(colors.error(`热更新失败: ${err.message}`));
             }
+        };
+
+        const enqueueWatcherEvent = (event, filePath) => {
+            const normalizedPath = normalizePathForMatch(filePath);
+            pendingWatcherEvents.set(normalizedPath, { event, filePath });
+
+            if (watcherFlushTimer) {
+                clearTimeout(watcherFlushTimer);
+            }
+
+            watcherFlushTimer = setTimeout(async () => {
+                const pending = Array.from(pendingWatcherEvents.values());
+                pendingWatcherEvents.clear();
+                watcherFlushTimer = null;
+
+                for (const { event: pendingEvent, filePath: pendingFilePath } of pending) {
+                    await processWatcherEvent(pendingEvent, pendingFilePath);
+                }
+            }, 80);
+        };
+
+        watcher.on('all', (event, filePath) => {
+            enqueueWatcherEvent(event, filePath);
         });
     }
+}
+
+function normalizePathForMatch(filePath) {
+    return path.normalize(String(filePath)).replace(/\\/g, '/');
 }
 
 // 加载JSON数据
@@ -962,6 +982,13 @@ function regeneratePostHotUpdate(TPL, PUB, DATA_DIR, API_DIR, gameData, DOMAIN) 
     genRssXml(PUB, DOMAIN, games);
 }
 
+
+function regeneratePostPages(TPL, PUB, DATA_DIR, DOMAIN) {
+    const games = loadGames(DATA_DIR);
+    games
+        .filter(g => g.type === 'post')
+        .forEach(g => genGamePages(TPL, PUB, g, DOMAIN));
+}
 
 function regenerateAllGamePages(TPL, PUB, DATA_DIR, API_DIR, SRC, DOMAIN) {
     const games = loadGames(DATA_DIR);
